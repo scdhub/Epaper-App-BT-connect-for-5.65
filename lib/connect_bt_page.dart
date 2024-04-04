@@ -8,9 +8,8 @@ class ConnectBTPage extends StatefulWidget {
 class _ConnectBTPageState extends State<ConnectBTPage> {
 
   List<String> trustDevices = [];
-  // タグ情報の状態管理
 
-  List<String> flutes =[
+  List<String> detectDevices =[
     'リンゴ','みかん','なし','柿','ブドウ'
   ];
 
@@ -28,25 +27,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
             style: OutlinedButton.styleFrom(backgroundColor: Colors.blue),
             onPressed: () {},
           ),
-          Text('未登録デバイス'), // Swap the order of sections
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                    });
-                  },
-                  child: Container(
-                    height: 50,
-                    color: Colors.blue,
-                    alignment: Alignment.center,
 
-                  ),
-                );
-              },
-            ),
-          ),
           Text('登録済みデバイス'),
           Container(
             height: 300,
@@ -60,7 +41,30 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   margin: EdgeInsets.all(8),
                   color: Colors.green,
                   alignment: Alignment.center,
+                  child: Text(trustDevices[index]),
 
+                );
+              },
+            ),
+          ),
+          Text('未登録デバイス'), // Swap the order of sections
+          Expanded(
+            child: ListView.builder(
+              itemCount: detectDevices.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      trustDevices.add(detectDevices[index]);
+                      detectDevices.removeAt(index);
+                    });
+                  },
+                  child: Container(
+                    height: 50,
+                    color: Colors.blue,
+                    alignment: Alignment.center,
+                    child: Text(detectDevices[index]),
+                  ),
                 );
               },
             ),
