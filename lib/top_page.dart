@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'connect_bt_page.dart';
-import 'Test.dart';
 
 class TopPage extends StatefulWidget {
   const TopPage({super.key, required this.title});
@@ -43,10 +42,10 @@ class _TopPageState extends State<TopPage> {
           ElevatedButton(
               style:TextButton.styleFrom(foregroundColor: Colors.black,backgroundColor: Colors.blue),
               onPressed:(){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BluetoothScanner()),//テキスト入力画面遷移
-                );
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => BluetoothScanner()),//テキスト入力画面遷移
+              //   );
               },
               child:Row(
                   children:[
