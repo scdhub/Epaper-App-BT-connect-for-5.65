@@ -20,7 +20,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
     'パイナップル',
     'ブルーベリー'
   ];
-  var isScanning = true;
+  var isScanning = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +45,14 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
               padding: EdgeInsets.all(50),
               child: ElevatedButton(
                 child: Container(
-                  width: 150,
+                  width: 170,
                   child: Row(children: [
                     isScanning
                         ? CircularProgressIndicator()
                         : Icon(Icons.restart_alt),
                     SizedBox(width: 10),
                     Text(isScanning ? 'スキャン停止' : 'スキャン開始',
-                        style: TextStyle(color: Colors.white))
+                        style: TextStyle(color: Colors.white,fontSize:20,))
                   ]),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -73,26 +73,33 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 },
               ),
             ),
-            Text('登録済みデバイス'),
+            Text('登録済みデバイス',style: TextStyle(fontSize:20,)),
             Container(
-              height: 300,
+              height: 250,
               child: ListView.builder(
                 scrollDirection: Axis.vertical,
                 itemCount: trustDevices.length,
                 itemBuilder: (context, index) {
                   return Container(
-                    width: 100,
+                    // width: 100,
                     height: 50,
-                    margin: EdgeInsets.all(8),
-                    color: Colors.white,
+                    margin: EdgeInsets.all(1),
+                    // color: Colors.white,
                     alignment: Alignment.center,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 2,
+                        )),
                     child: Text(trustDevices[index]),
                   );
                 },
               ),
             ),
-            SizedBox(height:10),
-            Text('未登録デバイス'), // Swap the order of sections
+            SizedBox(height: 10),
+            Text('未登録デバイス',style: TextStyle(fontSize:20,)), // Swap the order of sections
             Expanded(
               child: ListView.builder(
                 itemCount: detectDevices.length,
@@ -107,7 +114,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                     child: Container(
                       height: 50,
                       color: Colors.blue,
-                      margin: EdgeInsets.all(8),
+                      margin: EdgeInsets.all(1),
                       alignment: Alignment.center,
                       child: Text(detectDevices[index]),
                     ),
