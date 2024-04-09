@@ -41,13 +41,14 @@ class PopupMenuAlbumName extends StatelessWidget{
               child:Row(
                   children:[
                     Text(
-                      //選択画面起動時、「：albums[0].name」にするとエラーが発生するため今のところ「:'Recent'」に設定
+                      //選択画面起動時、「：albums[0].name」にするとエラーが発生するため「:'Recent'」に設定
+                      // selectedAlbumIndex != null ? albums[selectedAlbumIndex!].name :'Recent',
                       selectedAlbumIndex != null ? albums[selectedAlbumIndex!].name :'Recent',
                       style: TextStyle(
                         color: Colors.white,
                       ),
                     ),
-                    //containerが押されたときの回転動作をあとで付け加える。ボタン機能は無くす予定
+                    //containerが押されたときの回転動作をあとで付け加える。
                     IconButton(
                       icon: Icon(Icons.expand_more, color: Colors.white),
                       onPressed: () {
@@ -61,6 +62,7 @@ class PopupMenuAlbumName extends StatelessWidget{
           itemBuilder: (BuildContext context) => albums.asMap().entries.map((entry) {
             int index = entry.key;// アルバムのインデックスを取得
             AssetPathEntity album = entry.value;// アルバムを取得
+
 
             // リスト欄にアルバムの最初の画像とアルバム名を設定。
             // 下記コードでは、アルバム名があっても画像がない場合、永遠にインジケーターが回るため、画像ない時の処理の追加が必要
@@ -79,6 +81,16 @@ class PopupMenuAlbumName extends StatelessWidget{
                     },
                   ),
                   SizedBox(width: 8),
+                  // FutureBuilder(
+                  //   future: fetchAssetCount(album),
+                  //   builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.done) {
+                  //       return Text('${album.name} (${snapshot.data})');
+                  //     } else {
+                  //       return Text(album.name);
+                  //     }
+                  //   },
+                  // ),
                   FutureBuilder(
                     future: fetchAssetCount(album),
                     builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -97,10 +109,20 @@ class PopupMenuAlbumName extends StatelessWidget{
   }
 
 
+  // Future<Uint8List?> _fetchFirstImage(AssetPathEntity album) async {
+  //   final assetList = await album.getAssetListPaged(page: 0, size: 1);
+  //   // final imageAssets = assetList.where((asset)=>asset.type == AssetType.image).toList();
+  //   if (assetList.isNotEmpty) {
+  //     final byteData = await assetList.first.originBytes;
+  //     return byteData;
+  //   }
+  //   return null;
+  // }
   Future<Uint8List?> _fetchFirstImage(AssetPathEntity album) async {
-    final assetList = await album.getAssetListPaged(page: 0, size: 1);
-    if (assetList.isNotEmpty) {
-      final byteData = await assetList.first.originBytes;
+    final assetList = await album.getAssetListPaged(page: 0, size: 10000);
+    final imageAssets = assetList.where((asset) => asset.type == AssetType.image).toList();
+    if (imageAssets.isNotEmpty) {
+      final byteData = await imageAssets.first.originBytes;
       return byteData;
     }
     return null;
