@@ -12,10 +12,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'E Ink 電子ペーパー',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TopPage(title: 'E Ink 電子ペーパー'),
+      home: TopPage(/*title: 'E Ink 電子ペーパー'*/),
     );
   }
 }
