@@ -1,53 +1,42 @@
 import 'package:flutter/material.dart';
-
-class DeviceInfo {
-  String vernum;
-
-  String UIDnum;
-  String resolution;
-  String colorsaport;
-  String maker;
-  String colorparm;
-
-  DeviceInfo({
-    this.vernum = '2.5.1',
-    this.UIDnum = '005EF97E',
-    this.resolution = '160×160(垂直走査)',
-    this.colorsaport = 'ブラックホワイトレッド',
-    this.maker = 'その他(F0)',
-    this.colorparm = '黒(0)白(2)赤(1)',
-  });
-}
+import 'package:iphone_bt_epaper/devices_data.dart';
+import 'photo-select_page.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'e-paper_info.dart';
 
 class ImportPage extends StatefulWidget {
+  final String trustName;
+  final String trustIpAddress;
+
+  ImportPage({
+    required this.trustName,
+    required this.trustIpAddress,
+  });
+
   @override
   State<ImportPage> createState() => _ImportPageState();
 }
 
 class _ImportPageState extends State<ImportPage> {
-  DeviceInfo deviceInfo;
-
-  _ImportPageState() : deviceInfo = DeviceInfo();
   var _selectedIndex = 1;
+  var processRate = 0.5;
+  E_paperInfo e_paperInfo;
 
-  void updateDeviceInfo(String newVersion, String newUID, String newResolution,
-      String newColorsaport, String newMaker, String newColorparm) {
-    setState(() {
-      deviceInfo.vernum = newVersion;
-      deviceInfo.UIDnum = newUID;
-      deviceInfo.resolution = newResolution;
-      deviceInfo.colorsaport = newColorsaport;
-      deviceInfo.maker = newMaker;
-      deviceInfo.colorparm = newColorparm;
-    });
-  }
+  _ImportPageState(): e_paperInfo = E_paperInfo();
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: Text('E ink 電子ペーパー'),
+        centerTitle: true,
+        title: Text(
+          'E ink 電子ペーパー',
+          style: GoogleFonts.sawarabiGothic(),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -62,9 +51,10 @@ class _ImportPageState extends State<ImportPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
-                '描画位置を選択',
-              ),
+              Text('描画位置を選択',
+                  style: TextStyle(
+                    fontSize: 20,
+                  )),
               SizedBox(height: 10),
               Container(
                 // color:Colors.white,
@@ -95,7 +85,12 @@ class _ImportPageState extends State<ImportPage> {
                       }),
                 ]),
               ),
-              Text('デバイス内の写真を選んでE-paperにインポート'),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child:Text('デバイス内の写真を選んでE-paperにインポート',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ))),
               Container(
                 // color:Colors.white,
                 width: double.infinity,
@@ -111,6 +106,7 @@ class _ImportPageState extends State<ImportPage> {
                     Padding(
                   padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
                   child: ElevatedButton(
+
                     child: Container(
                       width: double.infinity,
                       child:
@@ -119,25 +115,58 @@ class _ImportPageState extends State<ImportPage> {
                               child: Text('写真を選択',
                                   style: TextStyle(
                                     color: Colors.white,
+                                    fontSize: 16,
                                   ))),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => imageSelect_Album()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       // backgroundColor: isScanning ? Colors.blue : Colors.grey,
                       backgroundColor: Colors.blue,
                       elevation: 10,
                       side: BorderSide(
-                        color: Colors.black,
-                        width: 2,
+                        color: Colors.transparent,
+                        width: 1,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                     ),
                   ),
                 ),
               ),
-              Text('デバイス内の文書を選んでE-paperにインポート'),
+              SizedBox(height: 5),
+              Row(children: [
+                SizedBox(width: 10),
+                // Padding(
+                // padding:EdgeInsets.all(5),
+                // child:// LinearProgressIndicator(value: processRate),
+                Expanded(
+                  child: LinearProgressIndicator(
+                    value: processRate,
+                    color: Colors.greenAccent,
+                    minHeight: 20,
+                  ),
+                ),
+                // ),
+                SizedBox(width: 10),
+// Text('${(processRate * 100).toStringAsFixed(1)}%'),
+                Text('${(processRate * 100).toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      fontSize: 20,
+                    )),
+              ]),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child:Text('デバイス内の文書を選んでE-paperにインポート',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ))),
               Container(
                 // color:Colors.white,
                 width: double.infinity,
@@ -161,6 +190,7 @@ class _ImportPageState extends State<ImportPage> {
                               child: Text('文書を選択',
                                   style: TextStyle(
                                     color: Colors.white,
+                                    fontSize: 16,
                                   ))),
                     ),
                     onPressed: () {},
@@ -169,34 +199,22 @@ class _ImportPageState extends State<ImportPage> {
                       backgroundColor: Colors.blue,
                       elevation: 10,
                       side: BorderSide(
-                        color: Colors.black,
-                        width: 2,
+                        color: Colors.transparent,
+                        width: 1,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                     ),
                   ),
                 ),
               ),
-              Text('設備情報'),
-              Container(
-                // color:Colors.white,
-
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.black12,
-                      width: 2,
-                    )),
-                child: Column(children: [
-                  Text('設備名称',style: TextStyle(fontSize:20,)),
-                  Text('IMEI',style: TextStyle(fontSize:20,)),
-                  Text('MACアドレス',style: TextStyle(fontSize:20,)),
-                ]),
-              ),
-              Text('装置企画情報',style: TextStyle(fontSize:20,)),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child:Text('設備情報',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ))),
               Container(
                 // color:Colors.white,
 
@@ -209,9 +227,104 @@ class _ImportPageState extends State<ImportPage> {
                     )),
                 child: Column(
                     children: [
-                  Text('画面サイズ',style: TextStyle(fontSize:20,)),
-                  Text('解像度',style: TextStyle(fontSize:20,)),
-                  Text('色',style: TextStyle(fontSize:20,)),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('設備名称',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                        Text(widget.trustName,
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                      ]),
+                  SizedBox(height:5),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('IMEI',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                        Text('46008000C003070',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                      ]),
+                      SizedBox(height:5),
+
+                      Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('MACアドレス',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                        Text(widget.trustIpAddress,
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                      ]),
+                ]),
+              ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+              child:Text('装置企画情報',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ))),
+              Container(
+                // color:Colors.white,
+
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: Colors.black12,
+                      width: 2,
+                    )),
+                child: Column(children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('画面サイズ',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                        Text(e_paperInfo.screenSize,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ))
+                      ]),
+                  SizedBox(height:5),
+
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('解像度',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                        Text(e_paperInfo.resolutions,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ))
+                      ]),
+                  SizedBox(height:5),
+
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('色',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )),
+                        Text(e_paperInfo.colors,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ))
+                      ]),
                 ]),
               ),
             ],
