@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'devices_data.dart';
+import 'import_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ConnectBTPage extends StatefulWidget {
   @override
@@ -6,21 +9,29 @@ class ConnectBTPage extends StatefulWidget {
 }
 
 class _ConnectBTPageState extends State<ConnectBTPage> {
-  List<String> trustDevices = [];
+  // List<String> trustDevices = [];
+  List<TrustDevice> trustDevices = [];
 
-  List<String> detectDevices = [
-    'リンゴ',
-    'みかん',
-    'なし',
-    '柿',
-    'ブドウ',
-    'イチゴ',
-    'apple',
-    'orange',
-    'パイナップル',
-    'ブルーベリー'
-  ];
+  // 仮データ
+  // List<String> detectDevices = [
+  //   'リンゴ',
+  //   'みかん',
+  //   'なし',
+  //   '柿',
+  //   'ブドウ',
+  //   'イチゴ',
+  //   'apple',
+  //   'orange',
+  //   'パイナップル',
+  //   'ブルーベリー'
+  // ];
   var isScanning = false;
+//  データを作成
+//   TrustDevice trustDevice;
+//   _ConnectBTPageState() : trustDevice = TrustDevice();
+
+  // DetectDevice detectDevice;
+  // _ConnectBTPageState() : detectDevice = DetectDevice();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         centerTitle: true,
-        title: Text('電子ペーパー'),
+        title: Text('E ink 電子ペーパー',
+          style: GoogleFonts.sawarabiGothic(),
+        ),
       ),
       body: Container(
         // color:Colors.greenAccent,
@@ -63,7 +76,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                     width: 2,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onPressed: () {
@@ -73,14 +86,28 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 },
               ),
             ),
-            Text('登録済みデバイス',style: TextStyle(fontSize:20,)),
+            // Text('登録済みデバイス',style: TextStyle(fontSize:20,),textAlign: TextAlign.left),
+            // Text('登録済みデバイス',style:GoogleFonts.bungeeSpice( textStyle: TextStyle(fontSize:20,))),
+            // Text('登録済みデバイス',style:GoogleFonts.mPlusRounded1c( textStyle: TextStyle(fontSize:20,))),
+            Text('登録済みデバイス',style:GoogleFonts.sawarabiGothic( textStyle: TextStyle(fontSize:20,))),
+
             Container(
               height: 250,
-              child: ListView.builder(
+
+              child:ListView.builder(
                 scrollDirection: Axis.vertical,
                 itemCount: trustDevices.length,
                 itemBuilder: (context, index) {
-                  return Container(
+                  return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>
+                          // ImportPage(TrustDevice(trustName:devices[index].detectName,trustIpAddress: devices[index].detectIpAddress))),
+                      ImportPage(trustName: trustDevices[index].trustName, trustIpAddress: trustDevices[index].trustIpAddress)),
+                    );
+                  },
+                    child:Container(
                     // width: 100,
                     height: 50,
                     margin: EdgeInsets.all(1),
@@ -89,11 +116,28 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                         color: Colors.white,
+                        shape:BoxShape.rectangle,
                         border: Border.all(
                           color: Colors.black12,
                           width: 2,
-                        )),
-                    child: Text(trustDevices[index]),
+                        ),
+                    borderRadius:BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0, 5),
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+
+                    // child: Text(trustDevices[index]),
+                    child:Column(
+                      children:[
+                      Text(trustDevices[index].trustName,style:TextStyle(fontWeight:FontWeight.bold),),
+                        Text(trustDevices[index].trustIpAddress,style:TextStyle(fontWeight:FontWeight.bold,color:Colors.grey),),
+                    ]
+                    ),
+                    ),
                   );
                 },
               ),
@@ -102,21 +146,46 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
             Text('未登録デバイス',style: TextStyle(fontSize:20,)), // Swap the order of sections
             Expanded(
               child: ListView.builder(
-                itemCount: detectDevices.length,
+                // itemCount: detectDevices.length,
+                itemCount: devices.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        trustDevices.add(detectDevices[index]);
-                        detectDevices.removeAt(index);
+                        // trustDevices.add(detectDevices[index]);
+                        // detectDevices.removeAt(index);
+                        trustDevices.add(TrustDevice(trustName:devices[index].detectName,trustIpAddress: devices[index].detectIpAddress));
+                        devices.removeAt(index);
+
                       });
                     },
                     child: Container(
                       height: 50,
-                      color: Colors.blue,
+                      // color: Colors.blue,
                       margin: EdgeInsets.all(1),
                       alignment: Alignment.center,
-                      child: Text(detectDevices[index]),
+                        decoration: BoxDecoration(
+                            color: Colors.greenAccent,
+                            shape:BoxShape.rectangle,
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 2,
+                            ),
+                          borderRadius:BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              offset: Offset(0, 5),
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      // child: Text(detectDevices[index]),
+                      child:Column(
+                        children:[
+                          Text(devices[index].detectName,style:TextStyle(fontWeight:FontWeight.bold),),
+                          Text(devices[index].detectIpAddress,style:TextStyle(fontWeight:FontWeight.bold,color:Colors.grey),),
+                        ]
+                      )
                     ),
                   );
                 },
