@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:iphone_bt_epaper/devices_data.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'appserver.dart';
+import 'e-paper-send-picture_page.dart';
 import 'photo-select_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'e-paper_info.dart';
+import 'select-photo-check_page.dart';
 
 class ImportPage extends StatefulWidget {
   final String trustName;
@@ -24,7 +28,7 @@ class _ImportPageState extends State<ImportPage> {
 
   _ImportPageState(): e_paperInfo = E_paperInfo();
 
-
+  AppServer? selectedPhoto;
 
 
   @override
@@ -122,8 +126,74 @@ class _ImportPageState extends State<ImportPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => imageSelect_Album()),
-                      );
+                            builder: (context) =>SendPictureSelect()),
+                      ).then((value){
+                        if(value != null){
+return showDialog(
+  barrierDismissible:false,//dialog以外の部分をタップしても消えないようにする。
+context:context,
+  builder: (context)=>
+    //   Container(
+    // width:double.infinity,
+    // height: 200,
+    // child:
+  Center( child:
+        Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+          children:[
+      AlertDialog(
+        title:Text('選択画像を転送しますか？',style:TextStyle(fontSize:20,)),
+        content: SingleChildScrollView(
+          child:ListBody(
+            children:<Widget>[
+              Container(
+                width:200,
+                height: 200,
+                // color:Colors.white70,
+                decoration: BoxDecoration(
+                    border:Border.all(color:Colors.black12,
+                        width:2
+                    )),
+                child:
+          // Column(
+          //   mainAxisSize:  MainAxisSize.max,
+          //   children:<Widget>[
+                FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: value.detectIpAddress.toString(),
+          ),
+        ),
+        //   ]),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          // ボタン領域
+          TextButton(
+            child: Text("Cancel"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text("OK"),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+
+],),
+  // ),
+  ),
+);
+                        }
+                      });
+    // if (selectedPhoto != null && context.mounted) {
+    //   ScaffoldMessenger.of(context)
+    //     ..removeCurrentSnackBar()
+    //     ..showSnackBar(SnackBar(content: FadeInImage.memoryNetwork(
+    //       placeholder: kTransparentImage,
+    //       image: selectedPhoto!.detectIpAddress.toString(),
+    //     ),));
+    // }
                     },
                     style: ElevatedButton.styleFrom(
                       // backgroundColor: isScanning ? Colors.blue : Colors.grey,
@@ -333,4 +403,26 @@ class _ImportPageState extends State<ImportPage> {
       ),
     );
   }
+
+
+  // Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+  //   // Navigator.push returns a Future that completes after calling
+  //   // Navigator.pop on the Selection Screen.
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => SendPictureSelect()),
+  //   );
+  //
+  //   // When a BuildContext is used from a StatefulWidget, the mounted property
+  //   // must be checked after an asynchronous gap.
+  //   if (!context.mounted) return;
+  //
+  //   // After the Selection Screen returns a result, hide any previous snackbars
+  //   // and show the new result.
+  //   ScaffoldMessenger.of(context)
+  //     ..removeCurrentSnackBar()
+  //     ..showSnackBar(SnackBar(content: Text('$result')));
+  // }
+
 }
+
