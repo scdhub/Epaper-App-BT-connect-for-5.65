@@ -20,9 +20,32 @@ class _DrawingPageState extends State<DrawingPage> {
       ColorPath.paths.clear();
     });
   }
-
+  // int selectedRadio = 0;
+  // double penThickness = 5;
+  // double _circleWidth = 45;
+  // void _updateSelectedRadio(int newSelectedRadio){
+  //   setState((){
+  //     selectedRadio = newSelectedRadio;
+  //     ColorPallete.of(context).setSelectedColor(newSelectedRadio);
+  //   });
+  // }
+  // void _updateThickness(double newThickness){
+  //   setState((){
+  //     penThickness = newThickness;
+  //   });
+  // }
+  // List<Color> colors = [ // 追加：色のリスト
+  //   Colors.black,
+  //   Color(0XFF00FF00),
+  //   Color(0xFFFFFFFF),
+  //   Color(0XFF0000FF),
+  //   Color(0XFFFF0000),
+  //   Color(0XFFFFFF00),
+  //   Color(0XFFFF8000),
+  // ];
   @override
   Widget build(BuildContext context) {
+    final colorPallete = ColorPallete.of(context);
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
@@ -59,23 +82,82 @@ class _DrawingPageState extends State<DrawingPage> {
               backgroundColor: Color(0xFF0080FF),
             ),
             body: Container(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.fromLTRB(20,20,20,80),
                 color: Colors.green,
-                child:ClipRect(
+                child:
+
+                ClipRect(
                 child:RepaintBoundary(
                 key: canvasKey,
                 child: Container(
                   // color: Colors.greenAccent,
-
-                    child: ColorPallete(
+                  //   margin: EdgeInsets.fromLTRB(20,20,20,80),
+child: Stack(
+    alignment: Alignment.bottomCenter,
+                    // child:
+    children: [
+      Container(color: Colors.red,height: 20,),
+    ColorPallete(
                         notifier: ColorPalleteNotifier(),
                         child: RepaintBoundary(
                           child:SizedBox(
                             width:MediaQuery.of(context).size.width, // 画面の幅に合わせる
                             height:MediaQuery.of(context).size.height, // 画面の高さに合わせる
-                            child: DrawingSpace(),
+                            // height:(MediaQuery.of(context).size.height/2) , // 画面の高さに合わせる
+                            child:
+                            DrawingSpace(),
+                        //       Container(
+                        //         // key: canvasKey,
+                        //         // padding: EdgeInsets.all(8),
+                        //         color: Colors.grey,
+                        //         // margin: EdgeInsets.all(20),
+                        //         child: Stack(
+                        //           alignment: Alignment.bottomCenter,
+                        //           children: [
+                        //             canvasArea(selectedRadio:selectedRadio,changeThickness:penThickness),
+                        //             Padding(
+                        //               padding: EdgeInsets.all(8),
+                        //               child: Align(
+                        //                 alignment: Alignment.bottomRight,
+                        //                 child:
+                        //                 Row(
+                        //                     mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //                     children: [
+                        //                       for (var i = 0; i < colorPallete.colors.length; i++)
+                        //                         GestureDetector(
+                        //                           // onTap: selected ? null : () => colorPallete.select(i),
+                        //                           onTap: () => colorPallete.setSelectedColor(i),
+                        //                           child:
+                        //
+                        //                           Container(
+                        //                             width: _circleWidth,
+                        //                             height: _circleWidth,
+                        //                             transformAlignment: Alignment.center,
+                        //                             // transform: selected ? _transform : null,
+                        //                             decoration: BoxDecoration(
+                        //                               shape: BoxShape.circle,
+                        //                               // color: ColorHelper.hueToColor(index),
+                        //                               color: colorPallete.colors[i],
+                        //                               border: Border.all(
+                        //                                 color:  Colors.black54,
+                        //                                 width: 6,
+                        //                               ),
+                        //                             ),
+                        //                           ),
+                        //                           //   },
+                        //                           // ),
+                        //                         ),
+                        //                     ]),
+                        //               ),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       )
                           ),
-                        ))))))));
+                        )),
+
+    ]),
+                ))))));
   }
   // 描画画面を画像としてキャプチャする
   Future<Uint8List> _capturePng() async {
