@@ -45,6 +45,8 @@ dependencies:
   collection: ^1.18.0
   photo_manager_image_provider: ^2.1.1
   path_provider: ^2.1.3
+  http: ^1.2.1 #S3にリクエスト通信のため必要
+  crop: ^0.5.5 #画像切り取り
 
 dev_dependencies:
   flutter_test:
