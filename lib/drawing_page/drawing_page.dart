@@ -4,8 +4,8 @@ import 'dart:ui'as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '../select-photo-check_page.dart';
-import 'drawing_color-pallete.dart';
+import '../server_upload/select-photo-check_page.dart';
+import 'drawing_color-palette.dart';
 import 'drawing_drawing-space.dart';
 
 class DrawingPage extends StatefulWidget {
@@ -16,6 +16,20 @@ class DrawingPage extends StatefulWidget {
 class _DrawingPageState extends State<DrawingPage> {
   final GlobalKey canvasKey = GlobalKey();//画像をキャプチャするため
 
+  int selectedRadio = 0;
+  double penThickness = 5;
+  // double _circleWidth = 45;
+  void _updateSelectedRadio(int newSelectedRadio){
+    setState((){
+      selectedRadio = newSelectedRadio;
+      ColorPalette.of(context).setSelectedColor(newSelectedRadio);
+    });
+  }
+  void _updateThickness(double newThickness){
+    setState((){
+      penThickness = newThickness;
+    });
+  }
   //前画面に戻る際に描画画面をクリアする
   void _resetDrawing() {
     setState(() {
@@ -24,10 +38,11 @@ class _DrawingPageState extends State<DrawingPage> {
   }
   @override
   Widget build(BuildContext context) {
-    // final colorPallete = ColorPallete.of(context);
+    // final colorPalette = ColorPalette.of(context);
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
+              centerTitle: true,
               leading: IconButton(
                   icon: Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
@@ -36,7 +51,8 @@ class _DrawingPageState extends State<DrawingPage> {
                   }),
               title: Text(
                 'ペイント',
-                style: TextStyle(fontSize: 20, color: Colors.black),
+
+                style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               actions: [
                 IconButton(
@@ -59,14 +75,18 @@ class _DrawingPageState extends State<DrawingPage> {
                 ),
               ],
               backgroundColor: Color(0xFF0080FF),
+              // backgroundColor: Color(0xFFd7e8ff),
             ),
             body: Container(
-                padding: EdgeInsets.fromLTRB(20,20,20,80),
+                padding: EdgeInsets.fromLTRB(20,20,20,78),
                 color: Colors.green,
                 child:
 
                 ClipRect(
-                child:RepaintBoundary(
+                  child:Column(
+                // child:
+                    children:[
+                    RepaintBoundary(
                 key: canvasKey,
                 child: Container(
                   // color: Colors.greenAccent,
@@ -75,21 +95,37 @@ child: Stack(
     alignment: Alignment.bottomCenter,
                     // child:
     children: [
-      Container(color: Colors.red,height: 20,),
-    ColorPallete(
-                        notifier: ColorPalleteNotifier(),
+      // Container(color: Colors.red,height: 20,),
+    //   Expanded(
+    // child:
+    ColorPalette(
+                        notifier: ColorPaletteNotifier(),
                         child: RepaintBoundary(
                           child:SizedBox(
                             // width:MediaQuery.of(context).size.width, // 画面の幅に合わせる
                             // height:MediaQuery.of(context).size.height, // 画面の高さに合わせる
-                            // height:(MediaQuery.of(context).size.height/2) , // 画面の高さに合わせる
-                            child:DrawingSpace(),
+                            height:(MediaQuery.of(context).size.height/1.4) , // 画面の高さに合わせる
+                            child:DrawingSpace(selectedRadio:selectedRadio),
 
                           ),
                         )),
-
+      // ),
+      // ColorPaletteSelect(),
     ]),
-                ))))));
+                )),
+                      Container(
+                          color: Colors.greenAccent,
+                          width:MediaQuery.of(context).size.width,
+                          height:(MediaQuery.of(context).size.height/12),
+                        child: ColorPalette(
+                          notifier: ColorPaletteNotifier(),
+                          // child: RepaintBoundary(
+                          child:ColorPaletteSelect(selectedRadio:selectedRadio),
+                        ),
+                      ),
+                      // ),
+])
+                ))));
   }
   // 描画画面を画像としてキャプチャする
   Future<Uint8List> _capturePng() async {
@@ -104,7 +140,84 @@ child: Stack(
   }
 }
 
+class ColorPaletteSelect extends StatefulWidget {
+  final int selectedRadio;
+  ColorPaletteSelect({required this.selectedRadio});
+  @override
+  _ColorPaletteSelect createState() => _ColorPaletteSelect();
+// _ColorPaletteSelect createState() => _ColorPaletteSelect(selectedRadio);
+}
 
+class _ColorPaletteSelect extends State<ColorPaletteSelect> {
+  // int selectedRadio = 0;
+  // double penThickness = 5;
+  double _circleWidth = 45;
+  // int selectedRadio;
+  // _ColorPaletteSelect(this.selectedRadio);
+  //
+  // void _updateSelectedRadio(int newSelectedRadio){
+  //   setState((){
+  //     selectedRadio = newSelectedRadio;
+  //     ColorPalette.of(context).setSelectedColor(newSelectedRadio);
+  //   });
+  // }
+  // void _updateThickness(double newThickness){
+  //   setState((){
+  //     penThickness = newThickness;
+  //   });
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorPalette = ColorPalette.of(context);
+    // ColorPale colorPalette = ColorPalette.of(context);
+    return Container(
+      color: Colors.orange,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      height: 60,
+      child:
+      Padding(
+        padding: EdgeInsets.all(8),
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child:
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                for (var i = 0; i < colorPalette.colors.length; i++)
+                  GestureDetector(
+                    // onTap: selected ? null : () => colorPalette.select(i),
+                    // onTap: () => colorPalette.setSelectedColor(i),
+                    onTap: (){
+
+                      colorPalette.setSelectedColor(i);
+                      },
+
+                    child: Container(
+                      width: _circleWidth,
+                      height: _circleWidth,
+                      transformAlignment: Alignment.center,
+                      // transform: selected ? _transform : null,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        // color: ColorHelper.hueToColor(index),
+                        color: colorPalette.colors[i],
+                        border: Border.all(
+                          color: Colors.black54,
+                          width: 6,
+                        ),
+                      ),
+                    ),
+                  ),
+              ]),
+        ),
+      ),
+    );
+  }
+}
 
 
 
@@ -126,7 +239,7 @@ class ColorPath {
   }
 }
 
-class ColorPalleteNotifier extends ChangeNotifier {
+class ColorPaletteNotifier extends ChangeNotifier {
   List<Color> colors = [
     Colors.black,
     Color(0XFF00FF00),//green

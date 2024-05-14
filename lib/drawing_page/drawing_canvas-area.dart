@@ -2,14 +2,16 @@
 
 import 'package:flutter/material.dart';
 
-import 'drawing_color-pallete.dart';
+import 'drawing_color-palette.dart';
 import 'drawing_page.dart';
 import 'drawing_path-painter.dart';
 
 class CanvasArea extends StatefulWidget {
-  final int selectedRadio;//DrawingSpace空のデータ渡し
+  // final int selectedRadio;//DrawingSpace空のデータ渡し
   final double changeThickness;//DrawingSpace空のデータ渡し
-  CanvasArea({required this.selectedRadio,required this.changeThickness});
+  CanvasArea({
+    // required this.selectedRadio,
+    required this.changeThickness});
   @override
   _CanvasAreaState createState() => _CanvasAreaState();
 }
@@ -19,7 +21,7 @@ class _CanvasAreaState extends State<CanvasArea> {
 //ドラック開始の処理
   void _onPanStart(DragStartDetails details) {
     //色を変えた時更新
-    _colorPath = ColorPath(ColorPallete.of(context).selectedColor, widget.changeThickness);
+    _colorPath = ColorPath(ColorPalette.of(context).selectedColor, widget.changeThickness);
     _colorPath.setFirstPoint(details.localPosition);
   }
   //ドラック中の処理
@@ -37,7 +39,7 @@ class _CanvasAreaState extends State<CanvasArea> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // データが変更されたときにパスを更新
-    _colorPath = ColorPath(ColorPallete.of(context).selectedColor, widget.changeThickness);
+    _colorPath = ColorPath(ColorPalette.of(context).selectedColor, widget.changeThickness);
   }
 
   @override

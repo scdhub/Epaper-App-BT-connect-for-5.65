@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 
 import 'drawing_page.dart';
 
-class ColorPallete extends InheritedNotifier<ColorPalleteNotifier> {
-  const ColorPallete({
+class ColorPalette extends InheritedNotifier<ColorPaletteNotifier> {
+  const ColorPalette({
     Key? key,
-    required ColorPalleteNotifier notifier,
+    required ColorPaletteNotifier notifier,
     required Widget child,
   }) : super(key: key, notifier: notifier, child: child);
 
-  static ColorPalleteNotifier of(BuildContext context) {
+  static ColorPaletteNotifier of(BuildContext context) {
+    //追加
+    // final widget = context.dependOnInheritedWidgetOfExactType<ColorPalette>();
+    // assert(widget != null, 'No ColorPalette found in context');
+    // return widget!.notifier!;
+    //
     return context
-        .dependOnInheritedWidgetOfExactType<ColorPallete>()!
+        .dependOnInheritedWidgetOfExactType<ColorPalette>()!
         .notifier!;
   }
 }
