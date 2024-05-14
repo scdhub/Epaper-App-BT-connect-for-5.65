@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../text_input_page/text_input_page.dart';
+
 
 class TextToPage extends StatefulWidget {
 
@@ -21,12 +23,12 @@ class _TextToPageState extends State<TextToPage> {
                 borderRadius: BorderRadius.circular(10.0)),
           ),
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //       builder: (context) =>
-            //           ConnectBTPage()), //BT接続画面に遷移
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      TextInputPage()), //BT接続画面に遷移
+            );
           },
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
