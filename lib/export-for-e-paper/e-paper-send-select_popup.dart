@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'connect_bt_page.dart';
+import '../bt_connect_page/connect_bt_page.dart';
 
 class EpaperSendSelect extends StatefulWidget{
   @override

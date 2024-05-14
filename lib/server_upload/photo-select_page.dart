@@ -18,14 +18,14 @@ class Media {
   });
 }
 
-class imageSelect_Album extends StatefulWidget {
+class ImageSelect_Album extends StatefulWidget {
 
 
   @override
-  _imageSelectAlbumState createState() => _imageSelectAlbumState();
+  _ImageSelectAlbumState createState() => _ImageSelectAlbumState();
 }
 
-class _imageSelectAlbumState extends State<imageSelect_Album> {
+class _ImageSelectAlbumState extends State<ImageSelect_Album> {
 
   final ScrollController _scrollController = ScrollController();
   AssetPathEntity? _currentAlbum;
@@ -141,6 +141,7 @@ class _imageSelectAlbumState extends State<imageSelect_Album> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // toolbarTextStyle: TextStyle(color:Colors.white),
         title: DropdownButton<AssetPathEntity>(
           borderRadius: BorderRadius.circular(16.0),
           value: _currentAlbum,
@@ -171,6 +172,8 @@ class _imageSelectAlbumState extends State<imageSelect_Album> {
           },
         ),
 
+// backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFF87ff99),
       ),
       body: MediasGridView(
         // Pass the list of media items to the grid view
@@ -193,13 +196,37 @@ class _imageSelectAlbumState extends State<imageSelect_Album> {
         //     MaterialPageRoute(builder: (context) =>
         //         SelectCheck(imageData: _selectedMedias))),
         onPressed: () async{
+          Future<Map<String,dynamic>> getMetadata(AssetEntity asset) async{
+            // Map<String,dynamic> metadata = await asset.metadata;
+            Map<String,dynamic> metadata = {
+              'creationDate': asset.createDateTime,
+              'width': asset.width,
+              'height': asset.height,
+              'title': asset.title,
+            };
+            debugPrint('Metadata: $metadata');
+            return metadata;
+          }
+
+          // debugPrint('Metadata: $metadata');
+          // someFunction();
+          // debugPrint('$metadata');
           List<Uint8List?> imageDataList = [];
+          List<String?> imageMetaData = [];
           for (Media media in _selectedMedias){
+
+          //   var metadataT = await getMetadata(media.assetEntity);
+          //   debugPrint('Metadata: $metadataT');
+          // imageMetaData.add(metadataT);
+
             Uint8List? data = await getMediaData(media.assetEntity);
             if(data != null){
               imageDataList.add(data);
+
             }
           }
+          // debugPrint();
+
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -208,8 +235,9 @@ class _imageSelectAlbumState extends State<imageSelect_Album> {
           );
         },
 
+        backgroundColor: Colors.lightGreenAccent,
         // Display check icon
-        child: const Icon(Icons.check_rounded),
+        child: const Icon(Icons.add_task_outlined),
       ),
     );
   }

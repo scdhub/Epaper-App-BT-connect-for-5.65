@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../crop_page/crop_photo-select.dart';
 import 'import-type-select_radiobutton.dart';
-import 'photo-select_page.dart';
-import 'take-photo_page.dart';
-import 'select-photo-check_page.dart';
+import '../photo-select_page.dart';
+import '../take-photo_page.dart';
+import '../select-photo-check_page.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
@@ -51,9 +52,20 @@ Row(
           onPressed:(){
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => imageSelect_Album()),
+              MaterialPageRoute(builder: (context) => ImageSelect_Album()),
             );
           },),
+      IconButton(
+        icon:Icon(
+          Icons.cut_outlined,
+          size: 50.0,
+        ),
+        onPressed:(){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CropImageSelect_Album()),
+          );
+        },),
         ]),
         Divider(),
         Container(

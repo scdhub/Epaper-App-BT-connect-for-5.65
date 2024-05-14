@@ -18,11 +18,11 @@ class TrimmingPage extends StatefulWidget {
 }
 
 class _TrimmingPageState extends State<TrimmingPage> {
-  final controller = CropController(aspectRatio: 1.0);//切り取る画像の縦横比1:1に設定
+  final controller = CropController(aspectRatio: 600 / 448);//切り取る画像の縦横比1:1に設定
   bool isSquare = true;
   void _changeAspectRatio(bool isSquare) {
     setState(() {
-      controller.aspectRatio = isSquare ? 1.0 : 600 / 448; // 例として16:9を使用
+      controller.aspectRatio = isSquare ? 600 / 448 : 1.0; // 例として16:9を使用
     });
   }
 
@@ -77,6 +77,7 @@ class _TrimmingPageState extends State<TrimmingPage> {
           title: Text('トリミング画面', style: TextStyle(color: Colors.white)),
           actions: [
             Row(children: [
+
               Switch(
                   activeColor:Colors.red,
                 value: isSquare,
@@ -87,6 +88,7 @@ class _TrimmingPageState extends State<TrimmingPage> {
 
                 });
               },
+
               ),
             IconButton(
               icon: Icon(Icons.done, color: Colors.white),
@@ -128,8 +130,8 @@ Widget buildGridHelper(double aspectRatio) {
               top: gridHeight * i,
               child: Container(
                 width: constraints.maxWidth,
-                height: 1,
-                color: Colors.white,
+                height: 2,
+                color: Colors.black,
               ),
             ),
           // 縦線
@@ -138,9 +140,9 @@ Widget buildGridHelper(double aspectRatio) {
               left: gridWidth * i,
               top: 0,
               child: Container(
-                width: 1,
+                width: 2,
                 height: constraints.maxHeight,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
         ],
@@ -203,6 +205,7 @@ class CropSpace extends StatefulWidget {
 
 class _CropSpaceState extends State<CropSpace> {
   double _rotation = 0; // 画像の回転角度
+  Offset _offset = Offset.zero;
   BoxShape shape = BoxShape.rectangle;//切り取る形状、四角形
   // final double aspectRatio = getAspectRatio();
   double getAspectRatio() {
@@ -227,6 +230,7 @@ class _CropSpaceState extends State<CropSpace> {
                   if (_rotation != decomposition.rotation) {
                     setState(() {
                       _rotation = ((decomposition.rotation + 180) % 360) - 180;
+                      // _offset = decomposition.offset;
                     });
                   }
                 },
@@ -234,13 +238,19 @@ class _CropSpaceState extends State<CropSpace> {
                 shape: shape,
                 // helper: buildGridHelper(),//切り取り範囲を視覚的に示すための補助線,Grid(3×3)
                 helper: buildGridHelper(aspectRatio),
+                // child: Transform(
+                //   transform: Matrix4.identity()
+                //     ..translate(_offset.dx, _offset.dy) // 位置の変更
+                //     ..rotateZ(_rotation), // 角度の変更
                 child: Image.memory(
                   widget.imageData,
                   fit: BoxFit.cover,
+                  // fit: OverflowBox,
+                ),
                 ),
               ),
             ),
-          ),
+          // ),
           // ),
         ],
       ),
