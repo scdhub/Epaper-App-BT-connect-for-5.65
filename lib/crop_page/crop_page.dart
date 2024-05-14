@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:crop/crop.dart';
 import 'dart:ui' as ui;
 
-import 'select-photo-check_page.dart';
+import '../server_upload/select-photo-check_page.dart';
 
 // import 'importPreview_page.dart';
 // import 'trimming_cropSpace.dart';

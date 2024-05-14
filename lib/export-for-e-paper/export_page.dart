@@ -13,28 +13,28 @@ import '../server_upload/select-photo-check_page.dart';
 import 'package:http/http.dart' as http;
 
 
-class ImportPage extends StatefulWidget {
+class ExportPage extends StatefulWidget {
   final String trustName;
   final String trustIpAddress;
   final VoidCallback onDelete;
 
-  ImportPage({
+  ExportPage({
     required this.trustName,
     required this.trustIpAddress,
     required this.onDelete,
   });
 
   @override
-  State<ImportPage> createState() => _ImportPageState();
+  State<ExportPage> createState() => _ExportPageState();
 }
 
-class _ImportPageState extends State<ImportPage> {
+class _ExportPageState extends State<ExportPage> {
   var _selectedIndex = 1;
   var processRate = 0.5;
   E_paperInfo e_paperInfo;
   List<TrustDevice> trustDevices = [];//信頼済みデバイスデータ格納List
 
-  _ImportPageState(): e_paperInfo = E_paperInfo();
+  _ExportPageState(): e_paperInfo = E_paperInfo();
 
   AppServer? selectedPhoto;
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'connect_bt_page.dart';
-import 'import_page.dart';
-import 'photo-select_page.dart';
-import 'import-type-select_popup.dart';
+import 'package:iphone_bt_epaper/top_page/top_text-to-page.dart';
+import '../bt_connect_page/connect_bt_page.dart';
+import '../export-for-e-paper/export_page.dart';
+import '../server_upload/photo-select_page.dart';
+import '../import_type_select_page/import-type-select_popup.dart';
 import 'top_bt-connect-to-page.dart';
 import 'top_drawing-to-page.dart';
 import 'top_import-type-select-to-popup.dart';
-import 'top_text-to-page.dart';
+
 
 
 class TopPage extends StatefulWidget {

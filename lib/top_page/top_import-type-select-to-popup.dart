@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'import-type-select_popup.dart';
+import '../import_type_select_page/import-type-select_popup.dart';
 
 class ImportTypeSelectToPopup extends StatefulWidget {
 

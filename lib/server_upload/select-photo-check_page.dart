@@ -5,13 +5,13 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'e-paper-send-select_popup.dart';
-import 'bt_connect_page/connect_bt_page.dart';
-import 'import_page/import_page.dart';
+import '../export-for-e-paper/e-paper-send-select_popup.dart';
+import '../bt_connect_page/connect_bt_page.dart';
+import '../export-for-e-paper/export_page.dart';
 import 'photo-select_page.dart';
-import 'import_page/import-type-select_popup.dart';
+import '../import_type_select_page/import-type-select_popup.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'appserver.dart';
+import '../appserver.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'drawing_page/drawing_page.dart';
+import '../drawing_page/drawing_page.dart';
+
 
 
 class DrawingToPage extends StatefulWidget {

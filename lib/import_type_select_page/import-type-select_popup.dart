@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../crop_page/crop_photo-select.dart';
 import 'import-type-select_radiobutton.dart';
-import '../photo-select_page.dart';
+import '../server_upload/photo-select_page.dart';
 import '../take-photo_page.dart';
-import '../select-photo-check_page.dart';
+import '../server_upload/select-photo-check_page.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';

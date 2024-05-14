@@ -5,8 +5,8 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'photo-select_page.dart';
-import 'select-photo-check_page.dart';
+import 'server_upload/photo-select_page.dart';
+import 'server_upload/select-photo-check_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
