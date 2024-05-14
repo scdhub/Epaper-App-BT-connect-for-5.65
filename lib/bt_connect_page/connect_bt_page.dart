@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'devices_data.dart';
-import 'import_page.dart';
+import '../devices_data.dart';
+import '../export-for-e-paper/export_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ConnectBTPage extends StatefulWidget {
@@ -15,7 +15,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
 List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデータを格納
 
-  //信頼済みデバイス電源落としても記憶できるように追加
+  //信頼済みデバイスアプリ終了しても記憶できるように追加
   //データ書き込み
   _saveStringList(List<TrustDevice> value) async {
     var prefs = await SharedPreferences.getInstance();
@@ -210,10 +210,12 @@ SizedBox(width: 50,),
                               MaterialPageRoute(
                                   builder: (context) =>
                                   // ImportPage(TrustDevice(trustName:devices[index].detectName,trustIpAddress: devices[index].detectIpAddress))),
-                                  ImportPage(
+                                  ExportPage(
                                       trustName: trustDevices[index].trustName,
-                                      trustIpAddress:
-                                      trustDevices[index].trustIpAddress)),
+                                      trustIpAddress:trustDevices[index].trustIpAddress,
+                                    onDelete: () => _removeCounterValue(index),
+                                  ),
+                              ),
                             );
                           },
                           icon:Icon(Icons.info_outline_rounded),
@@ -233,7 +235,7 @@ SizedBox(width: 50,),
             // isScanning ?
             Expanded(
               child:
-              // devices.isNotEmpty ?
+              scanDevices.isNotEmpty ?
               ListView.builder(
                 // itemCount: detectDevices.length,
                 // itemCount: devices.length,
@@ -269,7 +271,6 @@ SizedBox(width: 50,),
                                     _saveStringList(trustDevices);
                                   });
                                 }
-
                               ),
                         );
                         // setState(() {
@@ -323,6 +324,8 @@ SizedBox(width: 50,),
                 },
               )
                     // : Text('デバイスを検出中...',style: TextStyle(color: Colors.blue),),
+                  : Text('スキャンを開始して、未登録デバイスを表示してください',style: TextStyle(color: Colors.redAccent),),
+
             )
             // : Text('スキャンを開始して、未登録デバイスを表示してください',style: TextStyle(color: Colors.redAccent),),
             // Expanded(

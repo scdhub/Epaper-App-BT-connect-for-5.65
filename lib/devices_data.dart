@@ -5,6 +5,13 @@ class TrustDevice {
   TrustDevice({required this.trustName, required this.trustIpAddress});
 }
 
+class ScanDevice{
+  final String scanName;
+  final String scanIpAddress;
+
+  ScanDevice({required this.scanName, required this.scanIpAddress});
+}
+
 class DetectDevice {
   final String detectName;
   final String detectIpAddress;
