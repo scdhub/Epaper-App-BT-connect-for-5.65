@@ -545,26 +545,26 @@ class _ExportPageState extends State<ExportPage> {
                 ),
               ),
               SizedBox(height: 5),
-              Row(children: [
-                SizedBox(width: 10),
-                // Padding(
-                // padding:EdgeInsets.all(5),
-                // child:// LinearProgressIndicator(value: processRate),
-                Expanded(
-                  child: LinearProgressIndicator(
-                    value: processRate,
-                    color: Colors.greenAccent,
-                    minHeight: 20,
-                  ),
-                ),
-                // ),
-                SizedBox(width: 10),
-// Text('${(processRate * 100).toStringAsFixed(1)}%'),
-                Text('${(processRate * 100).toStringAsFixed(1)}%',
-                    style: TextStyle(
-                      fontSize: 20,
-                    )),
-              ]),
+//               Row(children: [
+//                 SizedBox(width: 10),
+//                 // Padding(
+//                 // padding:EdgeInsets.all(5),
+//                 // child:// LinearProgressIndicator(value: processRate),
+//                 Expanded(
+//                   child: LinearProgressIndicator(
+//                     value: processRate,
+//                     color: Colors.greenAccent,
+//                     minHeight: 20,
+//                   ),
+//                 ),
+//                 // ),
+//                 SizedBox(width: 10),
+// // Text('${(processRate * 100).toStringAsFixed(1)}%'),
+//                 Text('${(processRate * 100).toStringAsFixed(1)}%',
+//                     style: TextStyle(
+//                       fontSize: 20,
+//                     )),
+//               ]),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                   child:Text('登録済みデバイスを削除する',
