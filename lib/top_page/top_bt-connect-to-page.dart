@@ -38,7 +38,7 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
                   size: 50.0,
                 ),
                 Text(
-                  'BlueTooth接続',
+                  'BT接続して\ne-paper配信',
                 ),
               ])),
     );
