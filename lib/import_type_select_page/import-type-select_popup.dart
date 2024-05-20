@@ -23,8 +23,11 @@ class _ImageTypeSelection_popupState extends State<ImageTypeSelection_popup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
-      backgroundColor:Colors.lightBlueAccent,
-      title: Text('画像インポート方法選択'),
+      backgroundColor:Colors.white,
+      title:
+      Text('スマホから画像を\nインポート方法選択',
+        textAlign: TextAlign.center,
+      ),
       // content: TypeSelectedRadio(
       //   // コールバック関数を渡す
       //   onSelected: (value) {
@@ -34,39 +37,148 @@ class _ImageTypeSelection_popupState extends State<ImageTypeSelection_popup> {
       //   },
       // ),
       actions: <Widget>[
+    //     content: Container(
+    //     width: MediaQuery.of(context).size.width, // 画面幅の90%に設定
+    // child: Column(
+    // children: [
+    //   Text('スマホから画像を\nインポート方法選択',
+    //     textAlign: TextAlign.center,
+    //   ),
+        Column(
+    children: [
 Row(
+
+    // mainAxisAlignment: MainAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     children:[
-        IconButton(
-          icon:Icon(
-            Icons.camera_alt_outlined,
-            size: 50.0,),
-          onPressed:(){
-            getImageFromCamera(context);
-        },),
-        IconButton(
-          icon:Icon(
-              Icons.photo_library_outlined,
-            size: 50.0,
+
+      Container(
+        // color: Colors.greenAccent,
+        width: 140,
+        height: 100,
+        // padding: ,
+        child:
+
+        ElevatedButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.greenAccent,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
           ),
-          onPressed:(){
+          onPressed: () {
+            getImageFromCamera(context);
+          },
+          child:
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        // IconButton(
+        //   icon:
+          Icon(
+            Icons.camera_alt_outlined,
+            size: 40.0,),
+        //   onPressed:(){
+        //     getImageFromCamera(context);
+        // },
+        // ),
+          Text(
+            '撮影して\nインポート',
+          ),
+    ]),
+      ),
+      ),
+
+      Container(
+        // color: Colors.cyan,
+        width: 140,
+        height: 100,
+        child:
+
+        ElevatedButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.cyan,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+          ),
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ImageSelect_Album()),
             );
-          },),
-      IconButton(
-        icon:Icon(
+          },
+          child:
+          Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+        // IconButton(
+        //   icon:
+        Icon(
+              Icons.photo_library_outlined,
+            size: 40.0,
+          ),
+          // onPressed:(){
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => ImageSelect_Album()),
+          //   );
+          // },),
+            Text(
+              'アルバムから\n複数画像選択',
+            ),
+          ]),
+      ),
+      ),
+      // VerticalDivider(/*区切り線の設定*/),
+    ]),
+      Container(
+        // color: Colors.pinkAccent,
+        width: 145,
+        height: 100,
+          child:
+          ElevatedButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.pinkAccent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+            ),
+            onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CropImageSelect_Album()),
+                    );
+            },
+            child:
+          Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+      // IconButton(
+      //   icon:
+      Icon(
           Icons.cut_outlined,
-          size: 50.0,
+          size: 40.0,
         ),
-        onPressed:(){
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CropImageSelect_Album()),
-          );
-        },),
+    //     onPressed:(){
+    //       Navigator.push(
+    //         context,
+    //         MaterialPageRoute(builder: (context) => CropImageSelect_Album()),
+    //       );
+    //     },
+    // ),
+      Text(
+        'アルバムから\n1枚トリミング',
+      ),
+    ]),
+      ),
+      ),
         ]),
+
+
         Divider(),
         Container(
           width: 300,
@@ -98,6 +210,8 @@ Row(
         //   child: const Text('OK'),
         // ),
       ],
+    // ),
+    // ),
     );
   }
 }
