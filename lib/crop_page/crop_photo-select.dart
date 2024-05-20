@@ -132,7 +132,9 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
         _selectedMedias.removeWhere(
                 (element) => element.assetEntity.id == media.assetEntity.id);
       } else {
-        // Select the media item if not already selected
+
+        _selectedMedias.clear();
+
         _selectedMedias.add(media);
       }
     });
