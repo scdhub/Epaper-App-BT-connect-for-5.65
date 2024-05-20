@@ -4,6 +4,9 @@ import '../devices_data.dart';
 import '../export-for-e-paper/export_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../main.dart';
+import '../top_page/top_page.dart';
+
 class ConnectBTPage extends StatefulWidget {
   @override
   State<ConnectBTPage> createState() => _ConnectBTPageState();
@@ -70,6 +73,16 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
         // backgroundColor: Colors.blue,
         backgroundColor: Color(0xFF87ff99),
         centerTitle: true,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => MyApp()),
+                    (Route<dynamic> route) => false,
+              );
+
+            }),
         title: Text(
           'E ink 電子ペーパー',
           style: GoogleFonts.sawarabiGothic(),
