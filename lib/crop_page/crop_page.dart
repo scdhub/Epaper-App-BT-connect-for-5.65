@@ -18,11 +18,13 @@ class TrimmingPage extends StatefulWidget {
 }
 
 class _TrimmingPageState extends State<TrimmingPage> {
-  final controller = CropController(aspectRatio: 600 / 448);//切り取る画像の縦横比1:1に設定
+  final controller =
+      CropController(aspectRatio: 600 / 448); //切り取る画像の初期縦横比600 / 448に設定
   bool isSquare = true;
+
   void _changeAspectRatio(bool isSquare) {
     setState(() {
-      controller.aspectRatio = isSquare ? 600 / 448 : 1.0; // 例として16:9を使用
+      controller.aspectRatio = isSquare ? 600 / 448 : 1.0;
     });
   }
 
@@ -34,7 +36,8 @@ class _TrimmingPageState extends State<TrimmingPage> {
     if (cropped == null) {
       return;
     }
-    if (!mounted) {//ウィジェットが画面から消えている状態で、Stateを更新しようとするエラーを防ぐ。
+    if (!mounted) {
+      //ウィジェットが画面から消えている状態で、Stateを更新しようとするエラーを防ぐ。
       return;
     }
     final byteData = await cropped.toByteData(format: ui.ImageByteFormat.png);
@@ -45,13 +48,8 @@ class _TrimmingPageState extends State<TrimmingPage> {
     }
     final Uint8List cropByte = byteData.buffer.asUint8List();
 
-    var cropBytes = [cropByte];
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (context) => importPreview_page(
-    //           imageBytes: cropBytes)),
-    // );
+    var cropBytes = [cropByte]; //List<Uint8List?>にするため
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -59,6 +57,7 @@ class _TrimmingPageState extends State<TrimmingPage> {
       ),
     );
   }
+
   // bool light = true;
 
   @override
@@ -77,42 +76,33 @@ class _TrimmingPageState extends State<TrimmingPage> {
           title: Text('トリミング画面', style: TextStyle(color: Colors.white)),
           actions: [
             Row(children: [
-
               Switch(
-                  activeColor:Colors.red,
+                activeColor: Colors.red,
                 value: isSquare,
-              onChanged: (bool value){
-                _changeAspectRatio(value);
-                setState(() {
-                  isSquare = value;
-
-                });
-              },
-
+                onChanged: (bool value) {
+                  _changeAspectRatio(value);
+                  setState(() {
+                    isSquare = value;
+                  });
+                },
               ),
-            IconButton(
-              icon: Icon(Icons.done, color: Colors.white),
-              onPressed: _cropImage,
-            ),
-      ]),
+              IconButton(
+                icon: Icon(Icons.crop_outlined, color: Colors.white),
+                onPressed: _cropImage,
+              ),
+            ]),
           ],
           backgroundColor: Colors.black45,
         ),
         backgroundColor: Colors.black45,
-        body:
-    // AspectRatio(
-    //       aspectRatio:600/448,
-    // child:
-    CropSpace(
+        body: CropSpace(
           imageData: widget.imageData!,
           controller: controller,
         ),
-      // ),
       ),
     );
   }
 }
-
 
 Widget buildGridHelper(double aspectRatio) {
   return LayoutBuilder(
@@ -187,12 +177,6 @@ Widget buildGridHelper(double aspectRatio) {
 //   );
 // }
 
-// import 'package:flutter/material.dart';
-// import 'package:crop/crop.dart';
-// import 'dart:typed_data';
-//
-// import 'trimming_cropSpace_GridHelper.dart';
-
 class CropSpace extends StatefulWidget {
   final Uint8List imageData;
   final CropController controller;
@@ -206,11 +190,12 @@ class CropSpace extends StatefulWidget {
 class _CropSpaceState extends State<CropSpace> {
   double _rotation = 0; // 画像の回転角度
   Offset _offset = Offset.zero;
-  BoxShape shape = BoxShape.rectangle;//切り取る形状、四角形
+  BoxShape shape = BoxShape.rectangle; //切り取る形状、四角形
   // final double aspectRatio = getAspectRatio();
   double getAspectRatio() {
     return widget.controller.aspectRatio;
   }
+
   @override
   Widget build(BuildContext context) {
     final double aspectRatio = getAspectRatio();
@@ -218,11 +203,7 @@ class _CropSpaceState extends State<CropSpace> {
       child: Column(
         children: <Widget>[
           Expanded(
-            child:
-            // AspectRatio(
-            //       aspectRatio:600/448,
-            // child:
-            Container(
+            child:Container(
               color: Colors.black,
               padding: const EdgeInsets.all(8),
               child: Crop(
@@ -230,26 +211,35 @@ class _CropSpaceState extends State<CropSpace> {
                   if (_rotation != decomposition.rotation) {
                     setState(() {
                       _rotation = ((decomposition.rotation + 180) % 360) - 180;
-                      // _offset = decomposition.offset;
                     });
                   }
+                  // print('初期:${_offset}');
+                  // print('移動:${decomposition.translation}');
+                  // if (_offset != decomposition.translation) {
+                  //   setState(() {
+                  //     _offset = decomposition.translation;
+                  //   });
+                  // }
                 },
+
+                interactive: true,
+
                 controller: widget.controller,
                 shape: shape,
-                // helper: buildGridHelper(),//切り取り範囲を視覚的に示すための補助線,Grid(3×3)
-                helper: buildGridHelper(aspectRatio),
+                 helper:buildGridHelper(aspectRatio),
                 // child: Transform(
                 //   transform: Matrix4.identity()
                 //     ..translate(_offset.dx, _offset.dy) // 位置の変更
                 //     ..rotateZ(_rotation), // 角度の変更
                 child: Image.memory(
                   widget.imageData,
-                  fit: BoxFit.cover,
+                  // fit: BoxFit.cover,
                   // fit: OverflowBox,
                 ),
                 ),
               ),
             ),
+          // ),
           // ),
           // ),
         ],
