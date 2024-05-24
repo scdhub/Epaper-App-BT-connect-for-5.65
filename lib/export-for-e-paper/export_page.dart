@@ -61,7 +61,7 @@ class _ExportPageState extends State<ExportPage> {
         backgroundColor: Color(0xFF87ff99),
         centerTitle: true,
         title: Text(
-          'E ink 電子ペーパー',
+          'E ink E-paper',
           style: GoogleFonts.sawarabiGothic(),
         ),
       ),
@@ -306,7 +306,7 @@ class _ExportPageState extends State<ExportPage> {
           //     ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child:Text('設備情報',
+              child:Text('接続 E-paper 情報',
                   style: TextStyle(
                     fontSize: 20,
                   ))),
@@ -325,7 +325,7 @@ class _ExportPageState extends State<ExportPage> {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('設備名称',
+                        Text('名称',
                             style: TextStyle(
                               fontSize: 20,
                             )),
@@ -365,7 +365,7 @@ class _ExportPageState extends State<ExportPage> {
               ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child:Text('装置企画情報',
+              child:Text('E-paper規格情報',
                   style: TextStyle(
                     fontSize: 20,
                   ))),
@@ -425,7 +425,7 @@ class _ExportPageState extends State<ExportPage> {
 
               Padding(
                   padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child:Text('デバイス内の写真を選んでE-paperにインポート',
+                  child:Text('登録画像を選んでE-paperに表示',
                       style: TextStyle(
                         fontSize: 16,
                       ))),
@@ -450,7 +450,7 @@ class _ExportPageState extends State<ExportPage> {
                       child:
                       // Row(children: [
                       Center(
-                          child: Text('写真を選択',
+                          child: Text('画像選択',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -461,65 +461,66 @@ class _ExportPageState extends State<ExportPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>SendPictureSelect()),
-                      ).then((value){
-                        if(value != null){
-                          return showDialog(
-                            barrierDismissible:false,//dialog以外の部分をタップしても消えないようにする。
-                            context:context,
-                            builder: (context)=>
-                            //   Container(
-                            // width:double.infinity,
-                            // height: 200,
-                            // child:
-                            Center( child:
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:[
-                                AlertDialog(
-                                  title:Text('選択画像を転送しますか？',style:TextStyle(fontSize:20,)),
-                                  content: SingleChildScrollView(
-                                    child:ListBody(
-                                      children:<Widget>[
-                                        Container(
-                                          width:200,
-                                          height: 200,
-                                          // color:Colors.white70,
-                                          decoration: BoxDecoration(
-                                              border:Border.all(color:Colors.black12,
-                                                  width:2
-                                              )),
-                                          child:
-                                          // Column(
-                                          //   mainAxisSize:  MainAxisSize.max,
-                                          //   children:<Widget>[
-                                          FadeInImage.memoryNetwork(
-                                            placeholder: kTransparentImage,
-                                            image: value.url,
-                                          ),
-                                        ),
-                                        //   ]),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    // ボタン領域
-                                    TextButton(
-                                      child: Text("Cancel"),
-                                      onPressed: () => Navigator.pop(context),
-                                    ),
-                                    TextButton(
-                                      child: Text("OK"),
-                                      onPressed: () => Navigator.pop(context),
-                                    ),
-                                  ],
-                                ),
-
-                              ],),
-                              // ),
-                            ),
-                          );
-                        }
-                      });
+                      // ).then((value){
+                      //   if(value != null){
+                      //     return showDialog(
+                      //       barrierDismissible:false,//dialog以外の部分をタップしても消えないようにする。
+                      //       context:context,
+                      //       builder: (context)=>
+                      //       //   Container(
+                      //       // width:double.infinity,
+                      //       // height: 200,
+                      //       // child:
+                      //       Center( child:
+                      //       Column(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children:[
+                      //           AlertDialog(
+                      //             title:Text('選択画像を転送しますか？',style:TextStyle(fontSize:20,)),
+                      //             content: SingleChildScrollView(
+                      //               child:ListBody(
+                      //                 children:<Widget>[
+                      //                   Container(
+                      //                     width:200,
+                      //                     height: 200,
+                      //                     // color:Colors.white70,
+                      //                     decoration: BoxDecoration(
+                      //                         border:Border.all(color:Colors.black12,
+                      //                             width:2
+                      //                         )),
+                      //                     child:
+                      //                     // Column(
+                      //                     //   mainAxisSize:  MainAxisSize.max,
+                      //                     //   children:<Widget>[
+                      //                     FadeInImage.memoryNetwork(
+                      //                       placeholder: kTransparentImage,
+                      //                       image: value.url,
+                      //                     ),
+                      //                   ),
+                      //                   //   ]),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //             actions: <Widget>[
+                      //               // ボタン領域
+                      //               TextButton(
+                      //                 child: Text("Cancel"),
+                      //                 onPressed: () => Navigator.pop(context),
+                      //               ),
+                      //               TextButton(
+                      //                 child: Text("OK"),
+                      //                 onPressed: () => Navigator.pop(context),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //
+                      //         ],),
+                      //         // ),
+                      //       ),
+                      //     );
+                      //   }
+                      // }
+                      );
                       // if (selectedPhoto != null && context.mounted) {
                       //   ScaffoldMessenger.of(context)
                       //     ..removeCurrentSnackBar()
@@ -591,7 +592,7 @@ class _ExportPageState extends State<ExportPage> {
                           child:
                               // Row(children: [
                               Center(
-                                  child: Text('登録デバイスを削除',
+                                  child: Text('削除',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
