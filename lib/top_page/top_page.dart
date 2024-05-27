@@ -11,6 +11,9 @@ import 'top_import-type-select-to-popup.dart';
 
 
 class TopPage extends StatefulWidget {
+final String title;
+TopPage({required this.title});
+
   @override
   State<TopPage> createState() => _TopPageState();
 }
@@ -22,10 +25,18 @@ class _TopPageState extends State<TopPage> {
         appBar: AppBar(
           backgroundColor: Color(0xFF87ff99),
           centerTitle: true,
-          title: Text('E Ink 電子ペーパー'),
+          title:
+          Text(
+            // 'E ink E-paper',
+            widget.title,
+              style: TextStyle(
+                // fontWeight: FontWeight.w900,//Black
+                fontSize: 25,
+                // fontWeight: FontWeight.w900,
+              ),
+          ),
         ),
         body: Container(
-            // color:Colors.greenAccent,
             width: double.infinity,
             height: double.infinity,
             decoration: BoxDecoration(
@@ -39,13 +50,17 @@ class _TopPageState extends State<TopPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 SizedBox(height: 100),
-                Text('E ink 電子ペーパー',
+                Text(widget.title,
                     style: TextStyle(
+                      // fontWeight: FontWeight.w800,//ExtraBold
+
                       fontSize: 40,
                     )),
                 SizedBox(height: 100),
+
                 Text('最新インストールツール',
                     style: TextStyle(
+                      // fontWeight: FontWeight.w400,//Light
                       fontSize: 20,
                     )),
                 Text('(Ver.20231201.001)',
@@ -70,7 +85,6 @@ class _TopPageState extends State<TopPage> {
                       TextToPage(),
 
                     ]),
-                // DrawingToPage(),
               ],
             )));
   }
