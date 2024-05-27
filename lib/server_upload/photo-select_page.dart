@@ -257,7 +257,7 @@ Future<List<Media>> fetchMedias({
   try {
     // Get a list of asset entities from the specified album and page
     final List<AssetEntity> entities =
-    await album.getAssetListPaged(page: 0, size: 30);
+    await album.getAssetListPaged(page: 0, size: 100000000);
 
     // Loop through each asset entity and create corresponding Media objects
     for (AssetEntity entity in entities) {

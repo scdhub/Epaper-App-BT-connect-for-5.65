@@ -1,24 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-// import 'dart:typed_data';
 import 'dart:io';
 
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:flutter/widgets.dart';
-import '../export-for-e-paper/e-paper-send-select_popup.dart';
 import '../bt_connect_page/connect_bt_page.dart';
-import '../export-for-e-paper/export_page.dart';
-import 'photo-select_page.dart';
-import '../import_type_select_page/import-type-select_popup.dart';
-import 'package:transparent_image/transparent_image.dart';
 import '../appserver.dart';
-
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class SelectCheck extends StatefulWidget {
@@ -215,9 +205,12 @@ saveImages();
   //ファイルアップロード
   Future<void> postData(List<String?> uploadImages) async {
     // Future<void> postData(List<Uint8List?> uploadImages) async {
-    Uri uri =  Uri.parse("https://m2g6hqov52dqjf3q5wfo67uf3y0vnmkf.lambda-url.ap-northeast-1.on.aws/signed_url");//awsS3
+    Uri uri =  Uri.parse(
+        // "https://m2g6hqov52dqjf3q5wfo67uf3y0vnmkf.lambda-url.ap-northeast-1.on.aws/signed_url"
+            "https://uvky3v6bmi.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url"
+    );//awsS3
     // Uri uri = Uri.parse("https://127.0.0.1:8080/signed_url");//ローカルサーバーアップロード
-    final headers =  {'Content-Type': 'application/json'};
+    final headers =  {'Content-Type': 'application/json','x-api-key':dotenv.get('API_KEY')};
     final body ={'images': uploadImages};
     // final body = {
     //   'images': uploadImages.map((image) {
