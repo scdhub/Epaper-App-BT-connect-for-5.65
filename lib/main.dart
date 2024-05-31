@@ -16,6 +16,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         fontFamily:'NotoSansJP',
+        appBarTheme: AppBarTheme(
+        color: Color(0xFF87ff99),
+          titleTextStyle: TextStyle(color: Colors.black,fontSize: 20,fontFamily:'NotoSansJP',)),
       ),
       home: TopPage(title: 'E ink E-paper'),
     );
