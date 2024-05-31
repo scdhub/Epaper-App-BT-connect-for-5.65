@@ -56,18 +56,20 @@ class _TrimmingPageState extends State<TrimmingPage> {
         builder: (context) => SelectCheck(imageData: cropBytes),
       ),
     );
+
+
   }
 
   // bool light = true;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
+    return
+      // MaterialApp(
+      //
+      // home:
+      //
+      Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -99,7 +101,7 @@ class _TrimmingPageState extends State<TrimmingPage> {
           imageData: widget.imageData!,
           controller: controller,
         ),
-      ),
+      // ),
     );
   }
 }

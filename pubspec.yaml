@@ -48,6 +48,7 @@ dependencies:
   http: ^1.2.1 #S3にリクエスト通信のため必要
   crop: ^0.5.5 #画像切り取り
   flutter_dotenv: ^5.1.0 #.envファイルで環境変数やAPIキーを管理する
+  image_cropper: any #crop画面で使用
 
 dev_dependencies:
   flutter_test:
