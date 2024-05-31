@@ -13,10 +13,11 @@ class ConnectBTPage extends StatefulWidget {
 }
 
 class _ConnectBTPageState extends State<ConnectBTPage> {
-  // List<String> trustDevices = [];
-  List<TrustDevice> trustDevices = [];//信頼済みデバイスデータ格納List
+  //信頼済みデバイスデータ格納List
+  List<TrustDevice> trustDevices = [];
 
-List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデータを格納
+//スキャンした時のデバイスデータを格納
+  List<ScanDevice> scanDevices = [];
 
   //信頼済みデバイスアプリ終了しても記憶できるように追加
   //データ書き込み
@@ -28,8 +29,8 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
           .map((device) => '${device.trustName}:${device.trustIpAddress}')
           .toList(),
     );
-
   }
+
 //データ読み込み
   _restoreValues() async {
     var prefs = await SharedPreferences.getInstance();
@@ -52,9 +53,11 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
       trustDevices.removeAt(index);
       _saveStringList(trustDevices);
       // SharedPreferencesから特定のデバイスを削除
-      prefs.setStringList('item', trustDevices
-          .map((device) => '${device.trustName}:${device.trustIpAddress}')
-          .toList());
+      prefs.setStringList(
+          'item',
+          trustDevices
+              .map((device) => '${device.trustName}:${device.trustIpAddress}')
+              .toList());
     });
   }
 
@@ -64,7 +67,7 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
     super.initState();
   }
 
-  bool isScanning = false;//スキャン開始、停止
+  bool isScanning = false; //スキャン開始、停止
 
   @override
   Widget build(BuildContext context) {
@@ -74,17 +77,16 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
         backgroundColor: Color(0xFF87ff99),
         centerTitle: true,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) => MyApp()),
-                    (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
               );
-
             }),
         title: Text(
-          'E ink 電子ペーパー',
+          'E ink E-paper',
           style: GoogleFonts.sawarabiGothic(),
         ),
       ),
@@ -106,8 +108,11 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
                   width: 170,
                   child: Row(children: [
                     isScanning
-                        // ? CircularProgressIndicator()
-                        ? Container(color: Colors.red,width: 5,height: 5,)
+                        ? Container(
+                            color: Colors.red,
+                            width: 5,
+                            height: 5,
+                          )
                         : Icon(Icons.restart_alt),
                     SizedBox(width: 10),
                     Text(isScanning ? 'スキャン停止' : 'スキャン開始',
@@ -131,23 +136,17 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
                 onPressed: () {
                   setState(() {
                     isScanning = !isScanning;
-                    if(isScanning == true){
-                      scanDevices = devices.map((device) =>
-                          ScanDevice(scanName: device.detectName, scanIpAddress: device.detectIpAddress)
-                      ).toList();
+                    if (isScanning == true) {
+                      scanDevices = devices
+                          .map((device) => ScanDevice(
+                              scanName: device.detectName,
+                              scanIpAddress: device.detectIpAddress))
+                          .toList();
                     }
                   });
-                  // if(isScanning == true){
-                  //   scanDevices = devices.map((device) =>
-                  //       ScanDevice(scanName: device.detectName, scanIpAddress: device.detectIpAddress)
-                  //   ).toList();
-                  // }
                 },
               ),
             ),
-            // Text('登録済みデバイス',style: TextStyle(fontSize:20,),textAlign: TextAlign.left),
-            // Text('登録済みデバイス',style:GoogleFonts.bungeeSpice( textStyle: TextStyle(fontSize:20,))),
-            // Text('登録済みデバイス',style:GoogleFonts.mPlusRounded1c( textStyle: TextStyle(fontSize:20,))),
             Text('登録済みデバイス',
                 style: GoogleFonts.sawarabiGothic(
                     textStyle: TextStyle(
@@ -160,81 +159,66 @@ List<ScanDevice> scanDevices = [];//スキャンした時のデバイスデー�
                 scrollDirection: Axis.vertical,
                 itemCount: trustDevices.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) =>
-                      //           // ImportPage(TrustDevice(trustName:devices[index].detectName,trustIpAddress: devices[index].detectIpAddress))),
-                      //           ImportPage(
-                      //               trustName: trustDevices[index].trustName,
-                      //               trustIpAddress:
-                      //                   trustDevices[index].trustIpAddress)),
-                      // );
-                    },
-                    child: Container(
-                      // width: 100,
-                      height: 50,
-                      margin: EdgeInsets.all(1),
-                      // color: Colors.white,
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.rectangle,
-                        border: Border.all(
-                          color: Colors.black12,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            offset: Offset(0, 5),
-                            color: Colors.grey,
-                          ),
-                        ],
+                  return Container(
+                    height: 50,
+                    margin: EdgeInsets.all(1),
+                    // color: Colors.white,
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                      border: Border.all(
+                        color: Colors.black12,
+                        width: 2,
                       ),
-
-                      // child: Text(trustDevices[index]),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-SizedBox(width: 50,),
-                      Column(
-                          children: [
-                        Text(
-                          trustDevices[index].trustName,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          offset: Offset(0, 5),
+                          color: Colors.grey,
                         ),
-                        Text(
-                          trustDevices[index].trustIpAddress,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.grey),
-                        ),
-                      ]),
-                        IconButton(
-                          onPressed: (){
-                            // _removeCounterValue(index);
-                            // _saveStringList(trustDevices);
+                      ],
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 50,
+                          ),
+                          Column(children: [
+                            Text(
+                              trustDevices[index].trustName,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              trustDevices[index].trustIpAddress,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                            ),
+                          ]),
+                          IconButton(
+                            onPressed: () {
+                              // _removeCounterValue(index);
+                              // _saveStringList(trustDevices);
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  // ImportPage(TrustDevice(trustName:devices[index].detectName,trustIpAddress: devices[index].detectIpAddress))),
-                                  ExportPage(
-                                      trustName: trustDevices[index].trustName,
-                                      trustIpAddress:trustDevices[index].trustIpAddress,
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ExportPage(
+                                    trustName: trustDevices[index].trustName,
+                                    trustIpAddress:
+                                        trustDevices[index].trustIpAddress,
                                     onDelete: () => _removeCounterValue(index),
                                   ),
-                              ),
-                            );
-                          },
-                          icon:Icon(Icons.info_outline_rounded),
-                        ),
-                    ]),
-                    ),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.info_outline_rounded),
+                          ),
+                        ]),
+                    // ),
                   );
                 },
               ),
@@ -247,107 +231,77 @@ SizedBox(width: 50,),
             // Swap the order of sections
             // isScanning ?
             Expanded(
-              child:
-              scanDevices.isNotEmpty ?
-              ListView.builder(
-                // itemCount: detectDevices.length,
-                // itemCount: devices.length,
-                // itemBuilder: (context, index) {
-                //   if (trustDevices.any((device) =>
-                //       device.trustName == devices[index].detectName &&
-                //       device.trustIpAddress ==
-                //           devices[index].detectIpAddress)) {
+              child: scanDevices.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: scanDevices.length,
+                      itemBuilder: (context, index) {
+                        if (trustDevices.any((device) =>
+                            device.trustName == scanDevices[index].scanName &&
+                            device.trustIpAddress ==
+                                scanDevices[index].scanIpAddress)) {
+                          return Container();
+                        } else {
+                          return GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) =>
+                                    TrustDevices_popup(
 
-    itemCount: scanDevices.length,
-    itemBuilder: (context, index) {
-    if (trustDevices.any((device) =>
-    device.trustName == scanDevices[index].scanName &&
-    device.trustIpAddress ==
-        scanDevices[index].scanIpAddress)) {
-                    return Container();
-                    // return Text('スキャンを開始して、未登録デバイスを表示してください',style: TextStyle(color: Colors.redAccent),);
-                  } else {
-                    return GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) =>
-                              TrustDevices_popup(
-                                onOk:(){
+                                        onOk: () {
                                   setState(() {
-                                    // trustDevices.add(detectDevices[index]);
-                                    // detectDevices.removeAt(index);
                                     trustDevices.add(TrustDevice(
                                         trustName: scanDevices[index].scanName,
-                                        trustIpAddress: scanDevices[index].scanIpAddress));
+                                        trustIpAddress:
+                                            scanDevices[index].scanIpAddress));
                                     scanDevices.removeAt(index);
                                     _saveStringList(trustDevices);
                                   });
-                                }
-                              ),
-                        );
-                        // setState(() {
-                        //   // trustDevices.add(detectDevices[index]);
-                        //   // detectDevices.removeAt(index);
-                        //   trustDevices.add(TrustDevice(
-                        //       trustName: devices[index].detectName,
-                        //       trustIpAddress: devices[index].detectIpAddress));
-                        //   devices.removeAt(index);
-                        //   _saveStringList('item', trustDevices);
-                        // });
+                                }),
+                              );
+                            },
+                            child: Container(
+                                height: 50,
+                                // color: Colors.blue,
+                                margin: EdgeInsets.all(1),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent,
+                                  shape: BoxShape.rectangle,
+                                  border: Border.all(
+                                    color: Colors.black12,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      offset: Offset(0, 5),
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                                child: Column(children: [
+                                  Text(
+                                    scanDevices[index].scanName,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    scanDevices[index].scanIpAddress,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey),
+                                  ),
+                                ])),
+                          );
+                        }
                       },
-                      child: Container(
-                          height: 50,
-                          // color: Colors.blue,
-                          margin: EdgeInsets.all(1),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.greenAccent,
-                            shape: BoxShape.rectangle,
-                            border: Border.all(
-                              color: Colors.black12,
-                              width: 2,
-                            ),
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 5),
-                                color: Colors.grey,
-                              ),
-                            ],
-                          ),
-                          // child: Text(detectDevices[index]),
-
-                          child: Column(children: [
-                            Text(
-                              // devices[index].detectName,
-                              scanDevices[index].scanName,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              // devices[index].detectIpAddress,
-                              scanDevices[index].scanIpAddress,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey),
-                            ),
-                          ])),
-                    );
-                  }
-                },
-              )
-                    // : Text('デバイスを検出中...',style: TextStyle(color: Colors.blue),),
-                  : Text('スキャンを開始して、未登録デバイスを表示してください',style: TextStyle(color: Colors.redAccent),),
-
+                    )
+                  : Text(
+                      'スキャンを開始して、未登録デバイスを表示してください',
+                      style: TextStyle(color: Colors.redAccent),
+                    ),
             )
-            // : Text('スキャンを開始して、未登録デバイスを表示してください',style: TextStyle(color: Colors.redAccent),),
-            // Expanded(
-            //   child: devices.isEmpty
-            //       ? Text('スキャンを開始して、未登録デバイスを表示してください',style: TextStyle(color: Colors.redAccent),)
-            //       : ListView.builder(
-            //     // 省略
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -355,59 +309,41 @@ SizedBox(width: 50,),
   }
 }
 
-
 class TrustDevices_popup extends StatefulWidget {
   final Function onOk;
+
   const TrustDevices_popup({required this.onOk});
 
   @override
-  _TrustDevices_popupState createState() =>
-      _TrustDevices_popupState();
+  _TrustDevices_popupState createState() => _TrustDevices_popupState();
 }
 
 class _TrustDevices_popupState extends State<TrustDevices_popup> {
-
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      // actionsAlignment: MainAxisAlignment.center,
-      // backgroundColor:Colors.lightBlueAccent,
-      // title: Text('書き込み完了'),
-      // content: Text('E-paperに配信しますか？'),
-      title: Text('デバイスを登録しますか'),
-      // content: TypeSelectedRadio(
-      //   // コールバック関数を渡す
-      //   onSelected: (value) {
-      //     setState(() {
-      //       _selectedIndex = value;
-      //     });
-      //   },
-      // ),
-      actions: <Widget>[
 
+      title: Text('デバイスを登録しますか'),
+      actions: <Widget>[
         Divider(),
         Container(
           width: 300,
-          alignment:Alignment.center,
-          child:Row(
-    children: [
-      TextButton(
-        onPressed: (){
-          widget.onOk();
-    Navigator.pop(context, 'OK');
-    } ,
-        child: const Text('はい'),
-      ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'Cancel'),
-            child: const Text('いいえ'),
-          ),
-    ]),
+          alignment: Alignment.center,
+          child: Row(children: [
+            TextButton(
+              onPressed: () {
+                widget.onOk();
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('キャンセル'),
+            ),
+          ]),
         ),
-
-         ],
+      ],
     );
   }
 }
-
