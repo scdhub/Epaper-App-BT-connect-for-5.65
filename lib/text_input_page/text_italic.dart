@@ -18,7 +18,7 @@ class _TextItalicState extends State<TextItalic> {
         width: 110,
         height: 40,
         child: Transform.scale(
-          scale: 0.8,
+          scale: 1.0,
           child:  Row(children: [
             Checkbox(
               value: _isChecked,

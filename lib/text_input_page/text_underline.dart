@@ -14,9 +14,9 @@ class _TextUnderLineState extends State<TextUnderLine> {
     return Container(
       // color:Colors.yellow,
       height: 40,
-      padding:EdgeInsets.fromLTRB(0, 0, 0, 0),
+      padding:EdgeInsets.fromLTRB(0, 0, 5, 0),
       child: Transform.scale(
-        scale: 0.8,
+        scale: 1.0,
         child:Row(children: [
           Checkbox(
             value: _isChecked,

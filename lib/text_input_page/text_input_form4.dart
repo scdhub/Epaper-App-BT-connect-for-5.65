@@ -20,7 +20,7 @@ class TextInputForm4 extends StatelessWidget{
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(bottom: 0),
                       hintText: "文字を入力4",
-                      isDense: true,
+                      // isDense: true,
                     ),
                     style: TextStyle(fontSize: 13, color: Colors.black),
                     onChanged: onTodoListChanged4,

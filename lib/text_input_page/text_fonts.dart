@@ -11,17 +11,25 @@ class _TextFontsState extends State<TextFonts> {
   @override
   Widget build(BuildContext context) {
     return
+    Container(
+        width: 80,
+        height: 80,
+
+        child:
       Transform.scale(
-          scale: 0.8,
+          // scale: 0.8,
+          scale: 1.0,
           child:Container(
 
-              padding:EdgeInsets.fromLTRB(0, 0, 0, 0),
+              padding:EdgeInsets.fromLTRB(10, 0, 0, 0),
               child:Container(
                 // color:Colors.grey,
 
-                  width: 80,
-                  height: 50,
-                  child: Column(children: [
+                  // width: 80,
+                  // height: 80,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                     DropdownButton(
 
                       items:  [
@@ -47,6 +55,6 @@ class _TextFontsState extends State<TextFonts> {
                       isExpanded: true,
                       style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
-                  ]))));
+                  ])))));
   }
 }

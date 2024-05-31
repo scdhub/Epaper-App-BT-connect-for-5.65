@@ -39,7 +39,13 @@ class _TextToPageState extends State<TextToPage> {
                   size: 50.0,
                 ),
                 Text(
-                  'Text入力',
+                  '文字を入力して\n画像として登録',
+                    style: TextStyle(
+                      fontFamily: 'NotoSansJP',
+                      // fontWeight: FontWeight.w400,//Regular
+                      fontWeight: FontWeight.w500,//Midum
+                      fontSize: 14,
+                    )
                 ),
               ])),
     );

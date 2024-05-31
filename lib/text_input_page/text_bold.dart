@@ -13,10 +13,12 @@ class _TextBoldState extends State<TextBold> {
   Widget build(BuildContext context) {
     return Container(
         width: 80,
-        height: 40,
+        height: 80,
+
         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: Transform.scale(
-          scale: 0.8,
+          // scale: 0.8,
+          scale: 1.0,
           child:
           Row(children: [
             Checkbox(
