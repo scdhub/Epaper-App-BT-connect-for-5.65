@@ -39,6 +39,12 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
                 ),
                 Text(
                   'BT接続して\ne-paper配信',
+
+                    style: TextStyle(
+                    fontFamily: 'NotoSansJP',
+                    fontWeight: FontWeight.w500,//Medium
+                    fontSize: 14,
+                )
                 ),
               ])),
     );

@@ -25,7 +25,8 @@ class _ImageTypeSelection_popupState extends State<ImageTypeSelection_popup> {
       actionsAlignment: MainAxisAlignment.center,
       backgroundColor:Colors.white,
       title:
-      Text('スマホから画像を\nインポート方法選択',
+      // Text('スマホから画像を\nインポート方法選択',
+      Text('方法選択',
         textAlign: TextAlign.center,
       ),
       // content: TypeSelectedRadio(
@@ -84,7 +85,7 @@ Row(
         // },
         // ),
           Text(
-            '撮影して\nインポート',
+            ' 撮影して\n写真を登録',
           ),
     ]),
       ),
@@ -127,7 +128,7 @@ Row(
           //   );
           // },),
             Text(
-              'アルバムから\n複数画像選択',
+              'アルバムから\n　画像選択',
             ),
           ]),
       ),

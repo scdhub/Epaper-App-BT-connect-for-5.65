@@ -40,7 +40,13 @@ class _DrawingToPageState extends State<DrawingToPage> {
                   size: 50.0,
                 ),
                 Text(
-                  '絵を描いてインポート',
+                  '　絵を描いて\n画像として登録',
+                    style: TextStyle(
+                      fontFamily: 'NotoSansJP',
+                      // fontWeight: FontWeight.w400,//Regular
+                      fontWeight: FontWeight.w500,//Midum
+                      fontSize: 14,
+                    )
                 ),
               ])),
     );

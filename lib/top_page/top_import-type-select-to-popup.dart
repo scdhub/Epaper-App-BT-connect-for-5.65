@@ -37,7 +37,13 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
                   size: 50.0,
                 ),
                 Text(
-                  'スマホから画像をインポート',
+                  'スマホから\n画像を登録',
+                    style: TextStyle(
+                      fontFamily: 'NotoSansJP',
+                      // fontWeight: FontWeight.w400,//Regular
+                      fontWeight: FontWeight.w500,//Midum
+                      fontSize: 14,
+                    )
                 ),
               ])),
     );

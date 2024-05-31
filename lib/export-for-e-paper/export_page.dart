@@ -568,7 +568,7 @@ class _ExportPageState extends State<ExportPage> {
 //               ]),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child:Text('登録済みデバイスを削除する',
+                  child:Text('このデバイスの登録を解除',
                       style: TextStyle(
                         fontSize: 16,
                       ))),
@@ -592,7 +592,7 @@ class _ExportPageState extends State<ExportPage> {
                           child:
                               // Row(children: [
                               Center(
-                                  child: Text('削除',
+                                  child: Text('解除',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
@@ -613,7 +613,7 @@ class _ExportPageState extends State<ExportPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children:[
                                 AlertDialog(
-                                  title:Text('登録済みデバイスを削除しますか？',style:TextStyle(fontSize:20,)),
+                                  title:Text('登録を解除しますか？',style:TextStyle(fontSize:20,)),
                                   // content: SingleChildScrollView(
                                   //   child:ListBody(
                                   //     children:<Widget>[
@@ -638,7 +638,7 @@ class _ExportPageState extends State<ExportPage> {
                                   actions: <Widget>[
                                     // ボタン領域
                                     TextButton(
-                                      child: Text("Cancel"),
+                                      child: Text("キャンセル"),
                                       onPressed: () => Navigator.pop(context),
                                     ),
                                     TextButton(

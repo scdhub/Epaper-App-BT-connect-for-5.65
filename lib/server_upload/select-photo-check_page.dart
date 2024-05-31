@@ -50,8 +50,8 @@ saveImages();
         builder: (BuildContext context)
     {
       return AlertDialog(
-        title: Text(_isWriting ? '書き込み中...' : '書き込み完了'),
-          content: Text(_isWriting ? '':'E-paper機能に移りますか？'),
+        title: Text(_isWriting ? '画像登録中...' : '登録完了'),
+          content: Text(_isWriting ? '':'E-paper配信手続きに移りますか？'),
         // content: Text('確認してください。'),
         actions: <Widget>[
           // TextButton(
@@ -67,46 +67,66 @@ saveImages();
           //  },
           :  Row(
                 children: [
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('キャンセル'),
+                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ConnectBTPage()));
                     },
-                    child: Text('はい'),
+                    child: Text('OK'),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // Close the dialog
-                    },
-                    child: Text('いいえ'),
-                  ),
-                  // Text('書き込み中'),
-                  // ),
                 ])
         ],
       );
-      // : AlertDialog(
-      //   title: Text('書き込み完了'),
-      //   content: Text('E-paperに配信しますか？'),
-      //   actions: <Widget>[
-      //     TextButton(
-      //       onPressed: () {
-      //         Navigator.of(context).push(MaterialPageRoute(builder: (context) => ConnectBTPage()));
-      //       },
-      //       child: Text('はい'),
-      //     ),
-      //     TextButton(
-      //       onPressed: () {
-      //         Navigator.of(context).pop(); // Close the dialog
-      //       },
-      //       child: Text('いいえ'),
-      //     ),
-      //   ],
-      // );
     });
 
   }
 
+  void missUploadMessage(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context)
+        {
+          return AlertDialog(
+            title: Text('登録エラー'),
+            content: Text('登録中に一時的な問題が発生しました。\nしばらくしてから再度お試しください。'),
+            actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('OK'),
+                    ),
+            ],
+          );
+        });
+  }
+  void missAppSeverMessage(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context)
+        {
+          return AlertDialog(
+            title: Text('登録エラー'),
+            content: Text('サービスが一時的に利用できません。\nしばらくしてから再度お試しください。'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        });
+  }
   Future<void> _writeDataToServer() async {
     await Future.delayed(Duration(seconds:2));
     CircularProgressIndicator();
@@ -209,7 +229,6 @@ saveImages();
         // "https://m2g6hqov52dqjf3q5wfo67uf3y0vnmkf.lambda-url.ap-northeast-1.on.aws/signed_url"
             "https://uvky3v6bmi.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url"
     );//awsS3
-    // Uri uri = Uri.parse("https://127.0.0.1:8080/signed_url");//ローカルサーバーアップロード
     final headers =  {'Content-Type': 'application/json','x-api-key':dotenv.get('API_KEY')};
     final body ={'images': uploadImages};
     // final body = {
@@ -266,6 +285,7 @@ saveImages();
                 .last;
             putImageImpl(image_path: image_path,
                 signed_url: signed_url,
+                // signed_url: filename,
                 filename: filename);
           }
 
@@ -274,6 +294,11 @@ saveImages();
       print('ファイルアップロード成功1！');
     } else {
       print('ファイルアップロード失敗2: ${response.statusCode}');
+      setState(() {
+        _isWriting = false;
+        Navigator.of(context).pop();
+        missAppSeverMessage();
+      });
     }
   }
 
@@ -311,6 +336,7 @@ saveImages();
 
         final response = await http.put(
           Uri.parse(signed_url),
+          // Uri.parse("https://m2g6hqov52dqjf3q5wfo67uf3y0vnmkf.lambda-url.ap-northeast-1.on.aws/signed_url"),
           headers: {
             'Content-Type': 'binary/octet-stream',
             // 'Content-Type': 'image/png', // MIMEタイプを 'image/png' に設定
@@ -352,6 +378,11 @@ saveImages();
           });
         } else {
           print('ファイルアップロード失敗3: ${response.statusCode}');
+          setState(() {
+            _isWriting = false;
+            Navigator.of(context).pop();
+            missUploadMessage();
+          });
         }
       // }
     }
@@ -548,9 +579,11 @@ saveImages();
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+
           centerTitle: true,
-          title: Text('E Ink 電子ペーパー'),
+          title: Text('画像登録確認',
+            style: TextStyle(fontSize: 20),
+          ),
         ),
         body: Container(
           height:double.infinity,
@@ -657,7 +690,8 @@ Row(children: [
             // color:Colors.greenAccent,
             // decoration: BoxDecoration(),
               decoration: BoxDecoration(
-                color: Colors.blue, // コンテナの色を設定
+                // color: Colors.blue, // コンテナの色を設定
+                color: Color(0xFF87ff99),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30.0),
                   topRight: Radius.circular(30.0),
@@ -670,7 +704,7 @@ Row(children: [
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                 children:[
-                  Text('アプリに保存する',style:TextStyle(
+                  Text('アプリに登録する',style:TextStyle(
                     fontSize:40,
                   )),
                 SizedBox(
