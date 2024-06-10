@@ -646,7 +646,14 @@ class _ExportPageState extends State<ExportPage> {
                                       onPressed: () {
                                         widget.onDelete();
                                         Navigator.pop(context);
-                                        Navigator.pop(context);
+                                        Future.delayed(Duration(milliseconds: 600),(){
+                                          if(mounted){
+                                            setState((){
+                                              Navigator.pop(context);
+                                            });
+                                          }
+                                        });
+                                        // Navigator.pop(context);
                                       }
                                     ),
                                   ],
