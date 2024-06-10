@@ -22,7 +22,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
   //信頼済みデバイスアプリ終了しても記憶できるように追加
   //データ書き込み
   _saveStringList(List<TrustDevice> value) async {
-    var prefs = await SharedPreferences.getInstance();
+    //アプリのストレージにアクセスするため。
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //setStringListでSharedPreferencesに文字列のリストを保存
     prefs.setStringList(
       'item',
       value
@@ -33,8 +35,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
 //データ読み込み
   _restoreValues() async {
-    var prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      //getStringListでSharedPreferencesに文字列のリストを取得
       trustDevices = (prefs.getStringList('item') ?? []).map((item) {
         final parts = item.split(':');
         return TrustDevice(
@@ -49,10 +52,10 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
   void _removeCounterValue(int index) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      var deviceToRemove = trustDevices[index];
-      trustDevices.removeAt(index);
-      _saveStringList(trustDevices);
-      // SharedPreferencesから特定のデバイスを削除
+      // var deviceToRemove = trustDevices[index];
+      trustDevices.removeAt(index);//登録済みデバイスリストから除外する。
+      _saveStringList(trustDevices);//現時点の登録済みデバイスリストを入れる
+      // SharedPreferencesに保存する。
       prefs.setStringList(
           'item',
           trustDevices
@@ -63,6 +66,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
   @override
   void initState() {
+    //画面描画時、登録済みデバイスを表示する為
     _restoreValues();
     super.initState();
   }
@@ -73,25 +77,23 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Colors.blue,
-        backgroundColor: Color(0xFF87ff99),
         centerTitle: true,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                 context,
+                //サーバーupload画面から遷移した時、upload画面に戻らずtop画面に遷移するようにする。
                 MaterialPageRoute(builder: (BuildContext context) => MyApp()),
+                //top画面に遷移した後、戻る←マークが出ないようにする。
                 (Route<dynamic> route) => false,
               );
             }),
         title: Text(
           'E ink E-paper',
-          style: GoogleFonts.sawarabiGothic(),
         ),
       ),
       body: Container(
-        // color:Colors.greenAccent,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFE1E9FF), Colors.white],
@@ -109,9 +111,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   child: Row(children: [
                     isScanning
                         ? Container(
-                            color: Colors.red,
-                            width: 5,
-                            height: 5,
+                            color: Colors.blueGrey,
+                            width: 10,
+                            height: 10,
                           )
                         : Icon(Icons.restart_alt),
                     SizedBox(width: 10),
@@ -123,12 +125,14 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   ]),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isScanning ? Colors.blue : Colors.grey,
+                  backgroundColor: isScanning ? Colors.redAccent : Colors.grey,
                   elevation: 10,
+                  //境界線の幅を設定。
                   side: BorderSide(
                     color: Colors.black,
                     width: 2,
                   ),
+                  //ボタンの形状設定。角を丸めた長方形。
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -136,7 +140,10 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 onPressed: () {
                   setState(() {
                     isScanning = !isScanning;
+                    //スキャン開始をしてデバイス情報をデータバインド
                     if (isScanning == true) {
+                      // DetectDeviceクラスに仮デバイス情報としてあるdevicesから
+                      //ScanDeviceクラスに情報を入れる動作。
                       scanDevices = devices
                           .map((device) => ScanDevice(
                               scanName: device.detectName,
@@ -148,26 +155,25 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
               ),
             ),
             Text('登録済みデバイス',
-                style: GoogleFonts.sawarabiGothic(
-                    textStyle: TextStyle(
+                    style: TextStyle(
                   fontSize: 20,
-                ))),
+                )),
 
             Container(
               height: 250,
               child: ListView.builder(
-                scrollDirection: Axis.vertical,
+                scrollDirection: Axis.vertical,// 縦方向のスクロール
                 itemCount: trustDevices.length,
                 itemBuilder: (context, index) {
                   return Container(
                     height: 50,
                     margin: EdgeInsets.all(1),
-                    // color: Colors.white,
                     alignment: Alignment.center,
-                    width: double.infinity,
+                    // width: double.infinity,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      shape: BoxShape.rectangle,
+                      shape: BoxShape.rectangle,//長方形
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
@@ -206,6 +212,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
+                                  // 選択したデバイス名の情報を配信確認画面に渡す。
                                   builder: (context) => ExportPage(
                                     trustName: trustDevices[index].trustName,
                                     trustIpAddress:
@@ -235,6 +242,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   ? ListView.builder(
                       itemCount: scanDevices.length,
                       itemBuilder: (context, index) {
+                        //登録済みデバイスとスキャンしたデバイスの名前とremoteIdが一致したら表示しない。
                         if (trustDevices.any((device) =>
                             device.trustName == scanDevices[index].scanName &&
                             device.trustIpAddress ==
@@ -247,9 +255,10 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                                 context: context,
                                 builder: (context) =>
                                     TrustDevices_popup(
-
+                                      scanName: scanDevices[index].scanName,
                                         onOk: () {
                                   setState(() {
+                                    //OKを押したら、scanデバイスのデータを登録する。
                                     trustDevices.add(TrustDevice(
                                         trustName: scanDevices[index].scanName,
                                         trustIpAddress:
@@ -311,8 +320,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
 class TrustDevices_popup extends StatefulWidget {
   final Function onOk;
+  final String scanName;
 
-  const TrustDevices_popup({required this.onOk});
+  const TrustDevices_popup({required this.onOk,required this.scanName});
 
   @override
   _TrustDevices_popupState createState() => _TrustDevices_popupState();
@@ -323,7 +333,7 @@ class _TrustDevices_popupState extends State<TrustDevices_popup> {
   Widget build(BuildContext context) {
     return AlertDialog(
 
-      title: Text('デバイスを登録しますか'),
+      title: Text('"${widget.scanName}"を登録しますか'),
       actions: <Widget>[
         Divider(),
         Container(
