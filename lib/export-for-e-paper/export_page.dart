@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:iphone_bt_epaper/devices_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -17,11 +18,13 @@ class ExportPage extends StatefulWidget {
   final String trustName;
   final String trustIpAddress;
   final VoidCallback onDelete;
+  final BluetoothDevice trustDevice;
 
   ExportPage({
     required this.trustName,
     required this.trustIpAddress,
     required this.onDelete,
+    required this.trustDevice,
   });
 
   @override
@@ -358,7 +361,7 @@ class _ExportPageState extends State<ExportPage> {
                             )),
                         Text(widget.trustIpAddress,
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 15,
                             )),
                       ]),
                 ]),
@@ -643,17 +646,21 @@ class _ExportPageState extends State<ExportPage> {
                                     ),
                                     TextButton(
                                       child: Text("OK"),
-                                      onPressed: () {
-                                        widget.onDelete();
+                                      onPressed: () async{
+
+
+                                      widget.onDelete();
                                         Navigator.pop(context);
-                                        Future.delayed(Duration(milliseconds: 600),(){
-                                          if(mounted){
-                                            setState((){
-                                              Navigator.pop(context);
-                                            });
-                                          }
-                                        });
+                                        // Future.delayed(Duration(milliseconds: 600),(){
+                                        Navigator.pop(context);
+                                        // Future.microtask(() {
+                                        //   if(mounted){
+                                        //     setState((){});
+                                        //     // Navigator.pop(context);
+                                        //   }
+                                        // });
                                         // Navigator.pop(context);
+
                                       }
                                     ),
                                   ],
