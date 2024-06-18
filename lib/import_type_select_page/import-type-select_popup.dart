@@ -13,7 +13,6 @@ class ImageTypeSelection_popup extends StatefulWidget {
 }
 
 class _ImageTypeSelection_popupState extends State<ImageTypeSelection_popup> {
-  // var _selectedIndex = 1; // ラジオボタンの選択値を親ウィジェットで管理する
 
   @override
   Widget build(BuildContext context) {

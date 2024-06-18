@@ -3,9 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:transparent_image/transparent_image.dart';
-import '../appserver.dart';
-import 'photo-select_name-select.dart';
-import 'photo-select_image-list.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import 'select-photo-check_page.dart';
 
@@ -19,8 +16,6 @@ class Media {
 }
 
 class ImageSelect_Album extends StatefulWidget {
-
-
   @override
   _ImageSelectAlbumState createState() => _ImageSelectAlbumState();
 }
@@ -28,15 +23,16 @@ class ImageSelect_Album extends StatefulWidget {
 class _ImageSelectAlbumState extends State<ImageSelect_Album> {
 
   final ScrollController _scrollController = ScrollController();
-  AssetPathEntity? _currentAlbum;
-  List<AssetPathEntity> _albums = [];
-  // List<AssetEntity> _albums = [];
-  final List<Media> _medias = [];
+  AssetPathEntity? _currentAlbum; //現在のアルバムを選択
+  List<AssetPathEntity> _albums = [];//アルバムを保存する
+  final List<Media> _medias = [];//　アルバムの画像を格納する
   int _lastPage = 0;
   int _currentPage = 0;
-  List<AssetPathEntity> albums = [];
-  final List<Media> _selectedMedias = [];
-  final List<Media> selectedMedias =[];
+  List<AssetPathEntity> albums = [];//アルバム保存　一時保存
+  final List<Media> _selectedMedias = [];//選択した画像
+  final List<Media> selectedMedias =[];//選択した画像　一時保存
+
+  //初期化
   @override
   void initState() {
     super.initState();
@@ -51,15 +47,13 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
     super.dispose();
   }
   void _loadAlbums() async {
+    //　アルバムへのアクセス許可を確認する
     final permitted = await PhotoManager.requestPermissionExtend();
     if (permitted.isAuth) {
-      // albums = await fetchAlbums();
       albums = await PhotoManager.getAssetPathList(
-        // onlyAll: false,
         type: RequestType.image,
-      );//アルバムリスト取得
-      // _fetchPhotos(albums.first);
-      // _currentAlbum(albums.first);
+      );
+      //アルバムリスト取得
       if(albums.isNotEmpty){
         _currentAlbum = albums.first;
         _albums = albums;
@@ -67,71 +61,46 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
       }
 
     } else {
-      PhotoManager.openSetting();//許可がない時設定を開く
+      //許可がない時設定を開く
+      PhotoManager.openSetting();
     }
   }
-  _fetchPhotos(AssetPathEntity album) async {
-    // final photoList = await album.getAssetListPaged(page: 0, size: 100);//今のところ100枚の画像を取得するようにしている。後ほどすべて抜き出せるように修正。
-    // setState(() {
-    //   _currentAlbum = album
-    // });
 
-    // setState(() {
-    //   _albums = photoList;
-    // });
-  }
-  //   if (albums.isNotEmpty) {
-  //     setState(() {
-  //       // Set the first album as the current album
-  //       _currentAlbum = albums.first;
-  //       // Update the list of albums
-  //       _albums = albums;
-  //     });
-  //     // Load media items for the current album
-  //     _loadMedias();
-  //   }
-  // }
-
-  // Method to load media items asynchronously
   void _loadMedias() async {
-    // Store the current page as the last page
+    // 最後に見たページを現在のぺージとする
     _lastPage = _currentPage;
     if (_currentAlbum != null) {
-      // Fetch media items for the current album
+      // 現在のアルバムから画像を読み取る
       List<Media> medias =
       await fetchMedias(album: _currentAlbum!, page: _currentPage);
       setState(() {
-        // Add fetched media items to the list
         _medias.addAll(medias);
       });
     }
   }
 
-  // Method to load more media items when scrolling
+  // スクロールした時、画像のデータを取得する
   void _loadMoreMedias() {
     if (_scrollController.position.pixels /
         _scrollController.position.maxScrollExtent >
         0.33) {
-      // Check if scrolled beyond 33% of the scroll extent
       if (_currentPage != _lastPage) {
-        // Load more media items
         _loadMedias();
       }
     }
   }
 
-  // Method to select or deselect a media item
+  // 画像の選択、解除する
   void _selectMedia(Media media) {
     bool isSelected = _selectedMedias.any((element) =>
-    element.assetEntity.id ==
-        media.assetEntity.id); // Check if the media item is already selected
+    element.assetEntity.id == media.assetEntity.id);
     setState(() {
       if (isSelected) {
-        // Deselect the media item if already selected
+        // 既に選択されていたら外す。
         _selectedMedias.removeWhere(
                 (element) => element.assetEntity.id == media.assetEntity.id);
       } else {
-        // Select the media item if not already selected
+        // 選択されていない場合、追加する。
         _selectedMedias.add(media);
       }
     });
@@ -141,177 +110,118 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // toolbarTextStyle: TextStyle(color:Colors.white),
         title: DropdownButton<AssetPathEntity>(
+          dropdownColor: Colors.grey,
           borderRadius: BorderRadius.circular(16.0),
-          value: _currentAlbum,
+          value: _currentAlbum,//現在の選択中のアルバム
           items: _albums
               .map(
                 (e) => DropdownMenuItem<AssetPathEntity>(
               value: e,
-              // Display album name in dropdown
-              child: Text(e.name.isEmpty ? "0" : e.name),
+              child: Text(e.name.isEmpty ? "0" : e.name,style:TextStyle(color: Colors.yellow[100])),
             ),
-          )
-              .toList(),
+          ).toList(),
           onChanged: (AssetPathEntity? value) {
             setState(() {
-              // Set the selected album as the current album
+              // 選択したアルバムを現在のアルバムとする
               _currentAlbum = value;
-              // Reset current page to load from the beginning
+              // 現在のページをリセットし、最初から読み取る
               _currentPage = 0;
-              // Reset last page
+              // 最後のページをリセット
               _lastPage = 0;
-              // Clear existing media items
+              // 現在のアイテムをリセット
               _medias.clear();
             });
-            // Load media items for the selected album
+            // 選択したアルバムを読み込む
             _loadMedias();
-            // Scroll to the top
+            // スクロール位置を元に戻す。
             _scrollController.jumpTo(0.0);
           },
         ),
-
-// backgroundColor: Colors.blue,
-        backgroundColor: Color(0xFF87ff99),
       ),
       body: MediasGridView(
-        // Pass the list of media items to the grid view
+        // メディアのアイテムを渡す。
         medias: _medias,
-        // Pass the list of selected media items to the grid view
+        // 選択した画像のアイテムをりすとgridviewに渡す。
         selectedMedias: _selectedMedias,
-        // Pass the method to select or deselect a media item
+        // 選択または、選択解除するメソッドを渡す。
         selectMedia: _selectMedia,
-        // Pass the scroll controller to the grid view
+        // スクロールコントローラーをgridviewに渡す。
         scrollController: _scrollController,
-
-        // albums:albums,
       ),
       floatingActionButton: _selectedMedias.isEmpty
           ? null
           : FloatingActionButton(
-        // Close the screen and pass selected media items back
-        // onPressed: () => Navigator.push(context,
-        //
-        //     MaterialPageRoute(builder: (context) =>
-        //         SelectCheck(imageData: _selectedMedias))),
         onPressed: () async{
-          Future<Map<String,dynamic>> getMetadata(AssetEntity asset) async{
-            // Map<String,dynamic> metadata = await asset.metadata;
-            Map<String,dynamic> metadata = {
-              'creationDate': asset.createDateTime,
-              'width': asset.width,
-              'height': asset.height,
-              'title': asset.title,
-            };
-            debugPrint('Metadata: $metadata');
-            return metadata;
-          }
-
-          // debugPrint('Metadata: $metadata');
-          // someFunction();
-          // debugPrint('$metadata');
           List<Uint8List?> imageDataList = [];
-          List<String?> imageMetaData = [];
           for (Media media in _selectedMedias){
-
-          //   var metadataT = await getMetadata(media.assetEntity);
-          //   debugPrint('Metadata: $metadataT');
-          // imageMetaData.add(metadataT);
-
+            // 選択した画像をUint8List形式に変換する
             Uint8List? data = await getMediaData(media.assetEntity);
             if(data != null){
+              //List<Uint8List>に入れる
               imageDataList.add(data);
-
             }
           }
-          // debugPrint();
-
           Navigator.push(
             context,
             MaterialPageRoute(
+              //サーバーupload画面に選択した画像を渡す。
               builder: (context) => SelectCheck(imageData: imageDataList),
             ),
           );
         },
-
         backgroundColor: Colors.lightGreenAccent,
-        // Display check icon
         child: const Icon(Icons.add_task_outlined),
       ),
     );
   }
 }
 
+// assetEntityをバイトデータに変換する
 Future<Uint8List?> getMediaData(AssetEntity assetEntity) async {
   return await assetEntity.originBytes;
 }
 
-// Function to fetch media items from a specific album and page
 Future<List<Media>> fetchMedias({
   required AssetPathEntity album,
   required int page,
 }) async {
+  //読み取ったデータを格納する
   List<Media> medias = [];
 
   try {
-    // Get a list of asset entities from the specified album and page
+    //アルバムから画像を読み取る
     final List<AssetEntity> entities =
     await album.getAssetListPaged(page: 0, size: 100000000);
 
-    // Loop through each asset entity and create corresponding Media objects
     for (AssetEntity entity in entities) {
-      // Assign the asset entity to the Media object
+      //画像をデータを格納する
       Media media = Media(
         assetEntity: entity,
-        // Create a FadeInImage widget to display the media thumbnail
         widget: FadeInImage(
-          // Placeholder image
           placeholder: MemoryImage(kTransparentImage),
-          // Set the fit mode to cover
           fit: BoxFit.cover,
-          // Use AssetEntityImageProvider to load the media thumbnail
           image: AssetEntityImageProvider(
             entity,
-            // Thumbnail size
             thumbnailSize: const ThumbnailSize.square(300),
-            // Load a non-original (thumbnail) image
             isOriginal: false,
           ),
         ),
       );
-
-      // Media media = Media(
-      //   assetEntity: entity,
-      //   widget: imageWidget,
-      // );
-      // Add the created Media object to the list
+      //読み取ったデータを入れる
       medias.add(media);
     }
-
-
   } catch (e) {
-    // Handle any exceptions that occur during fetching
     debugPrint('Error fetching media: $e');
   }
-
-  // Return the list of fetched media items
   return medias;
 }
 
-// Widget to display a media item with optional selection overlay
 class MediaItem extends StatelessWidget {
-  // The media to display
   final Media media;
-
-  // Indicates whether the media is selected
   final bool isSelected;
-
-  // Callback function when the media is tapped
   final Function selectMedia;
-
-  // Unique identifier for the widget, passes the key to the super constructor
-  const MediaItem({
+const MediaItem({
     required this.media,
     required this.isSelected,
     required this.selectMedia,
@@ -321,21 +231,17 @@ class MediaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      // Callback function when the media is tapped
       onTap: () => selectMedia(media),
       child: Stack(
         children: [
-          //     // Display the media widget with optional padding
           _buildMediaWidget(),
-          //     // Display the selected overlay if the media is selected
           if (isSelected) _buildIsSelectedOverlay(),
         ],
       ),
     );
   }
-
-  // Build the media widget with optional padding
-  Widget _buildMediaWidget() {
+  //選択したら画像の周りにpaddingを表示する
+Widget _buildMediaWidget() {
     return Positioned.fill(
       child: Padding(
         padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
@@ -344,20 +250,15 @@ class MediaItem extends StatelessWidget {
       ),
     );
   }
-
-  // Build the selected overlay
+  //選択した画像に✔マークを表示する
   Widget _buildIsSelectedOverlay() {
     return Positioned.fill(
       child: Container(
-        // Semi-transparent black overlay
         color: Colors.black.withOpacity(0.1),
         child: const Center(
           child: Icon(
-            // Checkmark icon
             Icons.check_circle_rounded,
-            // White color for the icon
             color: Colors.white,
-            // Size of the icon
             size: 30,
           ),
         ),
@@ -366,35 +267,17 @@ class MediaItem extends StatelessWidget {
   }
 }
 
-// Widget to display a grid of media items
 class MediasGridView extends StatelessWidget {
-  // List of all media items
   final List<Media> medias;
-
-  // List of selected media items
   final List<Media> selectedMedias;
-
-  // Callback function to select a media item
   final Function(Media) selectMedia;
-
-  // Controller for scrolling
   final ScrollController scrollController;
-
-  // final List<AssetPathEntity> albums;
-
   const MediasGridView({
-    // Unique identifier for the widget
     super.key,
-    // List of all media items
     required this.medias,
-    // List of selected media items
     required this.selectedMedias,
-    // Callback function to select a media item
     required this.selectMedia,
-    // Controller for scrolling
     required this.scrollController,
-
-    // required this.albums
   });
 
   @override
@@ -402,105 +285,21 @@ class MediasGridView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3.0),
       child: GridView.builder(
-        // Assign the provided scroll controller
         controller: scrollController,
-        // Apply bouncing scroll physics
-        physics: const BouncingScrollPhysics(),
-        // Set the number of items in the grid
+        physics: const BouncingScrollPhysics(),//バウンド効果あるスクロール
         itemCount: medias.length,
-        // 3 columns in the grid
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
-          // Spacing between rows
           mainAxisSpacing: 4,
-          // Spacing between columns
-          crossAxisSpacing: 3,
+         crossAxisSpacing: 3,
         ),
-        // Build each media item using the MediaItem widget
         itemBuilder: (context, index) => MediaItem(
-          // Pass the current media item
           media: medias[index],
-          // Check if the media item is selected
           isSelected: selectedMedias.any((element) =>
           element.assetEntity.id == medias[index].assetEntity.id),
-          // Pass the selectMedia callback function
           selectMedia: selectMedia,
         ),
       ),
     );
   }
 }
-
-
-//   List<AssetPathEntity> albums = [];//ポップメニュー
-//   List<AssetEntity> photos = [];//gridviewに映す
-//   int? selectedAlbumIndex;
-//
-//
-//
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _fetchAlbums();//初期化時にアルバム取得
-//
-//   }
-//
-//
-//
-//   _fetchAlbums() async {
-//     final permitted = await PhotoManager.requestPermissionExtend();//初回写真へのアクセス許可を要求
-//     if (permitted.isAuth) {
-//       // onlyAll: をtrueにすると最初のファイルしかリスト一覧に出ないため、falseに設定
-//       albums = await PhotoManager.getAssetPathList(
-//           // onlyAll: false,
-//         type: RequestType.image,
-//       );//アルバムリスト取得
-//       _fetchPhotos(albums.first);
-//     } else {
-//       PhotoManager.openSetting();//許可がない時設定を開く
-//     }
-//   }
-//   //アルバムの写真のリスト
-//   _fetchPhotos(AssetPathEntity album) async {
-//     final photoList = await album.getAssetListPaged(page: 0, size: 100);//今のところ100枚の画像を取得するようにしている。後ほどすべて抜き出せるように修正。
-//     setState(() {
-//       photos = photoList;
-//     });
-//   }
-//
-//   Future<int> _fetchAssetCount(AssetPathEntity album) async {
-//     final photoList = await album.getAssetListPaged(page: 0, size: 1000000);
-//     final filteredPhotos = photoList.where((asset) => asset.type == AssetType.image).toList();
-//     return filteredPhotos.length;
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           leading: IconButton(
-//             icon: Icon(Icons.arrow_back, color: Colors.white),
-//             onPressed: () => Navigator.of(context).pop(),
-//           ),
-//           title: PopupMenuAlbumName(//写真フォルダリスト名表示
-//             albums: albums,
-//             onAlbumSelected: (index) {//リスト名を選択したら表示する
-//               setState(() {
-//                 selectedAlbumIndex = index;
-//                 _fetchPhotos(albums[index]);
-//               });
-//             },
-//             selectedAlbumIndex: selectedAlbumIndex,
-//             photos: photos,
-//             fetchAssetCount: _fetchAssetCount,
-//           ),
-//           backgroundColor: Colors.black,
-//         ),
-//         body: ImageList(photos: photos),
-//       ),
-//     );
-//   }
-// }
-
