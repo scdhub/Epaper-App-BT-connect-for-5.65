@@ -13,12 +13,27 @@ class _TextToPageState extends State<TextToPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        // shape: BoxShape.rectangle,
+        // color: Colors.white60,
+        // border: Border.all(
+        //   // color: Colors.black12,
+        //   width: 2,
+        // ),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(4, 5),
+            color: Colors.redAccent,
+          ),
+        ],
+      ),
       width: 150,
       height: 150,
       child: ElevatedButton(
           style: TextButton.styleFrom(
             foregroundColor: Colors.black,
-            backgroundColor: Colors.redAccent,
+            // backgroundColor: Colors.redAccent,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0)),
           ),
@@ -37,6 +52,7 @@ class _TextToPageState extends State<TextToPage> {
                 Icon(
                   Icons.edit_note_outlined,
                   size: 50.0,
+                  color: Colors.redAccent,
                 ),
                 Text(
                   '文字を入力して\n画像として登録',
