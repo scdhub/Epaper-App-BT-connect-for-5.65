@@ -10,11 +10,6 @@ class ColorPalette extends InheritedNotifier<ColorPaletteNotifier> {
   }) : super(key: key, notifier: notifier, child: child);
 
   static ColorPaletteNotifier of(BuildContext context) {
-    //追加
-    // final widget = context.dependOnInheritedWidgetOfExactType<ColorPalette>();
-    // assert(widget != null, 'No ColorPalette found in context');
-    // return widget!.notifier!;
-    //
     return context
         .dependOnInheritedWidgetOfExactType<ColorPalette>()!
         .notifier!;
