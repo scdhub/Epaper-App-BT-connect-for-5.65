@@ -1,178 +1,98 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
+import 'e_paper_send_picture_page.dart';
 
+class ServerImageDelCheckPopup extends StatefulWidget {
+  //top_pageから遷移
+  // const ImageTypeSelection_popup({super.key});
+  final List<DelData> selectDelImage;
 
-class ImageTypeSelection_popup extends StatefulWidget {//top_pageから遷移
-  const ImageTypeSelection_popup({super.key});
+  ServerImageDelCheckPopup({required this.selectDelImage});
 
   @override
-  _ImageTypeSelection_popupState createState() =>
-      _ImageTypeSelection_popupState();
+  _ServerImageDelCheckPopupState createState() =>
+      _ServerImageDelCheckPopupState();
 }
 
-class _ImageTypeSelection_popupState extends State<ImageTypeSelection_popup> {
-  var _selectedIndex = 1; // ラジオボタンの選択値を親ウィジェットで管理する
+class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
+
+
+  Future<void> postData(List<DelData> delId) async {
+    //awsS3
+    Uri uri =  Uri.parse(
+        "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/deletes"
+    );
+    final headers =  {'Content-Type': 'application/json','x-api-key':dotenv.get('API_KEY')};
+    final body ={'ids': delId};
+
+    final response = await http.post(uri, headers: headers, body: jsonEncode(body));
+    if (response.statusCode == 200) {
+
+      print('削除成功！');
+    } else {
+      print('削除失敗2: ${response.statusCode}');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
-      backgroundColor:Colors.white,
+      backgroundColor: Colors.yellow,
       title:
-      // Text('スマホから画像を\nインポート方法選択',
-      Text('方法選択',
+          // Text('スマホから画像を\nインポート方法選択',
+          Text(
+        '!　注意　！',
         textAlign: TextAlign.center,
       ),
-      // content: TypeSelectedRadio(
-      //   // コールバック関数を渡す
-      //   onSelected: (value) {
-      //     setState(() {
-      //       _selectedIndex = value;
-      //     });
-      //   },
-      // ),
       actions: <Widget>[
-        //     content: Container(
-        //     width: MediaQuery.of(context).size.width, // 画面幅の90%に設定
-        // child: Column(
-        // children: [
-        //   Text('スマホから画像を\nインポート方法選択',
-        //     textAlign: TextAlign.center,
-        //   ),
         Column(
             children: [
-              Row(
+              Text('選択した画像は、完全に削除されます。\n 復元はできません。\n本当に削除してもよろしいですか？'),
 
-                // mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children:[
-
-                    Container(
-                      // color: Colors.greenAccent,
-                      width: 140,
-                      height: 100,
-                      // padding: ,
-                      child:
-
-                      ElevatedButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.greenAccent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
-                        ),
-                        onPressed: () {
-                          getImageFromCamera(context);
-                        },
-                        child:
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // IconButton(
-                              //   icon:
-                              Icon(
-                                Icons.camera_alt_outlined,
-                                size: 40.0,),
-                              //   onPressed:(){
-                              //     getImageFromCamera(context);
-                              // },
-                              // ),
-                              Text(
-                                ' 撮影して\n写真を登録',
-                              ),
-                            ]),
-                      ),
-                    ),
-
-                    Container(
-                      // color: Colors.cyan,
-                      width: 140,
-                      height: 100,
-                      child:
-
-                      ElevatedButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.cyan,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ImageSelect_Album()),
-                          );
-                        },
-                        child:
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // IconButton(
-                              //   icon:
-                              Icon(
-                                Icons.photo_library_outlined,
-                                size: 40.0,
-                              ),
-                              Text(
-                                'アルバムから\n　画像選択',
-                              ),
-                            ]),
-                      ),
-                    ),
-                    // VerticalDivider(/*区切り線の設定*/),
-                  ]),
-              Container(
-                // color: Colors.pinkAccent,
-                width: 145,
-                height: 100,
-                child:
-                ElevatedButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.pinkAccent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                  ),
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => CropImageSelect_Album()),
-                    // );
-                  },
-                  child:
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // IconButton(
-                        //   icon:
-                        Icon(
-                          Icons.cut_outlined,
-                          size: 40.0,
-                        ),
-                        Text(
-                          'アルバムから\n1枚トリミング',
-                        ),
-                      ]),
-                ),
-              ),
-            ]),
-
+        ]),
 
         Divider(),
         Container(
           width: 300,
-          alignment:Alignment.center,
-          child:
-          TextButton(
+          alignment: Alignment.center,
+          child: Row(
+              children:[
+
+                TextButton(
             onPressed: () => Navigator.pop(context, 'Cancel'),
-            child: const Text('キャンセル',style: TextStyle(fontSize:20,color:Colors.black),),
+            child:
+              const Text(
+              'キャンセル',
+              style: TextStyle(fontSize: 20, color: Colors.black),
+            ),
+
           ),
+                TextButton(
+                  // onPressed: () => Navigator.pop(context, 'OK'),
+                  onPressed: (){
+                    List<DelData> delId = [];
+                    for (var item in widget.selectDelImage) {
+                    delId.add(item);
+    }
+
+                    postData(delId);
+                  },
+                  child:
+                  const Text(
+                    'OK',
+                    style: TextStyle(fontSize: 20, color: Colors.black),
+                  ),
+
+                ),
+              ]),
         ),
       ],
-
     );
   }
 }
