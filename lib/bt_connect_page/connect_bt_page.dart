@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../app_body_color.dart';
 import '../devices_data.dart';
 import '../export-for-e-paper/export_page.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -233,7 +234,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
           'E ink E-paper',
         ),
       ),
-      body: Container(
+      body: CustomPaint(
+        painter: HexagonPainter(),
+    child:Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFE1E9FF), Colors.white],
@@ -290,11 +293,16 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 },
               ),
             ),
-            Text('登録済みデバイス',
-                    style: TextStyle(
-                  fontSize: 20,
-                )),
-
+            Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white38,
+              child:
+              Text('登録済みデバイス',
+                  style: TextStyle(
+                    fontSize: 20,
+                  )),
+            ),
             Container(
               height: 250,
               child: ListView.builder(
@@ -303,7 +311,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 itemBuilder: (context, index) {
                   return Container(
                     height: 50,
-                    margin: EdgeInsets.all(1),
+                    margin: EdgeInsets.all(5),
                     alignment: Alignment.center,
                     // width: double.infinity,
                     width: MediaQuery.of(context).size.width,
@@ -368,24 +376,25 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
               ),
             ),
             SizedBox(height: 10),
-            Text('未登録デバイス',
+            Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white38,
+              child:
+              Text('未登録デバイス',
                 style: TextStyle(
                   fontSize: 20,
-                )),
-            // Swap the order of sections
-            // isScanning ?
+                ),
+              ),
+            ),
             UnregisteredDevice(
                 scanDevices: scanDevices,
                 trustDevices: trustDevices,
-            //     saveStringList:(){
-            //   saveStringList(trustDevices);
-            // },
               addTrustDevice: _addTrustDevice,
             ),
-
-
           ],
         ),
+      ),
       ),
     );
   }
@@ -410,10 +419,9 @@ class UnregisteredDevice extends StatefulWidget {
 class _UnregisteredDeviceState extends State<UnregisteredDevice> {
   @override
   Widget build(BuildContext context) {
-    return  Expanded(
-      child: widget.scanDevices.isNotEmpty
-      // child: devicesList.isNotEmpty
-          ? ListView.builder(
+    return  widget.scanDevices.isNotEmpty
+        ? Expanded(
+      child:ListView.builder(
         itemCount: widget.scanDevices.length,
         // itemCount: devicesList.length,
         itemBuilder: (context, index) {
@@ -455,10 +463,10 @@ class _UnregisteredDeviceState extends State<UnregisteredDevice> {
               child: Container(
                   height: 50,
                   // color: Colors.blue,
-                  margin: EdgeInsets.all(1),
+                  margin: EdgeInsets.all(5),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent,
+                    color: Colors.white60,
                     shape: BoxShape.rectangle,
                     border: Border.all(
                       color: Colors.black12,
@@ -490,10 +498,18 @@ class _UnregisteredDeviceState extends State<UnregisteredDevice> {
             );
           }
         },
-      )
-          : Text('スキャンを開始して、未登録デバイスを表示してください',
-        style: TextStyle(color: Colors.redAccent),
       ),
+    )
+            : Container(
+        color: Colors.black45,
+        alignment: Alignment.topCenter,
+        width: MediaQuery.of(context).size.width,
+    height: 25,
+    child:Text(
+    'スキャンを開始して、未登録デバイスを表示してください',
+    style: TextStyle(color: Colors.red,fontSize: 15),
+    ),
+
     );
   }
 }
