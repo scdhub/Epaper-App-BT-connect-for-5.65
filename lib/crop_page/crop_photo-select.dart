@@ -1,19 +1,13 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-// import 'appserver.dart';
-import '../server_upload/select-photo-check_page.dart';
-import 'crop_page.dart';
-
-// import 'photo-select_name-select.dart';
-// import 'photo-select_image-list.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
-// import 'select-photo-check_page.dart';
+
+import 'crop_photo_select_gridview.dart';
+import 'crop_page.dart';
 
 class Media {
   final AssetEntity assetEntity;
@@ -31,41 +25,44 @@ class CropImageSelect_Album extends StatefulWidget {
 }
 
 class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
-  final ScrollController _scrollController = ScrollController();
-  AssetPathEntity? _currentAlbum;
-  List<AssetPathEntity> _albums = [];
-  final List<Media> _medias = [];
-  int _lastPage = 0;
-  int _currentPage = 0;
-  List<AssetPathEntity> albums = [];
-  final List<Media> _selectedMedias = [];
-  final List<Media> selectedMedias = [];
+  final ScrollController _scrollController = ScrollController(); //スクロール制御
+  AssetPathEntity? _currentAlbum; //選択したアルバム名
+  List<AssetPathEntity> _albums = []; //アルバムリスト
+  final List<Media> _medias = []; //選択したアルバムのリスト
+  int _lastPage = 0; // 最後に読み込まれたページ
+  int _currentPage = 0;//現在読み込まれたページ
+  List<AssetPathEntity> albums = [];//アルバムリストの一時保存
+  final List<Media> _selectedMedias = [];//選択した画像のリスト保存
+  final List<Media> selectedMedias = [];//選択された画像の一時保存
 
   @override
   void initState() {
     super.initState();
-    _selectedMedias.addAll(selectedMedias);
+    _selectedMedias.addAll(selectedMedias);//選択した画像の初期化
     _loadAlbums();
-    _scrollController.addListener(_loadMoreMedias);
+    _scrollController.addListener(_loadMoreMedias);//スクロールイベントのリッスン
   }
 
+  //?
   @override
   void dispose() {
-    _scrollController.removeListener(_loadMoreMedias);
-    _scrollController.dispose();
+    _scrollController.removeListener(_loadMoreMedias); //スクロール位置に応じて画像を読み込む
+    _scrollController.dispose(); //メモリリークを防ぐため。widgetが破棄されるとき呼び出される
     super.dispose();
   }
 
   void _loadAlbums() async {
+    //アルバム情報を読み込む許可
     final permitted = await PhotoManager.requestPermissionExtend();
-    if (permitted.isAuth) {
+    if (permitted.isAuth) {//許可が出た場合
       albums = await PhotoManager.getAssetPathList(
+        //画像のみを取得
         type: RequestType.image,
       );
       //アルバムリスト取得
       if (albums.isNotEmpty) {
-        _currentAlbum = albums.first;
-        _albums = albums;
+        _currentAlbum = albums.first;//最初のアルバムを現在参照するアルバムに設定する
+        _albums = albums;//アルバムリストの保存
         _loadMedias();
       }
     } else {
@@ -73,42 +70,35 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
     }
   }
 
-  // Method to load media items asynchronously
+//選択されたアルバム名の情報を取得
   void _loadMedias() async {
-    // Store the current page as the last page
-    _lastPage = _currentPage;
+    _lastPage = _currentPage;//最後に読み込んだページとして保存
     if (_currentAlbum != null) {
-      // Fetch media items for the current album
       List<Media> medias =
           await fetchMedias(album: _currentAlbum!, page: _currentPage);
       setState(() {
-        // Add fetched media items to the list
         _medias.addAll(medias);
       });
     }
   }
 
-  // Method to load more media items when scrolling
+//スクロール位置に応じてメディアを読み込む
   void _loadMoreMedias() {
     if (_scrollController.position.pixels /
             _scrollController.position.maxScrollExtent >
         0.33) {
-      // Check if scrolled beyond 33% of the scroll extent
       if (_currentPage != _lastPage) {
-        // Load more media items
         _loadMedias();
       }
     }
   }
 
-  // Method to select or deselect a media item
+//画像の選択、解除
   void _selectMedia(Media media) {
-    bool isSelected = _selectedMedias.any((element) =>
-        element.assetEntity.id ==
-        media.assetEntity.id); // Check if the media item is already selected
+    bool isSelected = _selectedMedias
+        .any((element) => element.assetEntity.id == media.assetEntity.id);
     setState(() {
       if (isSelected) {
-        // Deselect the media item if already selected
         _selectedMedias.removeWhere(
             (element) => element.assetEntity.id == media.assetEntity.id);
       } else {
@@ -119,6 +109,7 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
     });
   }
 
+  // エラーダイアログを表示
   void _showErrorDialog() {
     showDialog(
       context: context,
@@ -139,136 +130,54 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
     );
   }
 
-  void _cropImage(AssetEntity asset) async {
-    final file = await asset.file;
-    ImageCropper imageCropper = ImageCropper();
-    final croppedFile = await imageCropper.cropImage(
-      sourcePath: file!.path,
-      // aspectRatio: CropAspectRatio(ratioX: 600, ratioY: 448),
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        // CropAspectRatio(ratioX: 600, ratioY: 448),
-        // CropAspectRatioPreset.ratio3x2,
-        // CropAspectRatioPreset.original,
-        // CropAspectRatioPreset.ratio4x3,
-        // CropAspectRatioPreset.ratio16x9
-      ],
-      aspectRatio: CropAspectRatio(ratioX: 600, ratioY: 448),
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'トリミング画面',
-          toolbarColor: Colors.black,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: true,
-        ),
-        IOSUiSettings(
-          title: 'トリミング画面',
-          cancelButtonTitle: 'Cancel',
-          doneButtonTitle: 'Crop',
-          // minimumAspectRatio: 1.0,
-          minimumAspectRatio: 600/448,
-
-        ),
-      ],
-    );
-
-    if (croppedFile != null) {
-      // クロップされた画像を使用
-      // クロップされた画像ファイルをUint8Listに変換
-      Uint8List cropBytes = await File(croppedFile.path).readAsBytes();
-      var croppedBytes = [cropBytes];
-      // Uint8Listを次のページに渡す
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SelectCheck(imageData: croppedBytes),
-        ),
-      );
-
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // toolbarTextStyle: TextStyle(color:Colors.white),
         title: DropdownButton<AssetPathEntity>(
+          dropdownColor: Colors.grey,
           borderRadius: BorderRadius.circular(16.0),
-          value: _currentAlbum,
+          value: _currentAlbum,//選択したアルバム情報
+          //アルバムリストからアルバム情報を読み込む
           items: _albums
               .map(
                 (e) => DropdownMenuItem<AssetPathEntity>(
                   value: e,
-                  // Display album name in dropdown
-                  child: Text(e.name.isEmpty ? "0" : e.name),
+                  child: Text(e.name.isEmpty ? "" : e.name,style:TextStyle(color: Colors.yellow[100])),
                 ),
               )
               .toList(),
           onChanged: (AssetPathEntity? value) {
             setState(() {
-              // Set the selected album as the current album
-              _currentAlbum = value;
-              // Reset current page to load from the beginning
-              _currentPage = 0;
-              // Reset last page
-              _lastPage = 0;
-              // Clear existing media items
-              _medias.clear();
+              _currentAlbum = value;//選択したアルバムを表示ため
+              _currentPage = 0;//スクロール位置リセットのため
+              _lastPage = 0;//スクロール位置リセットのため
+              _medias.clear();//今現在のアルバムリセット
             });
-            // Load media items for the selected album
-            _loadMedias();
-            // Scroll to the top
-            _scrollController.jumpTo(0.0);
+            _loadMedias();//選択したアルバムの画像を読み込む
+            _scrollController.jumpTo(0.0);//スクロール位置をトップに戻す
           },
         ),
-
-        // backgroundColor: Colors.blue,
       ),
-      body: MediasGridView(
-        // Pass the list of media items to the grid view
+      body: MediasGridView(//画像をgridview表示するクラス
         medias: _medias,
-        // Pass the list of selected media items to the grid view
         selectedMedias: _selectedMedias,
-        // Pass the method to select or deselect a media item
         selectMedia: _selectMedia,
-        // Pass the scroll controller to the grid view
         scrollController: _scrollController,
-
-        // albums:albums,
       ),
       floatingActionButton: _selectedMedias.isEmpty
           ? null
           : FloatingActionButton(
               onPressed: () async {
-                try{
-                Uint8List? cropImageData;
-                // List<String?> imageMetaData = [];
-                for (Media media in _selectedMedias) {
-                  // Uint8List? data = await getMediaData(media.assetEntity);
-                  // if (data != null) {
-                  //   setState(() {
-                  //     cropImageData = data;
-                  //   });
-                  // }
-                  AssetEntity asset = media.assetEntity;
-                  // _cropImageメソッドを呼び出し
-
-
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         TrimmingPage(imageData: cropImageData),
-                  //   ),
-                  // );
-                  _cropImage(asset);
-                }
-                }catch(e){
+                try {
+                  for (Media media in _selectedMedias) {
+                    AssetEntity asset = media.assetEntity;
+                    cropImage(context, asset);//クロップ画面に移動する
+                  }
+                } catch (e) {
                   _showErrorDialog();
                 }
               },
-
               backgroundColor: Colors.lightGreenAccent,
               child: const Icon(Icons.add_task_outlined),
             ),
@@ -276,10 +185,12 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
   }
 }
 
+//バイトデータに変換
 Future<Uint8List?> getMediaData(AssetEntity assetEntity) async {
   return await assetEntity.originBytes;
 }
 
+//アルバムから画像を読み込む
 Future<List<Media>> fetchMedias({
   required AssetPathEntity album,
   required int page,
@@ -293,13 +204,13 @@ Future<List<Media>> fetchMedias({
     for (AssetEntity entity in entities) {
       Media media = Media(
         assetEntity: entity,
-        widget: FadeInImage(
-          placeholder: MemoryImage(kTransparentImage),
+        widget: FadeInImage(//プレースホルダーから実際の画像に滑らかに表示
+          placeholder: MemoryImage(kTransparentImage),//プレースホルダー
           fit: BoxFit.cover,
-          image: AssetEntityImageProvider(
+          image: AssetEntityImageProvider(//元の画像のサムネイル化
             entity,
             thumbnailSize: const ThumbnailSize.square(300),
-            isOriginal: false,
+            isOriginal: false,//falseにすることで、サムネイル画像設定する
           ),
         ),
       );
@@ -310,97 +221,4 @@ Future<List<Media>> fetchMedias({
   }
 
   return medias;
-}
-
-class MediaItem extends StatelessWidget {
-  final Media media;
-
-  final bool isSelected;
-
-  final Function selectMedia;
-
-  const MediaItem({
-    required this.media,
-    required this.isSelected,
-    required this.selectMedia,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => selectMedia(media),
-      child: Stack(
-        children: [
-          _buildMediaWidget(),
-          if (isSelected) _buildIsSelectedOverlay(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMediaWidget() {
-    return Positioned.fill(
-      child: Padding(
-        padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
-        child: media.widget,
-      ),
-    );
-  }
-
-  Widget _buildIsSelectedOverlay() {
-    return Positioned.fill(
-      child: Container(
-        color: Colors.black.withOpacity(0.1),
-        child: const Center(
-          child: Icon(
-            Icons.check_circle_rounded,
-            color: Colors.white,
-            size: 30,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class MediasGridView extends StatelessWidget {
-  final List<Media> medias;
-
-  final List<Media> selectedMedias;
-
-  final Function(Media) selectMedia;
-
-  final ScrollController scrollController;
-
-  const MediasGridView({
-    super.key,
-    required this.medias,
-    required this.selectedMedias,
-    required this.selectMedia,
-    required this.scrollController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3.0),
-      child: GridView.builder(
-        controller: scrollController,
-        physics: const BouncingScrollPhysics(),
-        itemCount: medias.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 3,
-        ),
-        itemBuilder: (context, index) => MediaItem(
-          media: medias[index],
-          isSelected: selectedMedias.any((element) =>
-              element.assetEntity.id == medias[index].assetEntity.id),
-          selectMedia: selectMedia,
-        ),
-      ),
-    );
-  }
 }

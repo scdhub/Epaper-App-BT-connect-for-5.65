@@ -1,251 +1,50 @@
+//　選択された画像をトリミングする
+import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:crop/crop.dart';
-import 'dart:ui' as ui;
+import 'package:image_cropper/image_cropper.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import '../server_upload/select-photo-check_page.dart';
 
-// import 'importPreview_page.dart';
-// import 'trimming_cropSpace.dart';
+void cropImage(BuildContext context,AssetEntity asset) async {
+  final file = await asset.file;//アセットファイルとして、変換
+  ImageCropper imageCropper = ImageCropper();//image_cropper機能を呼び出す。
+  final croppedFile = await imageCropper.cropImage(//画像をクロップ
+    sourcePath: file!.path,//クロップする画像のファイルパス
 
-class TrimmingPage extends StatefulWidget {
-  final Uint8List? imageData;
+    aspectRatio: CropAspectRatio(ratioX: 600, ratioY: 448),//クロップする画角のアスペクト比を600/400に設定
+    uiSettings: [
+      AndroidUiSettings(//アンドロイド端末用の設定
+        toolbarTitle: 'トリミング画面',
+        toolbarColor: Colors.black,
+        toolbarWidgetColor: Colors.white,
+        initAspectRatio: CropAspectRatioPreset.original,
+        lockAspectRatio: true,
+      ),
+      IOSUiSettings(//iOS端末用の設定
+        title: 'トリミング画面',
+        cancelButtonTitle: 'Cancel',
+        doneButtonTitle: 'Crop',
+        minimumAspectRatio: 600/448,
 
-  TrimmingPage({Key? key, required this.imageData}) : super(key: key);
+      ),
+    ],
+  );
 
-  @override
-  State<TrimmingPage> createState() => _TrimmingPageState();
-}
-
-class _TrimmingPageState extends State<TrimmingPage> {
-  final controller =
-      CropController(aspectRatio: 600 / 448); //切り取る画像の初期縦横比600 / 448に設定
-  bool isSquare = true;
-
-  void _changeAspectRatio(bool isSquare) {
-    setState(() {
-      controller.aspectRatio = isSquare ? 600 / 448 : 1.0;
-    });
-  }
-
-  void _cropImage() async {
-    //デバイスのピクセル比を取得して、画面解像度に合わせて画像を切り取る
-    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    //指定されたピクセル比で画像を切り取る
-    final ui.Image? cropped = await controller.crop(pixelRatio: pixelRatio);
-    if (cropped == null) {
-      return;
-    }
-    if (!mounted) {
-      //ウィジェットが画面から消えている状態で、Stateを更新しようとするエラーを防ぐ。
-      return;
-    }
-    final byteData = await cropped.toByteData(format: ui.ImageByteFormat.png);
-
-    // bufferがbyteDataのnullの確認が必要のため、
-    if (byteData == null) {
-      return;
-    }
-    final Uint8List cropByte = byteData.buffer.asUint8List();
-
-    var cropBytes = [cropByte]; //List<Uint8List?>にするため
-
+  if (croppedFile != null) {
+    // クロップされた画像を使用
+    // クロップされた画像ファイルをUint8Listに変換
+    Uint8List cropBytes = await File(croppedFile.path).readAsBytes();
+    var croppedBytes = [cropBytes];
+    // Uint8Listを次のページに渡す
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SelectCheck(imageData: cropBytes),
+        builder: (context) => SelectCheck(imageData: croppedBytes),
       ),
     );
 
-
-  }
-
-  // bool light = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return
-      // MaterialApp(
-      //
-      // home:
-      //
-      Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text('トリミング画面', style: TextStyle(color: Colors.white)),
-          actions: [
-            Row(children: [
-              Switch(
-                activeColor: Colors.red,
-                value: isSquare,
-                onChanged: (bool value) {
-                  _changeAspectRatio(value);
-                  setState(() {
-                    isSquare = value;
-                  });
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.crop_outlined, color: Colors.white),
-                onPressed: _cropImage,
-              ),
-            ]),
-          ],
-          backgroundColor: Colors.black45,
-        ),
-        backgroundColor: Colors.black45,
-        body: CropSpace(
-          imageData: widget.imageData!,
-          controller: controller,
-        ),
-      // ),
-    );
-  }
-}
-
-Widget buildGridHelper(double aspectRatio) {
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      // アスペクト比に基づいてグリッドの幅と高さを計算
-      final double gridWidth = constraints.maxWidth / 3;
-      final double gridHeight = (constraints.maxWidth / aspectRatio) / 3;
-
-      return Stack(
-        children: <Widget>[
-          // 横線
-          for (int i = 0; i < 3; i++)
-            Positioned(
-              left: 0,
-              top: gridHeight * i,
-              child: Container(
-                width: constraints.maxWidth,
-                height: 2,
-                color: Colors.black,
-              ),
-            ),
-          // 縦線
-          for (int i = 0; i < 3; i++)
-            Positioned(
-              left: gridWidth * i,
-              top: 0,
-              child: Container(
-                width: 2,
-                height: constraints.maxHeight,
-                color: Colors.black,
-              ),
-            ),
-        ],
-      );
-    },
-  );
-}
-
-// Widget buildGridHelper() {
-//   return LayoutBuilder(
-//     builder: (context, constraints) {
-//       final double gridWidth = constraints.maxWidth / 3;
-//       final double gridHeight = constraints.maxHeight / 3;
-//       // final double gridWidth = constraints.maxWidth / 3;
-//       // final double gridHeight = (constraints.maxWidth / aspectRatio) / 3;
-//
-//       return Stack(
-//         children: <Widget>[
-//           for (int i = 0; i < 3; i++)
-//             Positioned(
-//               left: 0,
-//               top: gridHeight * i,
-//               child: Container(
-//                 width: constraints.maxWidth,
-//                 height: 2,
-//                 color: Colors.black,
-//               ),
-//             ),
-//           for (int i = 0; i < 3; i++)
-//             Positioned(
-//               left: gridWidth * i,
-//               top: 0,
-//               child: Container(
-//                 width: 2,
-//                 height: constraints.maxHeight,
-//                 color: Colors.black,
-//               ),
-//             ),
-//         ],
-//       );
-//     },
-//   );
-// }
-
-class CropSpace extends StatefulWidget {
-  final Uint8List imageData;
-  final CropController controller;
-
-  CropSpace({required this.imageData, required this.controller});
-
-  @override
-  _CropSpaceState createState() => _CropSpaceState();
-}
-
-class _CropSpaceState extends State<CropSpace> {
-  double _rotation = 0; // 画像の回転角度
-  Offset _offset = Offset.zero;
-  BoxShape shape = BoxShape.rectangle; //切り取る形状、四角形
-  // final double aspectRatio = getAspectRatio();
-  double getAspectRatio() {
-    return widget.controller.aspectRatio;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final double aspectRatio = getAspectRatio();
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child:Container(
-              color: Colors.black,
-              padding: const EdgeInsets.all(8),
-              child: Crop(
-                onChanged: (decomposition) {
-                  if (_rotation != decomposition.rotation) {
-                    setState(() {
-                      _rotation = ((decomposition.rotation + 180) % 360) - 180;
-                    });
-                  }
-                  // print('初期:${_offset}');
-                  // print('移動:${decomposition.translation}');
-                  // if (_offset != decomposition.translation) {
-                  //   setState(() {
-                  //     _offset = decomposition.translation;
-                  //   });
-                  // }
-                },
-
-                interactive: true,
-
-                controller: widget.controller,
-                shape: shape,
-                 helper:buildGridHelper(aspectRatio),
-                // child: Transform(
-                //   transform: Matrix4.identity()
-                //     ..translate(_offset.dx, _offset.dy) // 位置の変更
-                //     ..rotateZ(_rotation), // 角度の変更
-                child: Image.memory(
-                  widget.imageData,
-                  // fit: BoxFit.cover,
-                  // fit: OverflowBox,
-                ),
-                ),
-              ),
-            ),
-          // ),
-          // ),
-          // ),
-        ],
-      ),
-    );
   }
 }
