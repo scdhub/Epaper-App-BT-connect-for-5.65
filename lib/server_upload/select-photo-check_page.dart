@@ -143,30 +143,41 @@ class _SelectCheckState extends State<SelectCheck> {
     };
     final body = {'images': uploadImages};
     // サーバーにpostする
+    try {
     final response =
         await http.post(uri, headers: headers, body: jsonEncode(body));
     // 接続成功
-    if (response.statusCode == 200) {
-      // responseデータからデータを抜き取る
-      final body = jsonDecode(response.body);
-      final signed_urls = body['signed_urls'];
-      for (var map in signed_urls) {
-        for (var entry in map.entries) {
-          print(entry);
-          // 画像パス
-          final String image_path = entry.key;
-          // サーバーへのURL
-          final String signed_url = entry.value;
-          final String filename = image_path.split('/').last;
-          putImageImpl(
-              image_path: image_path,
-              signed_url: signed_url,
-              filename: filename);
+      if (response.statusCode == 200) {
+        // responseデータからデータを抜き取る
+        final body = jsonDecode(response.body);
+        final signed_urls = body['signed_urls'];
+        for (var map in signed_urls) {
+          for (var entry in map.entries) {
+            print(entry);
+            // 画像パス
+            final String image_path = entry.key;
+            // サーバーへのURL
+            final String signed_url = entry.value;
+            final String filename = image_path
+                .split('/')
+                .last;
+            putImageImpl(
+                image_path: image_path,
+                signed_url: signed_url,
+                filename: filename);
+          }
         }
+        print('ファイルアップロード成功1！');
+      } else {
+        print('ファイルアップロード失敗2: ${response.statusCode}');
+        setState(() {
+          _isWriting = false;
+          Navigator.of(context).pop();
+          missAppSeverMessage();
+        });
       }
-      print('ファイルアップロード成功1！');
-    } else {
-      print('ファイルアップロード失敗2: ${response.statusCode}');
+    }catch(e){
+      print(e);
       setState(() {
         _isWriting = false;
         Navigator.of(context).pop();
@@ -184,22 +195,31 @@ class _SelectCheckState extends State<SelectCheck> {
     final byteData = await file.readAsBytes(); // Fileオブジェクトからバイトデータを読み込む
     final List<int> bytes = byteData.buffer
         .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-    final response = await http.put(
-      Uri.parse(signed_url),
-      headers: {
-        'Content-Type': 'binary/octet-stream',
-      },
-      body: bytes,
-    );
-    if (response.statusCode == 200) {
-      print('ファイルアップロード成功2！');
-      setState(() {
-        _isWriting = false;
-        Navigator.of(context).pop();
-        uploadMessage();
-      });
-    } else {
-      print('ファイルアップロード失敗3: ${response.statusCode}');
+    signed_url ="https://gqj75id276l.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url";
+    try {
+      final response = await http.put(
+        Uri.parse(signed_url),
+        headers: {
+          'Content-Type': 'binary/octet-stream',
+        },
+        body: bytes,
+      );
+      if (response.statusCode == 200) {
+        print('ファイルアップロード成功2！');
+        setState(() {
+          _isWriting = false;
+          Navigator.of(context).pop();
+          uploadMessage();
+        });
+      } else {
+        print('ファイルアップロード失敗3: ${response.statusCode}');
+        setState(() {
+          _isWriting = false;
+          Navigator.of(context).pop();
+          missUploadMessage();
+        });
+      }
+    }catch(e){
       setState(() {
         _isWriting = false;
         Navigator.of(context).pop();
