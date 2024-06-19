@@ -162,6 +162,15 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
         });
       }
     });
+    //30s経ったら スキャンを停止する
+    Future.delayed(Duration(seconds: 30)).then((_) {
+      if (mounted) {
+        setState(() {
+          isScanning = false;
+        });
+      }
+      FlutterBluePlus.stopScan();
+    });
   }
   // void deviceScanResult() {
   //   // スキャンした結果を格納していく
@@ -237,13 +246,13 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       body: CustomPaint(
         painter: HexagonPainter(),
     child:Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE1E9FF), Colors.white],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        // decoration: BoxDecoration(
+        //   gradient: LinearGradient(
+        //     colors: [Color(0xFFE1E9FF), Colors.white],
+        //     begin: Alignment.topLeft,
+        //     end: Alignment.bottomRight,
+        //   ),
+        // ),
         child: Column(
           children: [
             Padding(
@@ -336,18 +345,23 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                           SizedBox(
                             width: 50,
                           ),
-                          Column(children: [
-                            Text(
-                              trustDevices[index].trustName,
+                          Expanded(
+                          child:Column(children: [
+                            Text(trustDevices[index].trustName.isEmpty
+                                ?'デバイス名　不明'
+                                :trustDevices[index].trustName,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               trustDevices[index].trustIpAddress,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey),
+                                  color: Colors.grey,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ]),
+                          ),
                           IconButton(
                             onPressed: () {
                               // _removeCounterValue(index);
@@ -443,6 +457,7 @@ class _UnregisteredDeviceState extends State<UnregisteredDevice> {
                   builder: (context) =>
                       TrustDevices_popup(
                           scanName: widget.scanDevices[index].scanName,
+                          scanIpAddress: widget.scanDevices[index].scanIpAddress.toString(),
                           onOk: () {
                             setState(() {
                               // //OKを押したら、scanデバイスのデータを登録する。
@@ -480,9 +495,11 @@ class _UnregisteredDeviceState extends State<UnregisteredDevice> {
                       ),
                     ],
                   ),
-                  child: Column(children: [
+                  child:Column(children: [
                     Text(
-                      widget.scanDevices[index].scanName,
+                      widget.scanDevices[index].scanName.isEmpty
+                          ?'デバイス名　不明'
+                          :widget.scanDevices[index].scanName,
                       // devicesList[index].platformName,
                       style:
                       TextStyle(fontWeight: FontWeight.bold),
@@ -492,7 +509,9 @@ class _UnregisteredDeviceState extends State<UnregisteredDevice> {
                       // devicesList[index].remoteId.toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          color: Colors.grey,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ])),
             );
