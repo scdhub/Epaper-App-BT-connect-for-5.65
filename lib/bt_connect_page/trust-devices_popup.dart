@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class TrustDevices_popup extends StatefulWidget {
   final Function onOk;
   final String scanName;
+  final String scanIpAddress;
 
-  const TrustDevices_popup({required this.onOk,required this.scanName});
+  const TrustDevices_popup({required this.onOk,required this.scanName, required this.scanIpAddress});
 
   @override
   _TrustDevices_popupState createState() => _TrustDevices_popupState();
@@ -15,7 +16,9 @@ class _TrustDevices_popupState extends State<TrustDevices_popup> {
   Widget build(BuildContext context) {
     return AlertDialog(
 
-      title: Text('"${widget.scanName}"を登録しますか'),
+      title: Text(widget.scanName.isEmpty
+          ?'"IP:${widget.scanIpAddress}"を登録しますか？'
+          :'"デバイス名：${widget.scanName}"を登録しますか？'),
       actions: <Widget>[
         Divider(),
         Container(

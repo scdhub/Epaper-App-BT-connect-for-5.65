@@ -73,11 +73,13 @@ class _ExportPageState extends State<ExportPage> {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('名称',
+                        Text('デバイス名',
                             style: TextStyle(
                               fontSize: 20,
                             )),
-                        Text(widget.trustName,
+                        Text(widget.trustName.isEmpty
+                            ?'不明'
+                            :widget.trustName,
                             style: TextStyle(
                               fontSize: 20,
                             )),
@@ -86,7 +88,7 @@ class _ExportPageState extends State<ExportPage> {
                       Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('IPアドレス',
+                        Text('IP',
                             style: TextStyle(
                               fontSize: 20,
                             )),
@@ -192,7 +194,10 @@ class _ExportPageState extends State<ExportPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>SendPictureSelect()),
+                            builder: (context) =>SendPictureSelect(
+                              deviceInfo:widget.trustDevice,
+
+                            )),
                       );
                     },
                     style: ElevatedButton.styleFrom(
