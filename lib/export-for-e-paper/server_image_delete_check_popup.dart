@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'e_paper_send_picture_page.dart';
+import 'sever_data_bind.dart';
 
 class ServerImageDelCheckPopup extends StatefulWidget {
   //top_pageから遷移
