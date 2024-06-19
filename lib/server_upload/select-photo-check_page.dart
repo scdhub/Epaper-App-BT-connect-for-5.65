@@ -93,27 +93,7 @@ class _SelectCheckState extends State<SelectCheck> {
           );
         });
   }
-
-  //サーバーとの接続ができなかった時のエラーメッセージ表示
-  void missAppSeverMessage() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('登録エラー'),
-            content: Text('サービスが一時的に利用できません。\nしばらくしてから再度お試しください。'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        });
-  }
-
+  
   //渡された画像を.png形式にする
   Future<void> saveImages() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -173,7 +153,7 @@ class _SelectCheckState extends State<SelectCheck> {
         setState(() {
           _isWriting = false;
           Navigator.of(context).pop();
-          missAppSeverMessage();
+          missAppSeverMessage(context);
         });
       }
     }catch(e){
@@ -181,7 +161,7 @@ class _SelectCheckState extends State<SelectCheck> {
       setState(() {
         _isWriting = false;
         Navigator.of(context).pop();
-        missAppSeverMessage();
+        missAppSeverMessage(context);
       });
     }
   }
@@ -195,7 +175,6 @@ class _SelectCheckState extends State<SelectCheck> {
     final byteData = await file.readAsBytes(); // Fileオブジェクトからバイトデータを読み込む
     final List<int> bytes = byteData.buffer
         .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-    signed_url ="https://gqj75id276l.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url";
     try {
       final response = await http.put(
         Uri.parse(signed_url),
@@ -417,4 +396,24 @@ class _SelectCheckState extends State<SelectCheck> {
       ),
     );
   }
+}
+
+//サーバーとの接続ができなかった時のエラーメッセージ表示
+void missAppSeverMessage(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('登録エラー'),
+          content: Text('サービスが一時的に利用できません。\nしばらくしてから再度お試しください。'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      });
 }
