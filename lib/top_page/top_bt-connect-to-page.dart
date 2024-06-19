@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import '../bt_connect_page/connect_bt_page.dart';
 import '../pre_connect_bt_page.dart';
 
 class BlueToothConnectToPage extends StatefulWidget {
@@ -55,7 +56,7 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      PreConnectBTPage()), //BT接続画面に遷移
+                      ConnectBTPage()), //BT接続画面に遷移
             );
           },
           child: Column(
