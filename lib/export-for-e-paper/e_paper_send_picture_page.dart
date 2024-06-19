@@ -1,57 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/server_delete-image_page.dart';
+import 'package:iphone_bt_epaper/export-for-e-paper/sever_data_bind.dart';
 import 'package:transparent_image/transparent_image.dart';
+import '../bt_connect_page/connect_bt_page.dart';
 import 'server_get-image.dart';
 import 'server_image_delete_check_popup.dart';
 
 class SendPictureSelect extends StatefulWidget {
+  final BluetoothDevice deviceInfo;
+  SendPictureSelect({
+    required this.deviceInfo
+});
   @override
   _SendPictureSelectState createState() => _SendPictureSelectState();
-}
-
-//アプリサーバー　古い順
-class ImageItem {
-  final String id;
-  final String url;
-  final String lastModified;
-  final Widget imageWidget;
-
-  ImageItem({required this.id, required this.url, required this.lastModified})
-      : imageWidget = Image.network(url);
-}
-
-//アプリサーバー　新しい順
-class ReversedData {
-  final String idR;
-  final String url;
-  final String lastModifiedR;
-  final Widget imageWidgetR;
-
-  ReversedData(
-      {required this.idR, required this.url, required this.lastModifiedR})
-      : imageWidgetR = Image.network(url);
-}
-
-//取得データ日付順並び替え　用
-class DateSort {
-  final String idD;
-  final String url;
-  final String lastModifiedD;
-  final Widget imageWidgetD;
-
-  DateSort({required this.idD, required this.url, required this.lastModifiedD})
-      : imageWidgetD = Image.network(url);
-}
-//サーバーデータ削除　用
-class DelData {
-  final String idDel;
-  final String url;
-  final String lastModifiedDel;
-  final Widget imageWidgetDel;
-
-  DelData({required this.idDel, required this.url, required this.lastModifiedDel})
-      : imageWidgetDel = Image.network(url);
 }
 
 class _SendPictureSelectState extends State<SendPictureSelect> {
@@ -67,6 +30,8 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
   final List<ImageItem> _delImageItems = []; //削除データ：古い順
   List<ReversedData> delReverseData = []; //削除データ選択:新しい順
   final List<ReversedData> _delReverseData = []; //削除データ選択:新しい順
+  List<BluetoothService> services = [];//接続したデバイスのサービス情報を読み取る
+
 
   final ScrollController _scrollController = ScrollController();
 
@@ -144,6 +109,51 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
       });
     }
   }
+
+
+  Future onDiscoverServicesPressed({required String sendImage}) async{
+    BluetoothCharacteristic? targetCharacteristic;
+    try{
+      // デバイスと接続する
+      await widget.deviceInfo.connect();
+      print('コネクト成功');
+    }catch(e){
+      print('コネクト失敗：$e');
+    }
+    try{
+      // デバイスのサービス情報を読み取る
+      services = await widget.deviceInfo.discoverServices();
+/*
+       //E-Paperの画像を書き込むUUIDを見つける
+       for (BluetoothService service in services) {
+        for (BluetoothCharacteristic characteristic in service.characteristics) {
+          if (characteristic.uuid.toString() == "目的のCharacteristicのUUID") {
+            targetCharacteristic = characteristic;
+            break;
+          }
+        }
+        if (targetCharacteristic != null) break;
+      }
+  */
+      print('サービス情報を読み取り成功');
+      print('$services');
+    }catch(e){
+      print('サービス情報を読み取り失敗:$e');
+    }
+   /*
+    //E-Paperの特定のcharacteristicに書き込む
+     try{
+       if (targetCharacteristic != null) {
+         await targetCharacteristic.write([0x12, 0x34], withoutResponse: false);
+       }
+     }catch(e){
+       print('目的のCharacteristicが見つかりませんでした');
+     }
+    */
+    //デバイスとの接続を切る
+    await widget.deviceInfo.disconnect();
+  }
+
 
 
   @override
@@ -304,6 +314,7 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
         // color: Colors.black,
         child: FutureBuilder(
           future: getImage(
+            context: context,
               imageItems: imageItems,
               reverseData: reverseData,
               dateSort: dateSort
@@ -337,8 +348,10 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                                 context: context,
                                 imageUrl: value.url,
                                 onSendOK: (){
-                                  Navigator.pop(context);
-                                        Navigator.pop(context);
+                                  // Navigator.pop(context);
+                                  //       Navigator.pop(context);
+                                  onDiscoverServicesPressed(sendImage:value.url);
+                                  // ePaperSend(context: context);
                                 }
                               );
                             }
@@ -349,8 +362,11 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                                 context: context,
                                 imageUrl: value.url,
                                   onSendOK: (){
-                                    Navigator.pop(context);
-                                          Navigator.pop(context);
+                                    // Navigator.pop(context);
+                                    //       Navigator.pop(context);
+                                    onDiscoverServicesPressed(sendImage:value.url);
+
+                                    // ePaperSend(context: context);
                                   }
                               );
                             },
@@ -422,7 +438,7 @@ void selectImageCheckDialog(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AlertDialog(
-            title: Text('選択画像を転送しますか？',
+            title: Text('選択画像を配信しますか？',
                 style: TextStyle(
                   fontSize: 20,
                 )),
@@ -469,33 +485,35 @@ void selectImageCheckDialog(
 Future<void> ePaperSend({
   required BuildContext context,
 }) async {
-  Timer? _timer;
-  _timer = Timer(Duration(seconds: 3), () {
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
-  });
+  // Timer? _timer;
+  // _timer = Timer(Duration(seconds: 3), () {
+  //   if (Navigator.canPop(context)) {
+  //     Navigator.pop(context);
+  //   }
+  // });
+
   await showDialog(
     // barrierDismissible:false,//dialog以外の部分をタップしても消えないようにする。
     context: context,
-    builder: (context) =>
+    builder: (BuildContext context) {
+      return Center(
+        child:
+        AlertDialog(
+          title: Text('E-paperに配信中',
+              style: TextStyle(
+                fontSize: 20,
+              )),
+          content: Container(
+              width: 30,
+              height: 30,
+              child: Center(
+                child: CircularProgressIndicator(),
+              )),
 
-        Center(
-      child:
-          AlertDialog(
-        title: Text('E-paperに配信中',
-            style: TextStyle(
-              fontSize: 20,
-            )),
-        content: Container(
-            width: 30,
-            height: 30,
-            child: Center(
-              child: CircularProgressIndicator(),
-            )),
+        ),
+      );
 
-      ),
-    ),
+    }
   );
 }
 
