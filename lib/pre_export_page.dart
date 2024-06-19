@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:iphone_bt_epaper/devices_data.dart';
+import 'package:iphone_bt_epaper/pre_send_picture_select.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../appserver.dart';
@@ -235,7 +236,7 @@ class _PreExportPageState extends State<PreExportPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>SendPictureSelect()),
+                            builder: (context) =>PreSendPictureSelect()),
 
                       );
                       // if (selectedPhoto != null && context.mounted) {
