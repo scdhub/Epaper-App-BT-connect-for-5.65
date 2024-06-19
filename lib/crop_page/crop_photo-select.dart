@@ -34,6 +34,7 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
   List<AssetPathEntity> albums = [];//アルバムリストの一時保存
   final List<Media> _selectedMedias = [];//選択した画像のリスト保存
   final List<Media> selectedMedias = [];//選択された画像の一時保存
+  Map<AssetPathEntity, int> _albumImageCounts = {};//画像数取得
 
   @override
   void initState() {
@@ -63,6 +64,15 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
       if (albums.isNotEmpty) {
         _currentAlbum = albums.first;//最初のアルバムを現在参照するアルバムに設定する
         _albums = albums;//アルバムリストの保存
+
+        // 各アルバムの画像数を取得
+        for (var album in albums) {
+          final List<AssetEntity> entities = await album.getAssetListPaged(page: 0, size: 100000000);
+          // final List<AssetEntity> entities = await album.getAssetList();
+          _albumImageCounts[album] = entities.length;
+        }
+
+
         _loadMedias();
       }
     } else {
@@ -138,15 +148,16 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
           dropdownColor: Colors.grey,
           borderRadius: BorderRadius.circular(16.0),
           value: _currentAlbum,//選択したアルバム情報
-          //アルバムリストからアルバム情報を読み込む
-          items: _albums
-              .map(
-                (e) => DropdownMenuItem<AssetPathEntity>(
-                  value: e,
-                  child: Text(e.name.isEmpty ? "" : e.name,style:TextStyle(color: Colors.yellow[100])),
-                ),
-              )
-              .toList(),
+          items: _albums.map((e) {
+            final imageCount = _albumImageCounts[e] ?? 0;
+            return DropdownMenuItem<AssetPathEntity>(
+              value: e,
+              child: Text(
+                e.name.isEmpty ? "" : "${e.name}($imageCount)",
+                style: TextStyle(color: Colors.yellow[100]),
+              ),
+            );
+          }).toList(),
           onChanged: (AssetPathEntity? value) {
             setState(() {
               _currentAlbum = value;//選択したアルバムを表示ため
