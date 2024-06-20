@@ -279,7 +279,9 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
               if (snapshot.connectionState == ConnectionState.done) {
                 // 非同期処理が完了したら画像を表示
                 if (imageItems.isEmpty) {
+                  return NonServerPictureMess();
 
+                } else {
                   return
                     // gridReverse ?
                     GridView.builder(
@@ -337,8 +339,6 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
 
                       },
                     );
-                } else {
-                  return NonServerPictureMess();
                 }
               } else {
                 // 非同期処理中はローディングインジケータを表示
@@ -348,7 +348,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
               }
             },
           ),
-    )
+)
 
         ),
 
