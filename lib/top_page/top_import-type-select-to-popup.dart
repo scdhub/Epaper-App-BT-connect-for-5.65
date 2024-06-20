@@ -16,7 +16,7 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            offset: Offset(2, -5),
+            offset: Offset(2, 5),
             color: Colors.blueGrey,
           ),
         ],

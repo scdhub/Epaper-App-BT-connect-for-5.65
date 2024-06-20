@@ -24,7 +24,7 @@ class _DrawingToPageState extends State<DrawingToPage> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            offset: Offset(-4, 5),
+            offset: Offset(2, 5),
             color: Colors.green,
           ),
         ],

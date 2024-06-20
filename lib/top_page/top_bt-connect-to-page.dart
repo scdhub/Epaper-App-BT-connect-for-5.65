@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import '../bt_connect_page/connect_bt_page.dart';
-import '../pre_connect_bt_page.dart';
+import '../bt_connect_for_emulator/pre_connect_bt_page.dart';
 
 class BlueToothConnectToPage extends StatefulWidget {
 
@@ -23,7 +23,7 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
         borderRadius: BorderRadius.circular(15),
       boxShadow: [
         BoxShadow(
-          offset: Offset(-4, -5),
+          offset: Offset(2, 5),
           color: Colors.blue,
         ),
       ],
