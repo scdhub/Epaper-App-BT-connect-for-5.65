@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iphone_bt_epaper/top_page/top_text-to-page.dart';
 import '../app_body_color.dart';
 import 'top_bt-connect-to-page.dart';
@@ -22,14 +23,13 @@ class _TopPageState extends State<TopPage> {
           title: Text(
             // 'E ink E-paper',
             widget.title,
-            style: TextStyle(
-              fontSize: 25,
-            ),
           ),
         ),
-        body: CustomPaint(
+        body:
+        CustomPaint(
     painter: HexagonPainter(),
-    child: Container(
+    child:
+    Container(
             width: MediaQuery.of(context).size.width, // 画面の幅に合わせる
             height: MediaQuery.of(context).size.height, // 画面の高さに合わせる
             // //Containerの色グラデーション
@@ -49,6 +49,13 @@ class _TopPageState extends State<TopPage> {
                 Text(widget.title,
                     style: TextStyle(
                       fontSize: 40,
+                      shadows: <Shadow>[
+                        Shadow(
+                          color: Colors.grey,
+                          offset: Offset(5.0, 5.0),
+                          blurRadius: 3.0,
+                        ),
+                      ],
                     )),
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 10,
