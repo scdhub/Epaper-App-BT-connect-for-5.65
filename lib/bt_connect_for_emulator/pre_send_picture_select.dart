@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/server_delete-image_page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+import '../app_body_color.dart';
 import '../export-for-e-paper/server_get-image.dart';
 import '../export-for-e-paper/server_image_delete_check_popup.dart';
 import '../export-for-e-paper/sever_data_bind.dart';
@@ -243,7 +244,9 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
         ),
         body:
         isOn?//削除機能ON
-        Container(
+        CustomPaint(
+          painter: HexagonPainter(),
+          child:Container(
             width: double.infinity,
             height: double.infinity,
             color: Colors.white60,
@@ -257,9 +260,11 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
               gridReverse: gridReverse,
               delImageDataList: delImageDataList,
             )
-        )
+        ))
         //  削除機能OFF
-            : Container(
+            : CustomPaint(
+        painter: HexagonPainter(),
+    child:Container(
           width: double.infinity,
           height: double.infinity,
           // color: Colors.black,
@@ -274,9 +279,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
               if (snapshot.connectionState == ConnectionState.done) {
                 // 非同期処理が完了したら画像を表示
                 if (imageItems.isEmpty) {
-                  return NonServerPictureMess();
 
-                } else {
                   return
                     // gridReverse ?
                     GridView.builder(
@@ -334,6 +337,8 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
 
                       },
                     );
+                } else {
+                  return NonServerPictureMess();
                 }
               } else {
                 // 非同期処理中はローディングインジケータを表示
@@ -343,7 +348,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
               }
             },
           ),
-
+    )
 
         ),
 
@@ -472,7 +477,7 @@ class NonServerPictureMess extends StatelessWidget{
                 Icon(Icons.warning_amber_outlined,color: Colors.white38,size: 300,),
                 Text(
                   '　　登録画像がありません\n\nまずは画像を登録しましょう！',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ])
       ),

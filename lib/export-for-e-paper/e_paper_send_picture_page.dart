@@ -300,7 +300,9 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
       ),
       body:
       isOn?//削除機能ON
-    Container(
+      CustomPaint(
+          painter: HexagonPainter(),
+          child: Container(
     width: double.infinity,
     height: double.infinity,
     color: Colors.white60,
@@ -313,7 +315,7 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
            scrollController: _scrollController,
            gridReverse: gridReverse,
              delImageDataList: delImageDataList,
-            )
+            ))
     )
      //  削除機能OFF
      : CustomPaint(
@@ -503,7 +505,7 @@ class NonServerPictureMess extends StatelessWidget{
                 Icon(Icons.warning_amber_outlined,color: Colors.white38,size: 300,),
                 Text(
                   '　　登録画像がありません\n\nまずは画像を登録しましょう！',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ])
       ),
