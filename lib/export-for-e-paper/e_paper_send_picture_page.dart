@@ -470,6 +470,7 @@ void selectImageCheckDialog(
                   onPressed: () {
                     onSendOK();
                     Navigator.pop(context);
+                    Navigator.pop(context);
 
                   }),
             ],
