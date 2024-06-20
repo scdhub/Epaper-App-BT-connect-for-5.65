@@ -8,8 +8,6 @@ import 'e_paper_send_picture_page.dart';
 import 'sever_data_bind.dart';
 
 class ServerImageDelCheckPopup extends StatefulWidget {
-  //top_pageから遷移
-  // const ImageTypeSelection_popup({super.key});
   final List<DelData> selectDelImage;
 
   ServerImageDelCheckPopup({required this.selectDelImage});
@@ -22,20 +20,26 @@ class ServerImageDelCheckPopup extends StatefulWidget {
 class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
 
 
-  Future<void> postData(List<DelData> delId) async {
+  // Future<void> postData(List<DelData> delId) async {
+    Future<void> postData(List<String> delId) async {//idのみ渡す場合。
     //awsS3
     Uri uri =  Uri.parse(
         "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/deletes"
     );
     final headers =  {'Content-Type': 'application/json','x-api-key':dotenv.get('API_KEY')};
     final body ={'ids': delId};
-
-    final response = await http.post(uri, headers: headers, body: jsonEncode(body));
-    if (response.statusCode == 200) {
-
-      print('削除成功！');
-    } else {
-      print('削除失敗2: ${response.statusCode}');
+    try {
+      final response = await http.post(
+          uri, headers: headers, body: jsonEncode(body));
+      if (response.statusCode == 200) {
+        print('削除成功！');
+        Navigator.pop(context);
+      } else {
+        print('削除失敗2: ${response.statusCode}');
+        Navigator.pop(context);
+      }
+    }catch(e){
+      print('$e');
     }
   }
 
@@ -77,9 +81,10 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                 TextButton(
                   // onPressed: () => Navigator.pop(context, 'OK'),
                   onPressed: (){
-                    List<DelData> delId = [];
+                    // List<DelData> delId = [];
+                    List<String> delId = [];
                     for (var item in widget.selectDelImage) {
-                    delId.add(item);
+                    delId.add(item.idDel);
     }
 
                     postData(delId);
