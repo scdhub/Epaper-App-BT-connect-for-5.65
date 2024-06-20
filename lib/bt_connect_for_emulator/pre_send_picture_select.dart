@@ -415,7 +415,7 @@ void selectImageCheckDialog(
                       child: Text("OK"),
                       onPressed: () {
                         onSendOK();
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
 
                       }),
                 ],
