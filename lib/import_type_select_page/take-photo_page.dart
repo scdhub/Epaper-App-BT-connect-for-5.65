@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'server_upload/photo-select_page.dart';
-import 'server_upload/select-photo-check_page.dart';
+import '../server_upload/photo-select_page.dart';
+import '../server_upload/select-photo-check_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../crop_page/crop_photo-select.dart';
 import '../server_upload/photo-select_page.dart';
-import '../take-photo_page.dart';
+import 'take-photo_page.dart';
 
 //top_pageから遷移
 class ImageTypeSelection_popup extends StatefulWidget {
