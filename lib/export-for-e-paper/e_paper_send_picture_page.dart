@@ -4,6 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/server_delete-image_page.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/sever_data_bind.dart';
 import 'package:transparent_image/transparent_image.dart';
+import '../app_body_color.dart';
 import '../bt_connect_page/connect_bt_page.dart';
 import 'server_get-image.dart';
 import 'server_image_delete_check_popup.dart';
@@ -112,10 +113,12 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
 
 
   Future onDiscoverServicesPressed({required String sendImage}) async{
+    //目的UUID
     BluetoothCharacteristic? targetCharacteristic;
     try{
       // デバイスと接続する
       await widget.deviceInfo.connect();
+
       print('コネクト成功');
     }catch(e){
       print('コネクト失敗：$e');
@@ -137,14 +140,19 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
   */
       print('サービス情報を読み取り成功');
       print('$services');
+      print('$sendImage');
     }catch(e){
       print('サービス情報を読み取り失敗:$e');
     }
    /*
+   //ここでSDKサーバーに画像配信要求(画像ID）を発行する。
+   //リクエストに指定する画像IDは「sendImage」で取得できます
+   //　以下のWriteは応答後に行う。
     //E-Paperの特定のcharacteristicに書き込む
      try{
        if (targetCharacteristic != null) {
-         await targetCharacteristic.write([0x12, 0x34], withoutResponse: false);
+      // ここは応答時に実行するコード（書き込むデータはサーバーから取得した変換後のデータを指定）
+         await targetCharacteristic.write('', withoutResponse: false);
        }
      }catch(e){
        print('目的のCharacteristicが見つかりませんでした');
@@ -308,11 +316,9 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
             )
     )
      //  削除機能OFF
-     : Container(
-        width: double.infinity,
-        height: double.infinity,
-        // color: Colors.black,
-        child: FutureBuilder(
+     : CustomPaint(
+        painter: HexagonPainter(),
+        child:FutureBuilder(
           future: getImage(
             context: context,
               imageItems: imageItems,
@@ -346,11 +352,11 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                               var value = imageItems[photoIndex];
                               selectImageCheckDialog(
                                 context: context,
-                                imageUrl: value.url,
+                                imageUrl: value.id,
                                 onSendOK: (){
                                   // Navigator.pop(context);
                                   //       Navigator.pop(context);
-                                  onDiscoverServicesPressed(sendImage:value.url);
+                                  onDiscoverServicesPressed(sendImage:value.id);
                                   // ePaperSend(context: context);
                                 }
                               );
@@ -360,11 +366,11 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                               var value = reverseData[photoIndexR];
                               selectImageCheckDialog(
                                 context: context,
-                                imageUrl: value.url,
+                                imageUrl: value.idR,
                                   onSendOK: (){
                                     // Navigator.pop(context);
                                     //       Navigator.pop(context);
-                                    onDiscoverServicesPressed(sendImage:value.url);
+                                    onDiscoverServicesPressed(sendImage:value.idR);
 
                                     // ePaperSend(context: context);
                                   }
@@ -482,41 +488,6 @@ void selectImageCheckDialog(
   );
 }
 // }
-
-Future<void> ePaperSend({
-  required BuildContext context,
-}) async {
-  // Timer? _timer;
-  // _timer = Timer(Duration(seconds: 3), () {
-  //   if (Navigator.canPop(context)) {
-  //     Navigator.pop(context);
-  //   }
-  // });
-
-  await showDialog(
-    // barrierDismissible:false,//dialog以外の部分をタップしても消えないようにする。
-    context: context,
-    builder: (BuildContext context) {
-      return Center(
-        child:
-        AlertDialog(
-          title: Text('E-paperに配信中',
-              style: TextStyle(
-                fontSize: 20,
-              )),
-          content: Container(
-              width: 30,
-              height: 30,
-              child: Center(
-                child: CircularProgressIndicator(),
-              )),
-
-        ),
-      );
-
-    }
-  );
-}
 
 
 
