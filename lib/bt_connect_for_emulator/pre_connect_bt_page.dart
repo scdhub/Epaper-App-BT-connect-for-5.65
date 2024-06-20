@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:iphone_bt_epaper/pre_devices_data.dart';
-import 'package:iphone_bt_epaper/pre_export_page.dart';
+import 'package:iphone_bt_epaper/bt_connect_for_emulator/pre_devices_data.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import 'app_body_color.dart';
+import '../app_body_color.dart';
+import 'pre_export_page.dart';
 
 class PreConnectBTPage extends StatefulWidget {
   @override

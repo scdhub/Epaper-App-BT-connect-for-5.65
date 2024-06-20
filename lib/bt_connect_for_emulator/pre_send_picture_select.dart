@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/server_delete-image_page.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'export-for-e-paper/server_get-image.dart';
-import 'export-for-e-paper/server_image_delete_check_popup.dart';
-import 'export-for-e-paper/sever_data_bind.dart';
-
+import '../export-for-e-paper/server_get-image.dart';
+import '../export-for-e-paper/server_image_delete_check_popup.dart';
+import '../export-for-e-paper/sever_data_bind.dart';
 
 class PreSendPictureSelect extends StatefulWidget {
 

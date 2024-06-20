@@ -1,20 +1,10 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:iphone_bt_epaper/devices_data.dart';
-import 'package:iphone_bt_epaper/pre_send_picture_select.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:transparent_image/transparent_image.dart';
-import '../appserver.dart';
-
-import '../server_upload/photo-select_page.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../e-paper_info.dart';
-import '../server_upload/select-photo-check_page.dart';
-import 'package:http/http.dart' as http;
-
-import 'app_body_color.dart';
-import 'export-for-e-paper/e_paper_send_picture_page.dart';
+import 'package:iphone_bt_epaper/bt_connect_for_emulator/appserver.dart';
+import 'package:iphone_bt_epaper/bt_connect_for_emulator/pre_devices_data.dart';
+import '../app_body_color.dart';
+import '../export-for-e-paper/e-paper_info.dart';
+import 'pre_send_picture_select.dart';
 
 
 class PreExportPage extends StatefulWidget {
@@ -36,7 +26,7 @@ class _PreExportPageState extends State<PreExportPage> {
   var _selectedIndex = 1;
   var processRate = 0.5;
   E_paperInfo e_paperInfo;
-  List<TrustDevice> trustDevices = [];//信頼済みデバイスデータ格納List
+  List<PreTrustDevice> trustDevices = [];//信頼済みデバイスデータ格納List
 
   _PreExportPageState(): e_paperInfo = E_paperInfo();
 

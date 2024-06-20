@@ -4,7 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:iphone_bt_epaper/devices_data.dart';
 import '../app_body_color.dart';
 import 'e_paper_send_picture_page.dart';
-import '../e-paper_info.dart';
+import 'e-paper_info.dart';
 
 
 class ExportPage extends StatefulWidget {
