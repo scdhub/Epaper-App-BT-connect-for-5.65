@@ -6,6 +6,7 @@ import 'package:transparent_image/transparent_image.dart';
 
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 
+import '../app_body_color.dart';
 import 'crop_photo_select_gridview.dart';
 import 'crop_page.dart';
 
@@ -170,12 +171,14 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
           },
         ),
       ),
-      body: MediasGridView(//画像をgridview表示するクラス
+      body:  CustomPaint(
+        painter: HexagonPainter(),
+        child:MediasGridView(//画像をgridview表示するクラス
         medias: _medias,
         selectedMedias: _selectedMedias,
         selectMedia: _selectMedia,
         scrollController: _scrollController,
-      ),
+      ),),
       floatingActionButton: _selectedMedias.isEmpty
           ? null
           : FloatingActionButton(

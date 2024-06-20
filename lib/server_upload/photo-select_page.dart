@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
+import '../app_body_color.dart';
 import 'select-photo-check_page.dart';
 
 class Media {
@@ -151,7 +152,9 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
           },
         ),
       ),
-      body: MediasGridView(
+      body:   CustomPaint(
+        painter: HexagonPainter(),
+        child:MediasGridView(
         // メディアのアイテムを渡す。
         medias: _medias,
         // 選択した画像のアイテムをりすとgridviewに渡す。
@@ -160,7 +163,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
         selectMedia: _selectMedia,
         // スクロールコントローラーをgridviewに渡す。
         scrollController: _scrollController,
-      ),
+      ),),
       floatingActionButton: _selectedMedias.isEmpty
           ? null
           : FloatingActionButton(

@@ -304,6 +304,7 @@ import 'dart:ui'as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../app_body_color.dart';
 import '../server_upload/select-photo-check_page.dart';
 import 'drawing_color-palette.dart';
 import 'drawing_drawing-space.dart';
@@ -359,7 +360,9 @@ class _DrawingPageState extends State<DrawingPage> {
                 ),
               ],
             ),
-            body: Container(
+            body:  CustomPaint(
+    painter: HexagonPainter(),
+    child:Container(
                 padding: EdgeInsets.fromLTRB(20,20,20,78),
                 child: ClipRect(
                     child:Column(
@@ -393,7 +396,7 @@ class _DrawingPageState extends State<DrawingPage> {
                             ),
                           ),
                         ])
-                )));
+                ))));
   }
   // 描画画面を画像としてキャプチャする
   Future<Uint8List> _capturePng() async {
