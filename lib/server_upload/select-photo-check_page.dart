@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import '../app_body_color.dart';
 import '../bt_connect_page/connect_bt_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -113,6 +114,7 @@ class _SelectCheckState extends State<SelectCheck> {
 
   //ファイルアップロード
   Future<void> postData(List<String?> uploadImages) async {
+
     //保存先URL
     Uri uri = Uri.parse(
         "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url");
@@ -228,35 +230,33 @@ class _SelectCheckState extends State<SelectCheck> {
             // style: TextStyle(fontSize: 20),
           ),
         ),
-        body: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFE1E9FF), Colors.white],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+        body:         CustomPaint(
+    painter: HexagonPainter(),
+    child:
+    Container(
+    width: MediaQuery.of(context).size.width, // 画面の幅に合わせる
+    height: MediaQuery.of(context).size.height, // 画面の高さに合わせるContainer(
+
             child: Column(children: [
               //   選択中の画像を表示
               Container(
                 // color:Colors.greenAccent,
                 width: 300,
                 height: 300,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFE1E9FF), Colors.white],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
                 child: Image.memory(
                   path!,
                 ),
               ),
               Divider(),
               Row(children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30), // ここで角の丸みを指定
+                    color: Colors.grey, // 背景色
+                  ),
+                  child:
                 IconButton(
                   // 押したら画像リストの最初の画像のある部分まで移動する
                   onPressed: () {
@@ -270,17 +270,14 @@ class _SelectCheckState extends State<SelectCheck> {
                     Icons.chevron_left,
                   ),
                 ),
+                ),
                 Expanded(
                     child: Container(
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width,
                   height: 100,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFE1E9FF), Colors.white],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
+                      color: Colors.white38,
+
+                  // color: Colors.white,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     //横にスクロールできるようにする
@@ -298,6 +295,14 @@ class _SelectCheckState extends State<SelectCheck> {
                     },
                   ),
                 )),
+Container(
+  height: 40,
+  width: 40,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(30), // ここで角の丸みを指定
+    color: Colors.grey, // 背景色
+  ),
+  child:
                 IconButton(
                   // 押したら最後の画像がある部分まで移動する
                   onPressed: () {
@@ -307,8 +312,9 @@ class _SelectCheckState extends State<SelectCheck> {
                       curve: Curves.fastOutSlowIn,
                     );
                   },
-                  icon: Icon(Icons.chevron_right),
+                  icon: Icon(Icons.chevron_right,color:Colors.black),
                 ),
+),
               ]),
               Divider(),
 
@@ -371,7 +377,7 @@ class _SelectCheckState extends State<SelectCheck> {
                           ),
                         ]),
                   )),
-            ])));
+            ]))));
   }
 
   // 画面上部表示中の画像のListView内での表示

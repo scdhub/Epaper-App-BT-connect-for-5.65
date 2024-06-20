@@ -56,10 +56,14 @@ class _ExportPageState extends State<ExportPage> {
 
           Padding(
             padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child:Text('接続 E-paper 情報',
+              child:Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white38,
+                  child:Text('接続 E-paper 情報',
                   style: TextStyle(
                     fontSize: 20,
-                  ))),
+                  )))),
               Container(
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -101,10 +105,14 @@ class _ExportPageState extends State<ExportPage> {
               ),
           Padding(
             padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-              child:Text('E-paper規格情報',
+              child:Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white38,
+                  child:Text('E-paper規格情報',
                   style: TextStyle(
                     fontSize: 20,
-                  ))),
+                  )))),
               Container(
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
@@ -159,10 +167,14 @@ class _ExportPageState extends State<ExportPage> {
 
               Padding(
                   padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child:Text('E-paper配信用画像の表示',
+                  child:Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.white38,
+                      child:Text('E-paper配信用画像の表示',
                       style: TextStyle(
                         fontSize: 16,
-                      ))),
+                      )))),
               Container(
                 // color:Colors.white,
                 width: MediaQuery.of(context).size.width,
@@ -218,10 +230,14 @@ class _ExportPageState extends State<ExportPage> {
 
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                  child:Text('このデバイスの登録を解除',
+                  child:Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.white38,
+                      child:Text('このデバイスの登録を解除',
                       style: TextStyle(
                         fontSize: 16,
-                      ))),
+                      )))),
                   Container(
                     // color:Colors.white,
                     width: MediaQuery.of(context).size.width,
