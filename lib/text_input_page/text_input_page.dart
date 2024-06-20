@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 
+import '../app_body_color.dart';
 import '../server_upload/select-photo-check_page.dart';
 import 'text_bold.dart';
 import 'text_color.dart';
@@ -113,7 +114,9 @@ class _TextInputPageState extends State<TextInputPage> {
           // title: const Text('テキストから画像を生成'),
           // backgroundColor: Color(0xFF0080FF),
         ),
-        body: Column(
+        body:  CustomPaint(
+    painter: HexagonPainter(),
+    child:Column(
           children: [
             Center(
               child: Container(
@@ -252,7 +255,7 @@ class _TextInputPageState extends State<TextInputPage> {
             ),
           ],
         ),
-
+        ),
     );
   }
 }
