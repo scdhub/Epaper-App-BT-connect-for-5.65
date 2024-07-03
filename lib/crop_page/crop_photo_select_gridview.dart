@@ -27,7 +27,7 @@ class MediasGridView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 3.0),
       child: GridView.builder(
         controller: scrollController,
-        physics: const BouncingScrollPhysics(),//端まで移動した時、バウンド効果を持たせる
+        physics: const BouncingScrollPhysics(), //端まで移動した時、バウンド効果を持たせる
         itemCount: medias.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
@@ -37,7 +37,7 @@ class MediasGridView extends StatelessWidget {
         itemBuilder: (context, index) => TapAction(
           media: medias[index],
           isSelected: selectedMedias.any((element) =>
-          element.assetEntity.id == medias[index].assetEntity.id),
+              element.assetEntity.id == medias[index].assetEntity.id),
           selectMedia: selectMedia,
         ),
       ),

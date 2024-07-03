@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../drawing_page/drawing_page.dart';
 
-
-
 class DrawingToPage extends StatefulWidget {
+  const DrawingToPage({super.key});
 
   @override
   State<DrawingToPage> createState() => _DrawingToPageState();
@@ -22,7 +21,7 @@ class _DrawingToPageState extends State<DrawingToPage> {
         //   width: 2,
         // ),
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             offset: Offset(2, 5),
             color: Colors.green,
@@ -35,8 +34,8 @@ class _DrawingToPageState extends State<DrawingToPage> {
           style: TextButton.styleFrom(
             foregroundColor: Colors.black,
             // backgroundColor: Colors.greenAccent,
-            side: BorderSide(
-              color:  Colors.greenAccent,
+            side: const BorderSide(
+              color: Colors.greenAccent,
               width: 2,
             ),
             shape: RoundedRectangleBorder(
@@ -46,11 +45,10 @@ class _DrawingToPageState extends State<DrawingToPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      DrawingPage()), //BT接続画面に遷移
+                  builder: (context) => DrawingPage()), //BT接続画面に遷移
             );
           },
-          child: Column(
+          child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -59,15 +57,14 @@ class _DrawingToPageState extends State<DrawingToPage> {
                   size: 50.0,
                   color: Colors.greenAccent,
                 ),
-                Text(
-                  '　絵を描いて\n画像として登録',
+                Text('　絵を描いて\n画像として登録',
                     style: TextStyle(
                       fontFamily: 'NotoSansJP',
                       // fontWeight: FontWeight.w400,//Regular
-                      fontWeight: FontWeight.w500,//Midum
+                      fontWeight: FontWeight.w500, //Midum
                       fontSize: 14,
-                    )
-                ),
+                    )),
               ])),
     );
-  }}
+  }
+}

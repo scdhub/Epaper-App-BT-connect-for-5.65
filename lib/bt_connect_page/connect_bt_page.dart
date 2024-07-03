@@ -6,14 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../app_body_color.dart';
 import '../devices_data.dart';
 import '../export-for-e-paper/export_page.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 
-import '../main.dart';
-import '../top_page/top_page.dart';
-import 'trust-devices_popup.dart';
+// import '../main.dart';
+// import '../top_page/top_page.dart';
+// import 'trust-devices_popup.dart';
 import 'unregistered_device.dart';
 
 class ConnectBTPage extends StatefulWidget {
+  const ConnectBTPage({super.key});
+
   @override
   State<ConnectBTPage> createState() => _ConnectBTPageState();
 }
@@ -25,12 +27,12 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 //スキャンした時のデバイスデータを格納
   List<ScanDevice> scanDevices = [];
 
-//スキャンした時のデバイスデータを格納　
+//スキャンした時のデバイスデータを格納
   List<ScanResult> scanResult = [];
   // スキャンしたデバイス情報を格納
   List<BluetoothDevice> devicesList = [];
 
-   StreamSubscription<List<ScanResult>>? scanResultsSubscription;
+  StreamSubscription<List<ScanResult>>? scanResultsSubscription;
 
   //信頼済みデバイスアプリ終了しても記憶できるように追加
   //データ書き込み
@@ -41,15 +43,20 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
     prefs.setStringList(
       'item',
       value
-          .map((device) => '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
+          .map((device) =>
+              '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
           .toList(),
     );
   }
+
 // String型からBluetoothDeviceに変換。
 // remoteIdからデバイス情報を読み取る
   BluetoothDevice _getDeviceFromAddress(String address) {
-    return BluetoothDevice(remoteId: DeviceIdentifier(address),);
+    return BluetoothDevice(
+      remoteId: DeviceIdentifier(address),
+    );
   }
+
 //データ読み込み
   _restoreValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -75,13 +82,14 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       // var deviceToRemove = trustDevices[index];
-      trustDevices.removeAt(index);//登録済みデバイスリストから除外する。
-      saveStringList(trustDevices);//現時点の登録済みデバイスリストを入れる
+      trustDevices.removeAt(index); //登録済みデバイスリストから除外する。
+      saveStringList(trustDevices); //現時点の登録済みデバイスリストを入れる
       // SharedPreferencesに保存する。
-     prefs.setStringList(
+      prefs.setStringList(
           'item',
           trustDevices
-              .map((device) => '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
+              .map((device) =>
+                  '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
               .toList());
     });
   }
@@ -99,16 +107,14 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
   //下記bluetooth有効の確認を入れないと最初のスキャンで、デバイスをスキャンしない。
   void initBluetooth() async {
-
     // Bluetooth が有効かチェック
-    var isOn = await FlutterBluePlus.adapterState.first == BluetoothAdapterState.on;
+    var isOn =
+        await FlutterBluePlus.adapterState.first == BluetoothAdapterState.on;
     if (!isOn) {
       // Bluetooth を有効にするようにユーザーに促す
       await FlutterBluePlus.turnOn();
     }
-
   }
-
 
   void deviceScan() {
     // スキャンを開始する前にリストをクリア
@@ -116,7 +122,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
     devicesList.clear();
 
     // BLEデバイスをスキャン
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 30));
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 30));
     // deviceScanResult();
     // スキャンした結果を格納していく
     scanResultsSubscription = FlutterBluePlus.scanResults.listen((results) {
@@ -125,28 +131,30 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       // scanResult = results;
       devicesList = results.map((r) => r.device).toList();
       // スキャン結果を反映
-      scanDevices = devicesList.map((device) =>
-          ScanDevice(scanName: device.platformName,
+      scanDevices = devicesList
+          .map((device) => ScanDevice(
+              scanName: device.platformName,
               scanIpAddress: device.remoteId.toString(),
-              scanDevicesData: device)
-      ).toList();
+              scanDevicesData: device))
+          .toList();
       if (mounted) {
         setState(() {
           // スキャンした情報を格納する
           // scanResult = results;
           devicesList = results.map((r) => r.device).toList();
           // スキャン結果を反映
-          scanDevices = devicesList.map((device) =>
-              ScanDevice(scanName: device.platformName,
+          scanDevices = devicesList
+              .map((device) => ScanDevice(
+                  scanName: device.platformName,
                   scanIpAddress: device.remoteId.toString(),
-                  scanDevicesData: device)
-          ).toList();
+                  scanDevicesData: device))
+              .toList();
           isScanning = true;
         });
       }
     });
     //30s経ったら スキャンを停止する
-    Future.delayed(Duration(seconds: 30)).then((_) {
+    Future.delayed(const Duration(seconds: 30)).then((_) {
       if (mounted) {
         setState(() {
           isScanning = false;
@@ -155,7 +163,6 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       FlutterBluePlus.stopScan();
     });
   }
-
 
   void _addTrustDevice(ScanDevice device) {
     setState(() {
@@ -166,7 +173,6 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       ));
       scanDevices.remove(device);
       saveStringList(trustDevices);
-
     });
   }
 
@@ -184,175 +190,175 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.popUntil(context, (Route<dynamic> route) => route.isFirst);
-
+              Navigator.popUntil(
+                  context, (Route<dynamic> route) => route.isFirst);
             }),
-        title: Text(
+        title: const Text(
           'E ink E-paper',
         ),
       ),
       body: CustomPaint(
         painter: HexagonPainter(),
-    child:Container(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(50),
-              child: ElevatedButton(
-                child: Container(
-                  width: 170,
-                  child: Row(children: [
-                    isScanning
-                        ? Container(
-                            color: Colors.blueGrey,
-                            width: 10,
-                            height: 10,
-                          )
-                        : Icon(Icons.restart_alt),
-                    SizedBox(width: 10),
-                    Text(isScanning ? 'スキャン停止' : 'スキャン開始',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ))
-                  ]),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isScanning ? Colors.redAccent : Colors.grey,
-                  elevation: 10,
-                  //境界線の幅を設定。
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 2,
-                  ),
-                  //ボタンの形状設定。角を丸めた長方形。
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: () {
-                  setState(() {
-                    if(isScanning){
-                      stopScan();
-                    }else{
-                      deviceScan();
-                    }
-                    // isScanning = !isScanning;
-                  });
-
-                },
-              ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white38,
-              child:
-              Text('登録済みデバイス',
-                  style: TextStyle(
-                    fontSize: 20,
-                  )),
-            ),
-            Container(
-              height: 250,
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,// 縦方向のスクロール
-                itemCount: trustDevices.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: 50,
-                    margin: EdgeInsets.all(5),
-                    alignment: Alignment.center,
-                    // width: double.infinity,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.rectangle,//長方形
-                      border: Border.all(
-                        color: Colors.black12,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(0, 5),
-                          color: Colors.grey,
-                        ),
-                      ],
+        child: Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(50),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        isScanning ? Colors.redAccent : Colors.grey,
+                    elevation: 10,
+                    //境界線の幅を設定。
+                    side: const BorderSide(
+                      color: Colors.black,
+                      width: 2,
                     ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 50,
+                    //ボタンの形状設定。角を丸めた長方形。
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (isScanning) {
+                        stopScan();
+                      } else {
+                        deviceScan();
+                      }
+                      // isScanning = !isScanning;
+                    });
+                  },
+                  child: SizedBox(
+                    width: 170,
+                    child: Row(children: [
+                      isScanning
+                          ? Container(
+                              color: Colors.blueGrey,
+                              width: 10,
+                              height: 10,
+                            )
+                          : const Icon(Icons.restart_alt),
+                      const SizedBox(width: 10),
+                      Text(isScanning ? 'スキャン停止' : 'スキャン開始',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ))
+                    ]),
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white38,
+                child: const Text('登録済みデバイス',
+                    style: TextStyle(
+                      fontSize: 20,
+                    )),
+              ),
+              SizedBox(
+                height: 250,
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical, // 縦方向のスクロール
+                  itemCount: trustDevices.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      height: 50,
+                      margin: const EdgeInsets.all(5),
+                      alignment: Alignment.center,
+                      // width: double.infinity,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.rectangle, //長方形
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0, 5),
+                            color: Colors.grey,
                           ),
-                          Expanded(
-                          child:Column(children: [
-                            Text(trustDevices[index].trustName.isEmpty
-                                ?'デバイス名　不明'
-                                :trustDevices[index].trustName,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                        ],
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const SizedBox(
+                              width: 50,
                             ),
-                            Text(
-                              trustDevices[index].trustIpAddress,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ]),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  // 選択したデバイス名の情報を配信確認画面に渡す。
-                                  builder: (context) => ExportPage(
-                                    trustName: trustDevices[index].trustName,
-                                    trustIpAddress:
-                                        trustDevices[index].trustIpAddress,
-                                    trustDevice: trustDevices[index].devicesData,
-                                    onDelete: () => _removeCounterValue(index),
+                            Expanded(
+                              child: Column(children: [
+                                Text(
+                                  trustDevices[index].trustName.isEmpty
+                                      ? 'デバイス名　不明'
+                                      : trustDevices[index].trustName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  trustDevices[index].trustIpAddress,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                              );
-                            },
-                            icon: Icon(Icons.info_outline_rounded),
-                          ),
-                        ]),
-                    // ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white38,
-              child:
-              Text('未登録デバイス',
-                style: TextStyle(
-                  fontSize: 20,
+                              ]),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    // 選択したデバイス名の情報を配信確認画面に渡す。
+                                    builder: (context) => ExportPage(
+                                      trustName: trustDevices[index].trustName,
+                                      trustIpAddress:
+                                          trustDevices[index].trustIpAddress,
+                                      trustDevice:
+                                          trustDevices[index].devicesData,
+                                      onDelete: () =>
+                                          _removeCounterValue(index),
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.info_outline_rounded),
+                            ),
+                          ]),
+                      // ),
+                    );
+                  },
                 ),
               ),
-            ),
-            UnregisteredDevice(
+              const SizedBox(height: 10),
+              Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white38,
+                child: const Text(
+                  '未登録デバイス',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              UnregisteredDevice(
                 scanDevices: scanDevices,
                 trustDevices: trustDevices,
-              addTrustDevice: _addTrustDevice,
-            ),
-          ],
+                addTrustDevice: _addTrustDevice,
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
 }
-
-
-

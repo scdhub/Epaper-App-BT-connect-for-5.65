@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../import_type_select_page/import-type-select_popup.dart';
 
 class ImportTypeSelectToPopup extends StatefulWidget {
+  const ImportTypeSelectToPopup({super.key});
+
   @override
   State<ImportTypeSelectToPopup> createState() =>
       _ImportTypeSelectToPopupState();
@@ -14,7 +16,7 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
       decoration: BoxDecoration(
         color: Colors.white60,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             offset: Offset(2, 5),
             color: Colors.blueGrey,
@@ -28,7 +30,7 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
             foregroundColor: Colors.black,
             // backgroundColor: Colors.blueGrey,
             backgroundColor: Colors.white,
-            side: BorderSide(
+            side: const BorderSide(
               color: Colors.blueGrey,
               width: 2,
             ),
@@ -38,10 +40,10 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (context) => ImageTypeSelection_popup(),
+              builder: (context) => const ImageTypeSelection_popup(),
             );
           },
-          child: Column(
+          child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

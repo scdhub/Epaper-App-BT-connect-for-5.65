@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'drawing_canvas-area.dart';
+
 class DrawingSpace extends StatefulWidget {
   final int selectedRadio;
-  DrawingSpace({required this.selectedRadio});
+  const DrawingSpace({super.key, required this.selectedRadio});
   @override
-  _DrawingSpaceState createState() => _DrawingSpaceState();
+  State<DrawingSpace> createState() => _DrawingSpaceState();
 }
 
 class _DrawingSpaceState extends State<DrawingSpace> {
@@ -17,8 +18,7 @@ class _DrawingSpaceState extends State<DrawingSpace> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          CanvasArea(
-              changeThickness:penThickness),
+          CanvasArea(changeThickness: penThickness),
         ],
       ),
     );

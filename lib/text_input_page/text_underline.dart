@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 var _isChecked = false;
 
 class TextUnderLine extends StatefulWidget {
+  const TextUnderLine({super.key});
+
   @override
-  _TextUnderLineState createState() => _TextUnderLineState();
+  State<TextUnderLine> createState() => _TextUnderLineState();
 }
 
 class _TextUnderLineState extends State<TextUnderLine> {
@@ -14,10 +16,10 @@ class _TextUnderLineState extends State<TextUnderLine> {
     return Container(
       // color:Colors.yellow,
       height: 40,
-      padding:EdgeInsets.fromLTRB(0, 0, 5, 0),
+      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
       child: Transform.scale(
         scale: 1.0,
-        child:Row(children: [
+        child: Row(children: [
           Checkbox(
             value: _isChecked,
             onChanged: (newValue) {
@@ -27,12 +29,13 @@ class _TextUnderLineState extends State<TextUnderLine> {
             },
           ),
           // AutoSizeText('下線', // TextをAutoSizeTextに変更する
-              Text('下線', // TextをAutoSizeTextに変更する
+          const Text(
+            '下線', // TextをAutoSizeTextに変更する
             // minFontSize: 6, // 最小のフォントサイズを指定する
             maxLines: 1, // 最大の行数を指定する
             style: TextStyle(fontSize: 12, color: Colors.black),
-          ),]
-        ),
+          ),
+        ]),
       ),
     );
   }

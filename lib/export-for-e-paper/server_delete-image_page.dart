@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ServerImageDelGridView extends StatelessWidget {
-
   final List<dynamic> imageItems;
   final List<dynamic> selectedMedias;
   final Function(dynamic) selectMedia;
@@ -10,14 +9,14 @@ class ServerImageDelGridView extends StatelessWidget {
   final bool gridReverse;
   final List<dynamic> delImageDataList;
 
-
   const ServerImageDelGridView({
     super.key,
     required this.imageItems,
     required this.selectedMedias,
     required this.selectMedia,
     required this.scrollController,
-    required this.gridReverse, required this.delImageDataList,
+    required this.gridReverse,
+    required this.delImageDataList,
   });
 
   @override
@@ -27,20 +26,19 @@ class ServerImageDelGridView extends StatelessWidget {
       child: GridView.builder(
         controller: scrollController,
         physics: const BouncingScrollPhysics(),
-        itemCount:imageItems.length,
+        itemCount: imageItems.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 1.0,
           crossAxisSpacing: 1.0,
         ),
         itemBuilder: (context, index) => DeleteItem(
-
-          media: imageItems[index],
-          isSelected: selectedMedias.any((element) =>
-          element.url == imageItems[index].url || element.url == imageItems[index].url),
-          selectMedia: selectMedia,
-            gridReverse:gridReverse
-        ),
+            media: imageItems[index],
+            isSelected: selectedMedias.any((element) =>
+                element.url == imageItems[index].url ||
+                element.url == imageItems[index].url),
+            selectMedia: selectMedia,
+            gridReverse: gridReverse),
       ),
     );
   }
@@ -53,6 +51,7 @@ class DeleteItem extends StatelessWidget {
   final Function(dynamic) selectMedia;
 
   const DeleteItem({
+    super.key,
     required this.media,
     required this.isSelected,
     required this.selectMedia,
@@ -63,33 +62,33 @@ class DeleteItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       // メディアがタップされたときのコールバック関数
-      onTap: () => gridReverse?selectMedia(media):selectMedia(media),
+      onTap: () => gridReverse ? selectMedia(media) : selectMedia(media),
       child: Stack(
         children: [
           // メディアウィジェットをオプションのパディングと共に表示
           _buildMediaWidget(),
           // メディアが選択されている場合、選択オーバーレイを表示
-           isSelected ? _buildIsSelectedOverlay() : SizedBox.shrink(),
+          isSelected ? _buildIsSelectedOverlay() : const SizedBox.shrink(),
         ],
       ),
     );
   }
+
 // 画像を選択した時に、画像の周りにpaddingを設ける
   Widget _buildMediaWidget() {
     return Positioned.fill(
       child: Padding(
-        padding:EdgeInsets.all(isSelected ? 10.0 : 0.0),
+        padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[300]!, width: 1),
-
           ),
           child: Center(
             child: FadeInImage.memoryNetwork(
               placeholder: kTransparentImage,
               // image: gridReverse ? media.url : media.url,
               image: media.url,
-              ),
+            ),
           ),
         ),
       ),
@@ -112,4 +111,3 @@ class DeleteItem extends StatelessWidget {
     );
   }
 }
-

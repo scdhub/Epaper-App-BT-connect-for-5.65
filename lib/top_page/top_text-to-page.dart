@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../text_input_page/text_input_page.dart';
 
-
 class TextToPage extends StatefulWidget {
+  const TextToPage({super.key});
 
   @override
   State<TextToPage> createState() => _TextToPageState();
@@ -21,7 +21,7 @@ class _TextToPageState extends State<TextToPage> {
         //   width: 2,
         // ),
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             offset: Offset(4, 5),
             color: Colors.redAccent,
@@ -41,11 +41,10 @@ class _TextToPageState extends State<TextToPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      TextInputPage()), //BT接続画面に遷移
+                  builder: (context) => TextInputPage()), //BT接続画面に遷移
             );
           },
-          child: Column(
+          child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -54,15 +53,14 @@ class _TextToPageState extends State<TextToPage> {
                   size: 50.0,
                   color: Colors.redAccent,
                 ),
-                Text(
-                  '文字を入力して\n画像として登録',
+                Text('文字を入力して\n画像として登録',
                     style: TextStyle(
                       fontFamily: 'NotoSansJP',
                       // fontWeight: FontWeight.w400,//Regular
-                      fontWeight: FontWeight.w500,//Midum
+                      fontWeight: FontWeight.w500, //Midum
                       fontSize: 14,
-                    )
-                ),
+                    )),
               ])),
     );
-  }}
+  }
+}

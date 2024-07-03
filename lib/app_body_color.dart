@@ -1,5 +1,3 @@
-
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -9,12 +7,14 @@ class HexagonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // グラデーション設定。
-    final Gradient gradient = LinearGradient(
-      colors: [Colors.white, Colors.black],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      stops: [0.1,1.0,]
-    );
+    const Gradient gradient = LinearGradient(
+        colors: [Color.fromARGB(255, 217, 217, 217), Colors.black],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        stops: [
+          0.1,
+          1.0,
+        ]);
 
     // 着色定義
     final paint = Paint()
@@ -25,7 +25,7 @@ class HexagonPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     // 正六角形のサイズ
-    final double radius = 10.0;
+    const double radius = 10.0;
     // 正六角形の辺の長さ
     final double sideLength = radius * sqrt(3);
     // 正六角形の高さ
@@ -35,8 +35,8 @@ class HexagonPainter extends CustomPainter {
 
     // 画面全体に正六角形を描画する
     for (double y = 0; y < size.height; y += hexHeight * 0.59) {
-
-      double offsetX = y % (hexHeight * 1.17) < hexHeight * 0.59 ? 0 : hexWidth / 2;
+      double offsetX =
+          y % (hexHeight * 1.17) < hexHeight * 0.59 ? 0 : hexWidth / 2;
       for (double x = 0; x < size.width; x += hexWidth) {
         drawHexagon(canvas, paint, x + offsetX, y, radius);
       }
@@ -44,7 +44,8 @@ class HexagonPainter extends CustomPainter {
   }
 
   // 正六角形を描画するメソッド
-  void drawHexagon(Canvas canvas, Paint paint, double centerX, double centerY, double radius) {
+  void drawHexagon(Canvas canvas, Paint paint, double centerX, double centerY,
+      double radius) {
     final path = Path();
     for (int i = 0; i < 6; i++) {
       // 正六角形の各頂点の角度

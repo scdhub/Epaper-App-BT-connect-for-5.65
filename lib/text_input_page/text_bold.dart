@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 var _isChecked = false;
 
 class TextBold extends StatefulWidget {
+  const TextBold({super.key});
+
   @override
-  _TextBoldState createState() => _TextBoldState();
+  State<TextBold> createState() => _TextBoldState();
 }
 
 class _TextBoldState extends State<TextBold> {
@@ -14,13 +16,11 @@ class _TextBoldState extends State<TextBold> {
     return Container(
         width: 80,
         height: 80,
-
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: Transform.scale(
           // scale: 0.8,
           scale: 1.0,
-          child:
-          Row(children: [
+          child: Row(children: [
             Checkbox(
               value: _isChecked,
               onChanged: (newValue) {
@@ -28,11 +28,11 @@ class _TextBoldState extends State<TextBold> {
                   _isChecked = newValue!;
                 });
               },
-
             ),
             // ４つ並びにするためにサイズ調整
             // AutoSizeText('太字', // TextをAutoSizeTextに変更する
-                Text('太字', // TextをAutoSizeTextに変更する
+            const Text(
+              '太字', // TextをAutoSizeTextに変更する
               // minFontSize: 6, // 最小のフォントサイズを指定する
               maxLines: 1, // 最大の行数を指定する
 

@@ -33,6 +33,7 @@ class DateSort {
   DateSort({required this.idD, required this.url, required this.lastModifiedD})
       : imageWidgetD = Image.network(url);
 }
+
 //サーバーデータ削除　用
 class DelData {
   final String idDel;
@@ -40,6 +41,7 @@ class DelData {
   final String lastModifiedDel;
   final Widget imageWidgetDel;
 
-  DelData({required this.idDel, required this.url, required this.lastModifiedDel})
+  DelData(
+      {required this.idDel, required this.url, required this.lastModifiedDel})
       : imageWidgetDel = Image.network(url);
 }

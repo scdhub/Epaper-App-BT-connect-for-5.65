@@ -6,7 +6,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-
 import '../app_body_color.dart';
 import '../server_upload/select-photo-check_page.dart';
 import 'text_bold.dart';
@@ -33,8 +32,10 @@ import 'text_underline.dart';
 // import 'text_ExportForm.dart';
 
 class TextInputPage extends StatefulWidget {
+  const TextInputPage({super.key});
+
   @override
-  _TextInputPageState createState() => _TextInputPageState();
+  State<TextInputPage> createState() => _TextInputPageState();
 }
 
 class _TextInputPageState extends State<TextInputPage> {
@@ -67,12 +68,13 @@ class _TextInputPageState extends State<TextInputPage> {
     });
   }
 
-  Offset position = Offset(0, 0); // 初期位置
-  Timer? _timer;
+  Offset position = const Offset(0, 0); // 初期位置
+  // Timer? _timer;
 
-  GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _globalKey = GlobalKey();
   Future<Uint8List> _capturePng() async {
-    RenderRepaintBoundary boundary = _globalKey.currentContext?.findRenderObject()as RenderRepaintBoundary;
+    RenderRepaintBoundary boundary =
+        _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
@@ -80,9 +82,11 @@ class _TextInputPageState extends State<TextInputPage> {
     }
     return byteData.buffer.asUint8List();
   }
+
   void _saveAndNavigate() async {
     Uint8List imageBytes = await _capturePng();
     var imagesBytes = [imageBytes];
+    // ignore: use_build_context_synchronously
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => SelectCheck(imageData: imagesBytes),
@@ -92,37 +96,41 @@ class _TextInputPageState extends State<TextInputPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, /*color: Colors.white*/),
-            onPressed: () => Navigator.of(context).pop(),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back, /*color: Colors.white*/
           ),
-          title: Text(
-            'テキストから画像を生成',
-            // style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.check_outlined, /*color: Colors.white*/),
-              onPressed: () {
-                // 入力した文字をインポート画面に渡せるようにコード修正必要。
-                _saveAndNavigate();
-              },
-            ),
-          ],
-          // title: const Text('テキストから画像を生成'),
-          // backgroundColor: Color(0xFF0080FF),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        body:  CustomPaint(
-    painter: HexagonPainter(),
-    child:Column(
+        title: const Text(
+          'テキストから画像を生成',
+          // style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.check_outlined, /*color: Colors.white*/
+            ),
+            onPressed: () {
+              // 入力した文字をインポート画面に渡せるようにコード修正必要。
+              _saveAndNavigate();
+            },
+          ),
+        ],
+        // title: const Text('テキストから画像を生成'),
+        // backgroundColor: Color(0xFF0080FF),
+      ),
+      body: CustomPaint(
+        painter: HexagonPainter(),
+        child: Column(
           children: [
             Center(
               child: Container(
-                color: Color(0xFFE0E0E0),
+                color: const Color(0xFFE0E0E0),
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height/3,
+                height: MediaQuery.of(context).size.height / 3,
                 child: Column(
                   children: <Widget>[
                     Row(
@@ -140,31 +148,29 @@ class _TextInputPageState extends State<TextInputPage> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          TextFonts(),//選んだフォントを文字に反映できるように修正する必要がある
-                          TextBold(),//文字に太文字を反映できるように修正する必要がある
-                          TextItalic(),//文字にイタリックな設定を反映できるように修正する必要がある
-                          TextUnderLine(),//文字に下線引けるように反映できるように修正する必要がある
+                          const TextFonts(), //選んだフォントを文字に反映できるように修正する必要がある
+                          const TextBold(), //文字に太文字を反映できるように修正する必要がある
+                          TextItalic(), //文字にイタリックな設定を反映できるように修正する必要がある
+                          TextUnderLine(), //文字に下線引けるように反映できるように修正する必要がある
                         ]),
                     Transform.scale(
                         scale: 1.0,
-                        child: Container(
-                            child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    '文字色:',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black),
-                                  ),
-                                  TextColor(),
-                                  Text(
-                                    '文字サイズ:',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black),
-                                  ),
-                                  TextFontSize(),
-                                ]))),
+                        child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                '文字色:',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
+                              ),
+                              TextColor(),
+                              Text(
+                                '文字サイズ:',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.black),
+                              ),
+                              TextFontSize(),
+                            ])),
 
                     // 今のところ、押すと画像不一致エラーが出るように設定。
                     // 後で、画像選択画面に遷移して、画像を選択して、エラーが出るように設定。
@@ -223,39 +229,38 @@ class _TextInputPageState extends State<TextInputPage> {
               ),
             ),
             RepaintBoundary(
-            key: _globalKey,
-            child:
-            Container(
-                color: Colors.grey,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height/2,
+              key: _globalKey,
+              child: Container(
+                  color: Colors.grey,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: GestureDetector(
+                    // _text1～４の入力した文字がすべて同時に動くため、_text単体で動くように修正が必要。
+                    dragStartBehavior: DragStartBehavior.down,
+                    onPanUpdate: (details) {
+                      position = details.localPosition; // ローカル座標を更新
+                      setState(() {});
+                    },
 
-                child: GestureDetector(
-                  // _text1～４の入力した文字がすべて同時に動くため、_text単体で動くように修正が必要。
-                  dragStartBehavior: DragStartBehavior.down,
-                  onPanUpdate: (details) {
-                    position = details.localPosition; // ローカル座標を更新
-                    setState(() {});
-                  },
-
-                  child: Stack(
-                    children: <Widget>[
-                      Positioned(//入力始めは、特定の座標にて表示するようにする
-                          left: position.dx,
-                          top: position.dy,
-                          child: Column(children: [
-                            TextExportForm(todoList: _text1),
-                            TextExportForm(todoList: _text2),
-                            TextExportForm(todoList: _text3),
-                            TextExportForm(todoList: _text4),
-                          ])),
-                    ],
-                  ),
-                )),
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned(
+                            //入力始めは、特定の座標にて表示するようにする
+                            left: position.dx,
+                            top: position.dy,
+                            child: Column(children: [
+                              TextExportForm(todoList: _text1),
+                              TextExportForm(todoList: _text2),
+                              TextExportForm(todoList: _text3),
+                              TextExportForm(todoList: _text4),
+                            ])),
+                      ],
+                    ),
+                  )),
             ),
           ],
         ),
-        ),
+      ),
     );
   }
 }

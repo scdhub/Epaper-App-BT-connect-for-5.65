@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import '../bt_connect_page/connect_bt_page.dart';
-import '../bt_connect_for_emulator/pre_connect_bt_page.dart';
+// import '../bt_connect_for_emulator/pre_connect_bt_page.dart';
 
 class BlueToothConnectToPage extends StatefulWidget {
+  const BlueToothConnectToPage({super.key});
 
   @override
   State<BlueToothConnectToPage> createState() => _BlueToothConnectToPageState();
@@ -12,6 +12,7 @@ class BlueToothConnectToPage extends StatefulWidget {
 class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
   @override
   Widget build(BuildContext context) {
+    const data = '　BTスキャン &\nE-paper配信関連';
     return Container(
       decoration: BoxDecoration(
         // shape: BoxShape.rectangle,
@@ -21,12 +22,12 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
         //   width: 2,
         // ),
         borderRadius: BorderRadius.circular(15),
-      boxShadow: [
-        BoxShadow(
-          offset: Offset(2, 5),
-          color: Colors.blue,
-        ),
-      ],
+        boxShadow: const [
+          BoxShadow(
+            offset: Offset(2, 5),
+            color: Colors.blue,
+          ),
+        ],
       ),
       width: 150,
       height: 150,
@@ -35,7 +36,7 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
             // elevation: 10,
             foregroundColor: Colors.black,
             // backgroundColor: Colors.white,
-            side: BorderSide(
+            side: const BorderSide(
               color: Colors.blueAccent,
               width: 2,
             ),
@@ -55,26 +56,23 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ConnectBTPage()), //BT接続画面に遷移
+                  builder: (context) => const ConnectBTPage()), //BT接続画面に遷移
             );
           },
-          child: Column(
+          child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.bluetooth_outlined,
                   size: 50.0,
-                   color: Colors.blueAccent,
+                  color: Colors.blueAccent,
                 ),
-                Text(
-                  '　BTスキャン &\nE-paper配信関連',
-
+                Text(data,
                     style: TextStyle(
-                    fontSize: 12,
-                )
-                ),
+                      fontSize: 12,
+                    )),
               ])),
     );
-  }}
+  }
+}

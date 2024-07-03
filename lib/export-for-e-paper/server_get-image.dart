@@ -15,14 +15,14 @@ Future<void> getImage({
 }) async {
   //awsサーバーからデータを読み取る
   Uri uri = Uri.parse(
-    // "https://uvky3v6bmi.execute-api.ap-northeast-1.amazonaws.com/dev/images");
+      // "https://uvky3v6bmi.execute-api.ap-northeast-1.amazonaws.com/dev/images");
       "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/images");
   final headers = {'x-api-key': dotenv.get('API_KEY')};
   try {
     // //サーバーからデータを読み取る
     final response = await http.get(uri, headers: headers).timeout(
-      Duration(seconds: 60),
-    );
+          const Duration(seconds: 60),
+        );
     if (response.statusCode == 200) {
       // httpレスポンスをJSON変換
       final body = jsonDecode(response.body);
@@ -55,8 +55,7 @@ Future<void> getImage({
             idR: item.id, url: item.url, lastModifiedR: item.lastModified));
       }
     }
-  }
-  catch(e){
+  } catch (e) {
     missAppSeverMessage(context);
   }
 }

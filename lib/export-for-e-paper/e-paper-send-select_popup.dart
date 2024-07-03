@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../bt_connect_page/connect_bt_page.dart';
 
-class EpaperSendSelect extends StatefulWidget{
+class EpaperSendSelect extends StatefulWidget {
+  const EpaperSendSelect({super.key});
+
   @override
-  _EpaperSendSelectState createState() => _EpaperSendSelectState();
+  State<EpaperSendSelect> createState() => _EpaperSendSelectState();
 }
 
-class _EpaperSendSelectState extends State<EpaperSendSelect>{
-
+class _EpaperSendSelectState extends State<EpaperSendSelect> {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
-      title: Text('E-paperに送信しますか？'),
-
+      title: const Text('E-paperに送信しますか？'),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -21,11 +21,11 @@ class _EpaperSendSelectState extends State<EpaperSendSelect>{
         ),
         TextButton(
           onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>  ConnectBTPage()),
-              );
-            },
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ConnectBTPage()),
+            );
+          },
           child: const Text('OK'),
         ),
       ],

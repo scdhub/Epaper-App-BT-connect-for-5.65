@@ -299,7 +299,7 @@
 // //------------------------------------------------------------------------------
 
 import 'dart:typed_data';
-import 'dart:ui'as ui;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -310,12 +310,14 @@ import 'drawing_color-palette.dart';
 import 'drawing_drawing-space.dart';
 
 class DrawingPage extends StatefulWidget {
+  const DrawingPage({super.key});
+
   @override
-  _DrawingPageState createState() => _DrawingPageState();
+  State<DrawingPage> createState() => _DrawingPageState();
 }
 
 class _DrawingPageState extends State<DrawingPage> {
-  final GlobalKey canvasKey = GlobalKey();//画像をキャプチャするため
+  final GlobalKey canvasKey = GlobalKey(); //画像をキャプチャするため
 
   int selectedRadio = 0;
   double penThickness = 5;
@@ -325,83 +327,85 @@ class _DrawingPageState extends State<DrawingPage> {
       ColorPath.paths.clear();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    _resetDrawing();
-                    Navigator.of(context).pop();
-                  }),
-              title: Text(
-                'ペイント',
-                style: TextStyle(fontSize: 20, ),
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.check_outlined),
-                  onPressed: () async {
-                    // // 画像をキャプチャしUint8Listに変換
-                    Uint8List imageByte = await _capturePng();
-                    List<Uint8List> imageBytes = [imageByte];
-                    // 新しいページに画像データを渡す
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                        // SelectCheck(imageData:imageBytes),
-                        SelectCheck(imageData:imageBytes),
-                      ),
-                    );
-                  },
-                ),
-              ],
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                _resetDrawing();
+                Navigator.of(context).pop();
+              }),
+          title: const Text(
+            'ペイント',
+            style: TextStyle(
+              fontSize: 20,
             ),
-            body:  CustomPaint(
-    painter: HexagonPainter(),
-    child:Container(
-                padding: EdgeInsets.fromLTRB(20,20,20,78),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check_outlined),
+              onPressed: () async {
+                // // 画像をキャプチャしUint8Listに変換
+                Uint8List imageByte = await _capturePng();
+                List<Uint8List> imageBytes = [imageByte];
+                // 新しいページに画像データを渡す
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        // SelectCheck(imageData:imageBytes),
+                        SelectCheck(imageData: imageBytes),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: CustomPaint(
+            painter: HexagonPainter(),
+            child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 78),
                 child: ClipRect(
-                    child:Column(
-                        children:[
-                          RepaintBoundary(
-                              key: canvasKey,
-                              child: Container(
-                                child: Stack(
-                                    alignment: Alignment.bottomCenter,
-                                    // child:
-                                    children: [
-                                      ColorPalette(
-                                          notifier: ColorPaletteNotifier(),
-                                          child: RepaintBoundary(
-                                            child:SizedBox(
-                                              height:(MediaQuery.of(context).size.height/1.4) , // 画面の高さに合わせる
-                                              child:DrawingSpace(selectedRadio:selectedRadio),
-
-                                            ),
-                                          )),
-                                    ]),
-                              )),
-                          Container(
-                            color: Colors.greenAccent,
-                            width:MediaQuery.of(context).size.width,
-                            height:(MediaQuery.of(context).size.height/12),
-                            child: ColorPalette(
-                              notifier: ColorPaletteNotifier(),
-                              // child: RepaintBoundary(
-                              child:ColorPaletteSelect(selectedRadio:selectedRadio),
-                            ),
-                          ),
-                        ])
-                ))));
+                    child: Column(children: [
+                  RepaintBoundary(
+                      key: canvasKey,
+                      child: Stack(
+                          alignment: Alignment.bottomCenter,
+                          // child:
+                          children: [
+                            ColorPalette(
+                                notifier: ColorPaletteNotifier(),
+                                child: RepaintBoundary(
+                                  child: SizedBox(
+                                    height:
+                                        (MediaQuery.of(context).size.height /
+                                            1.4), // 画面の高さに合わせる
+                                    child: DrawingSpace(
+                                        selectedRadio: selectedRadio),
+                                  ),
+                                )),
+                          ])),
+                  Container(
+                    color: Colors.greenAccent,
+                    width: MediaQuery.of(context).size.width,
+                    height: (MediaQuery.of(context).size.height / 12),
+                    child: ColorPalette(
+                      notifier: ColorPaletteNotifier(),
+                      // child: RepaintBoundary(
+                      child: ColorPaletteSelect(selectedRadio: selectedRadio),
+                    ),
+                  ),
+                ])))));
   }
+
   // 描画画面を画像としてキャプチャする
   Future<Uint8List> _capturePng() async {
     RenderRepaintBoundary boundary =
-    canvasKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+        canvasKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData != null) {
@@ -413,76 +417,68 @@ class _DrawingPageState extends State<DrawingPage> {
 
 class ColorPaletteSelect extends StatefulWidget {
   final int selectedRadio;
-  ColorPaletteSelect({required this.selectedRadio});
+  ColorPaletteSelect({super.key, required this.selectedRadio});
   @override
-  _ColorPaletteSelect createState() => _ColorPaletteSelect();
+  State<ColorPaletteSelect> createState() => _ColorPaletteSelect();
 }
 
 class _ColorPaletteSelect extends State<ColorPaletteSelect> {
-  double _circleWidth = 45;
+  final double _circleWidth = 45;
 
   @override
   Widget build(BuildContext context) {
     final colorPalette = ColorPalette.of(context);
     return Container(
       color: Colors.orange,
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: MediaQuery.of(context).size.width,
       height: 60,
-      child:
-      Padding(
-        padding: EdgeInsets.all(8),
+      child: Padding(
+        padding: const EdgeInsets.all(8),
         child: Align(
           alignment: Alignment.bottomRight,
           child:
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                for (var i = 0; i < colorPalette.colors.length; i++)
-                  GestureDetector(
-                    onTap: (){
-                      colorPalette.setSelectedColor(i);
-                    },
-
-                    child: Container(
-                      width: _circleWidth,
-                      height: _circleWidth,
-                      transformAlignment: Alignment.center,
-                      // transform: selected ? _transform : null,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        // color: ColorHelper.hueToColor(index),
-                        color: colorPalette.colors[i],
-                        border: Border.all(
-                          color: Colors.black54,
-                          width: 6,
-                        ),
-                      ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            for (var i = 0; i < colorPalette.colors.length; i++)
+              GestureDetector(
+                onTap: () {
+                  colorPalette.setSelectedColor(i);
+                },
+                child: Container(
+                  width: _circleWidth,
+                  height: _circleWidth,
+                  transformAlignment: Alignment.center,
+                  // transform: selected ? _transform : null,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    // color: ColorHelper.hueToColor(index),
+                    color: colorPalette.colors[i],
+                    border: Border.all(
+                      color: Colors.black54,
+                      width: 6,
                     ),
                   ),
-              ]),
+                ),
+              ),
+          ]),
         ),
       ),
     );
   }
 }
 
-
-
 class ColorPath {
   final Path path = Path();
   final Color color;
   final double strokeWidth;
 
-  ColorPath(this.color,this.strokeWidth);
+  ColorPath(this.color, this.strokeWidth);
 
   static List<ColorPath> paths = [];
   // ドローイングの開始点を設定
   void setFirstPoint(Offset point) {
     path.moveTo(point.dx, point.dy);
   }
+
   // パスに新しい点を追加
   void updatePath(Offset point) {
     path.lineTo(point.dx, point.dy);
@@ -491,21 +487,19 @@ class ColorPath {
 
 class ColorPaletteNotifier extends ChangeNotifier {
   List<Color> colors = [
-    Color(0xff000000),//black
-    Color(0XFF00FF00),//green
-    Color(0xFFFFFFFF),//white
-    Color(0XFF0000FF),//blue
-    Color(0XFFFF0000),//red
-    Color(0XFFFFFF00),//yellow
-    Color(0XFFFF8000),//orange
+    const Color(0xff000000), //black
+    const Color(0XFF00FF00), //green
+    const Color(0xFFFFFFFF), //white
+    const Color(0XFF0000FF), //blue
+    const Color(0XFFFF0000), //red
+    const Color(0XFFFFFF00), //yellow
+    const Color(0XFFFF8000), //orange
   ];
-
-
 
   int selectedIndexRadio = 0;
 
   int get selectedIndex => selectedIndexRadio; // 選択された色のインデックスを取得するゲッター
-  Color get selectedColor => colors[selectedIndexRadio];// 選択された色を取得するゲッター
+  Color get selectedColor => colors[selectedIndexRadio]; // 選択された色を取得するゲッター
 
   void setSelectedColor(int index) {
     if (index >= 0 && index < colors.length) {
@@ -513,10 +507,12 @@ class ColorPaletteNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   void changeColor(Color newColor) {
     colors[selectedIndex] = newColor;
     notifyListeners();
   }
+
   void select(int index) {
     selectedIndexRadio = index;
     notifyListeners();
@@ -525,10 +521,7 @@ class ColorPaletteNotifier extends ChangeNotifier {
   void rebuild() {
     notifyListeners();
   }
-
-
 }
-
 
 class ColorHelper {
   static Color hueToColor(double hueValue) =>

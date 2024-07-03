@@ -21,8 +21,10 @@ class Media {
 }
 
 class CropImageSelect_Album extends StatefulWidget {
+  const CropImageSelect_Album({super.key});
+
   @override
-  _CropImageSelectAlbumState createState() => _CropImageSelectAlbumState();
+  State<CropImageSelect_Album> createState() => _CropImageSelectAlbumState();
 }
 
 class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
@@ -31,18 +33,18 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
   List<AssetPathEntity> _albums = []; //アルバムリスト
   final List<Media> _medias = []; //選択したアルバムのリスト
   int _lastPage = 0; // 最後に読み込まれたページ
-  int _currentPage = 0;//現在読み込まれたページ
-  List<AssetPathEntity> albums = [];//アルバムリストの一時保存
-  final List<Media> _selectedMedias = [];//選択した画像のリスト保存
-  final List<Media> selectedMedias = [];//選択された画像の一時保存
-  Map<AssetPathEntity, int> _albumImageCounts = {};//画像数取得
+  int _currentPage = 0; //現在読み込まれたページ
+  List<AssetPathEntity> albums = []; //アルバムリストの一時保存
+  final List<Media> _selectedMedias = []; //選択した画像のリスト保存
+  final List<Media> selectedMedias = []; //選択された画像の一時保存
+  final Map<AssetPathEntity, int> _albumImageCounts = {}; //画像数取得
 
   @override
   void initState() {
     super.initState();
-    _selectedMedias.addAll(selectedMedias);//選択した画像の初期化
+    _selectedMedias.addAll(selectedMedias); //選択した画像の初期化
     _loadAlbums();
-    _scrollController.addListener(_loadMoreMedias);//スクロールイベントのリッスン
+    _scrollController.addListener(_loadMoreMedias); //スクロールイベントのリッスン
   }
 
   //?
@@ -56,23 +58,24 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
   void _loadAlbums() async {
     //アルバム情報を読み込む許可
     final permitted = await PhotoManager.requestPermissionExtend();
-    if (permitted.isAuth) {//許可が出た場合
+    if (permitted.isAuth) {
+      //許可が出た場合
       albums = await PhotoManager.getAssetPathList(
         //画像のみを取得
         type: RequestType.image,
       );
       //アルバムリスト取得
       if (albums.isNotEmpty) {
-        _currentAlbum = albums.first;//最初のアルバムを現在参照するアルバムに設定する
-        _albums = albums;//アルバムリストの保存
+        _currentAlbum = albums.first; //最初のアルバムを現在参照するアルバムに設定する
+        _albums = albums; //アルバムリストの保存
 
         // 各アルバムの画像数を取得
         for (var album in albums) {
-          final List<AssetEntity> entities = await album.getAssetListPaged(page: 0, size: 100000000);
+          final List<AssetEntity> entities =
+              await album.getAssetListPaged(page: 0, size: 100000000);
           // final List<AssetEntity> entities = await album.getAssetList();
           _albumImageCounts[album] = entities.length;
         }
-
 
         _loadMedias();
       }
@@ -83,7 +86,7 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
 
 //選択されたアルバム名の情報を取得
   void _loadMedias() async {
-    _lastPage = _currentPage;//最後に読み込んだページとして保存
+    _lastPage = _currentPage; //最後に読み込んだページとして保存
     if (_currentAlbum != null) {
       List<Media> medias =
           await fetchMedias(album: _currentAlbum!, page: _currentPage);
@@ -126,11 +129,12 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('エラー'),
-          content: Text('この画像は選択できません。\n他の画像を選択するか\nスマホ内に保存されているか確認ください。'),
+          title: const Text('エラー'),
+          content:
+              const Text('この画像は選択できません。\n他の画像を選択するか\nスマホ内に保存されているか確認ください。'),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -148,7 +152,7 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
         title: DropdownButton<AssetPathEntity>(
           dropdownColor: Colors.grey,
           borderRadius: BorderRadius.circular(16.0),
-          value: _currentAlbum,//選択したアルバム情報
+          value: _currentAlbum, //選択したアルバム情報
           items: _albums.map((e) {
             final imageCount = _albumImageCounts[e] ?? 0;
             return DropdownMenuItem<AssetPathEntity>(
@@ -161,24 +165,26 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
           }).toList(),
           onChanged: (AssetPathEntity? value) {
             setState(() {
-              _currentAlbum = value;//選択したアルバムを表示ため
-              _currentPage = 0;//スクロール位置リセットのため
-              _lastPage = 0;//スクロール位置リセットのため
-              _medias.clear();//今現在のアルバムリセット
+              _currentAlbum = value; //選択したアルバムを表示ため
+              _currentPage = 0; //スクロール位置リセットのため
+              _lastPage = 0; //スクロール位置リセットのため
+              _medias.clear(); //今現在のアルバムリセット
             });
-            _loadMedias();//選択したアルバムの画像を読み込む
-            _scrollController.jumpTo(0.0);//スクロール位置をトップに戻す
+            _loadMedias(); //選択したアルバムの画像を読み込む
+            _scrollController.jumpTo(0.0); //スクロール位置をトップに戻す
           },
         ),
       ),
-      body:  CustomPaint(
+      body: CustomPaint(
         painter: HexagonPainter(),
-        child:MediasGridView(//画像をgridview表示するクラス
-        medias: _medias,
-        selectedMedias: _selectedMedias,
-        selectMedia: _selectMedia,
-        scrollController: _scrollController,
-      ),),
+        child: MediasGridView(
+          //画像をgridview表示するクラス
+          medias: _medias,
+          selectedMedias: _selectedMedias,
+          selectMedia: _selectMedia,
+          scrollController: _scrollController,
+        ),
+      ),
       floatingActionButton: _selectedMedias.isEmpty
           ? null
           : FloatingActionButton(
@@ -186,7 +192,7 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
                 try {
                   for (Media media in _selectedMedias) {
                     AssetEntity asset = media.assetEntity;
-                    cropImage(context, asset);//クロップ画面に移動する
+                    cropImage(context, asset); //クロップ画面に移動する
                   }
                 } catch (e) {
                   _showErrorDialog();
@@ -218,13 +224,15 @@ Future<List<Media>> fetchMedias({
     for (AssetEntity entity in entities) {
       Media media = Media(
         assetEntity: entity,
-        widget: FadeInImage(//プレースホルダーから実際の画像に滑らかに表示
-          placeholder: MemoryImage(kTransparentImage),//プレースホルダー
+        widget: FadeInImage(
+          //プレースホルダーから実際の画像に滑らかに表示
+          placeholder: MemoryImage(kTransparentImage), //プレースホルダー
           fit: BoxFit.cover,
-          image: AssetEntityImageProvider(//元の画像のサムネイル化
+          image: AssetEntityImageProvider(
+            //元の画像のサムネイル化
             entity,
             thumbnailSize: const ThumbnailSize.square(300),
-            isOriginal: false,//falseにすることで、サムネイル画像設定する
+            isOriginal: false, //falseにすることで、サムネイル画像設定する
           ),
         ),
       );
