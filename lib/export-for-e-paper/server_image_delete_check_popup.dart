@@ -10,8 +10,10 @@ import 'sever_data_bind.dart';
 
 class ServerImageDelCheckPopup extends StatefulWidget {
   final List<DelData> selectDelImage;
+  final Future<void> Function() fetchData;
 
-  const ServerImageDelCheckPopup({super.key, required this.selectDelImage});
+  const ServerImageDelCheckPopup(
+      {super.key, required this.selectDelImage, required this.fetchData});
 
   @override
   State<ServerImageDelCheckPopup> createState() =>
@@ -19,12 +21,11 @@ class ServerImageDelCheckPopup extends StatefulWidget {
 }
 
 class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
-  // Future<void> postData(List<DelData> delId) async {
-  Future<void> postData(List<String> delId) async {
+  Future<int> postData(List<String> delId) async {
     //idのみ渡す場合。
     //awsS3
     Uri uri = Uri.parse(
-        "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/deletes");
+        "https://3lewes86g0.execute-api.ap-northeast-1.amazonaws.com/dev/deletes");
     final headers = {
       'Content-Type': 'application/json',
       'x-api-key': dotenv.get('API_KEY')
@@ -32,7 +33,7 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
     final body = {'ids': delId};
     try {
       final response =
-          await http.post(uri, headers: headers, body: jsonEncode(body));
+          await http.delete(uri, headers: headers, body: jsonEncode(body));
       if (response.statusCode == 200) {
         if (kDebugMode) {
           print('削除成功！');
@@ -41,13 +42,17 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
       } else {
         if (kDebugMode) {
           print('削除失敗2: ${response.statusCode}');
+          print('headers: ${response.headers}');
+          print('body: ${response.body}');
         }
         Navigator.pop(context);
       }
+      return response.statusCode;
     } catch (e) {
       if (kDebugMode) {
         print('$e');
       }
+      return 500; //例外で500エラーを返す
     }
   }
 
@@ -55,48 +60,131 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
-      backgroundColor: Colors.yellow,
+      backgroundColor: const Color(0xffF6B17A),
       title:
           // Text('スマホから画像を\nインポート方法選択',
           const Text(
         '!　注意　！',
         textAlign: TextAlign.center,
       ),
-      actions: <Widget>[
-        const Column(children: [
-          Text('選択した画像は、完全に削除されます。\n 復元はできません。\n本当に削除してもよろしいですか？'),
-        ]),
-        const Divider(),
-        Container(
-          width: 300,
-          alignment: Alignment.center,
-          child: Row(children: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text(
-                'キャンセル',
-                style: TextStyle(fontSize: 20, color: Colors.black),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('選択した画像は、完全に削除されます。\n 復元はできません。\n本当に削除してもよろしいですか？'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  List<String> delId = [];
+                  for (var item in widget.selectDelImage) {
+                    delId.add(item.idDel);
+                  }
+                  showLoadingModal(context);
+                  final status = await postData(delId);
+                  Navigator.of(context).pop();
+                  //削除成功と失敗の分岐
+                  if (status == 200) {
+                    showSuccessModal(context);
+                  } else {
+                    showFailedModal(context);
+                  }
+                  await widget.fetchData();
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(fontSize: 20, color: Colors.black),
+                ),
               ),
-            ),
-            TextButton(
-              // onPressed: () => Navigator.pop(context, 'OK'),
-              onPressed: () {
-                // List<DelData> delId = [];
-                List<String> delId = [];
-                for (var item in widget.selectDelImage) {
-                  delId.add(item.idDel);
-                }
-                postData(delId);
-                Navigator.pop(context, 'OK');
-              },
-              child: const Text(
-                'OK',
-                style: TextStyle(fontSize: 20, color: Colors.black),
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text(
+                  'キャンセル',
+                  style: TextStyle(fontSize: 20, color: Colors.black),
+                ),
               ),
-            ),
-          ]),
-        ),
-      ],
+            ],
+          )
+        ],
+      ),
     );
   }
+}
+
+void showSuccessModal(BuildContext context) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text(
+          '削除が成功しました!',
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text(
+              'OK',
+              style: TextStyle(fontSize: 20, color: Colors.black),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showFailedModal(BuildContext context) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text(
+          '削除が失敗しました!',
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text(
+              'OK',
+              style: TextStyle(fontSize: 20, color: Colors.black),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showLoadingModal(BuildContext context) {
+  showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      // ignore: deprecated_member_use
+      return WillPopScope(
+        onWillPop: () async => false,
+        child: const AlertDialog(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 30),
+              Text('Loading'),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

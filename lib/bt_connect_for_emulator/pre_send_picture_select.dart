@@ -31,6 +31,29 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
   final List<ReversedData> _delReverseData = []; //削除データ選択:新しい順
 
   final ScrollController _scrollController = ScrollController();
+  int count = 50;
+  bool isGetImages = false;
+
+
+// 削除時に画像を更新する関数
+  Future<void> fetchData() async {
+    setState(() {
+      isGetImages = false;
+    });
+    await getImage(
+      // ignore: use_build_context_synchronously
+      context: context,
+      imageItems: imageItems,
+      reverseData: reverseData,
+      dateSort: dateSort,
+    );
+    setState(() {
+      _delImageDataList.clear();
+      _delImageItems.clear();
+      _delReverseData.clear();
+      isGetImages = true;
+    });
+  }
 
   @override
   void initState() {
@@ -246,7 +269,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                                 : _selectDelReversedData,
                             scrollController: _scrollController,
                             gridReverse: gridReverse,
-                            delImageDataList: delImageDataList,
+                            count: count,
                           )))
             //  削除機能OFF
             : CustomPaint(
@@ -257,10 +280,11 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                   // color: Colors.black,
                   child: FutureBuilder(
                     future: getImage(
-                        context: context,
-                        imageItems: imageItems,
-                        reverseData: reverseData,
-                        dateSort: dateSort),
+                      context: context,
+                      imageItems: imageItems,
+                      reverseData: reverseData,
+                      dateSort: dateSort,
+                    ),
                     builder:
                         (BuildContext context, AsyncSnapshot<void> snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
@@ -346,7 +370,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                       showDialog(
                         context: context,
                         builder: (context) => ServerImageDelCheckPopup(
-                            selectDelImage: _delImageDataList),
+                            selectDelImage: _delImageDataList, fetchData: fetchData),
                       );
                     },
                     backgroundColor: Colors.lightGreenAccent,

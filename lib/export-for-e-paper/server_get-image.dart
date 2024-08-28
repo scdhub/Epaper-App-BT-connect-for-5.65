@@ -1,5 +1,6 @@
 //サーバーからデータを読み取る
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,8 +16,8 @@ Future<void> getImage({
 }) async {
   //awsサーバーからデータを読み取る
   Uri uri = Uri.parse(
-      // "https://uvky3v6bmi.execute-api.ap-northeast-1.amazonaws.com/dev/images");
-      "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/images");
+    "https://3lewes86g0.execute-api.ap-northeast-1.amazonaws.com/dev/images",
+  );
   final headers = {'x-api-key': dotenv.get('API_KEY')};
   try {
     // //サーバーからデータを読み取る
@@ -25,9 +26,11 @@ Future<void> getImage({
         );
     if (response.statusCode == 200) {
       // httpレスポンスをJSON変換
+      // String jsonBody = response.body.toString();
       final body = jsonDecode(response.body);
       // レスポンスデータ中の'data'部(画像IDと画像URLのリスト)を取得
-      final data = body['data'];
+      final data = body[0]['data'];
+      // print(imageItems.length);
       imageItems.clear(); //リストをクリア
       reverseData.clear(); //リストをクリア
       dateSort.clear(); //リストをクリア
@@ -54,8 +57,10 @@ Future<void> getImage({
         reverseData.add(ReversedData(
             idR: item.id, url: item.url, lastModifiedR: item.lastModified));
       }
+      // inspect(imageItems);
     }
   } catch (e) {
+    print(e);
     missAppSeverMessage(context);
   }
 }
