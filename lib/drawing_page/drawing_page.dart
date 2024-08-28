@@ -298,6 +298,7 @@
 // }
 // //------------------------------------------------------------------------------
 
+import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -356,50 +357,37 @@ class _DrawingPageState extends State<DrawingPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        // SelectCheck(imageData:imageBytes),
-                        SelectCheck(imageData: imageBytes),
+                    builder: (context) => SelectCheck(imageData: imageBytes),
                   ),
                 );
               },
             ),
           ],
         ),
-        body: CustomPaint(
-            painter: HexagonPainter(),
-            child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 78),
-                child: ClipRect(
-                    child: Column(children: [
-                  RepaintBoundary(
-                      key: canvasKey,
-                      child: Stack(
-                          alignment: Alignment.bottomCenter,
-                          // child:
-                          children: [
-                            ColorPalette(
-                                notifier: ColorPaletteNotifier(),
-                                child: RepaintBoundary(
-                                  child: SizedBox(
-                                    height:
-                                        (MediaQuery.of(context).size.height /
-                                            1.4), // 画面の高さに合わせる
-                                    child: DrawingSpace(
-                                        selectedRadio: selectedRadio),
-                                  ),
-                                )),
-                          ])),
-                  Container(
-                    color: Colors.greenAccent,
-                    width: MediaQuery.of(context).size.width,
-                    height: (MediaQuery.of(context).size.height / 12),
-                    child: ColorPalette(
-                      notifier: ColorPaletteNotifier(),
-                      // child: RepaintBoundary(
-                      child: ColorPaletteSelect(selectedRadio: selectedRadio),
-                    ),
-                  ),
-                ])))));
+        body: ColorPalette(
+            notifier: ColorPaletteNotifier(),
+            child: CustomPaint(
+                painter: HexagonPainter(),
+                child: Container(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 78),
+                    child: ClipRect(
+                        child: Column(children: [
+                      RepaintBoundary(
+                        key: canvasKey,
+                        child: SizedBox(
+                          height: (MediaQuery.of(context).size.height /
+                              1.448), // 画面の高さに合わせる
+                          // 1.4), // 画面の高さに合わせる
+                          child: DrawingSpace(selectedRadio: selectedRadio),
+                        ),
+                      ),
+                      Container(
+                        color: Colors.greenAccent,
+                        width: MediaQuery.of(context).size.width,
+                        height: (MediaQuery.of(context).size.height / 12),
+                        child: ColorPaletteSelect(selectedRadio: selectedRadio),
+                      ),
+                    ]))))));
   }
 
   // 描画画面を画像としてキャプチャする
@@ -417,7 +405,7 @@ class _DrawingPageState extends State<DrawingPage> {
 
 class ColorPaletteSelect extends StatefulWidget {
   final int selectedRadio;
-  ColorPaletteSelect({super.key, required this.selectedRadio});
+  const ColorPaletteSelect({super.key, required this.selectedRadio});
   @override
   State<ColorPaletteSelect> createState() => _ColorPaletteSelect();
 }
@@ -433,32 +421,13 @@ class _ColorPaletteSelect extends State<ColorPaletteSelect> {
       width: MediaQuery.of(context).size.width,
       height: 60,
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(17),
         child: Align(
           alignment: Alignment.bottomRight,
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             for (var i = 0; i < colorPalette.colors.length; i++)
-              GestureDetector(
-                onTap: () {
-                  colorPalette.setSelectedColor(i);
-                },
-                child: Container(
-                  width: _circleWidth,
-                  height: _circleWidth,
-                  transformAlignment: Alignment.center,
-                  // transform: selected ? _transform : null,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    // color: ColorHelper.hueToColor(index),
-                    color: colorPalette.colors[i],
-                    border: Border.all(
-                      color: Colors.black54,
-                      width: 6,
-                    ),
-                  ),
-                ),
-              ),
+              ColorCircle(index: i, width: _circleWidth)
           ]),
         ),
       ),
@@ -468,7 +437,7 @@ class _ColorPaletteSelect extends State<ColorPaletteSelect> {
 
 class ColorPath {
   final Path path = Path();
-  final Color color;
+  late final Color color;
   final double strokeWidth;
 
   ColorPath(this.color, this.strokeWidth);
@@ -482,6 +451,10 @@ class ColorPath {
   // パスに新しい点を追加
   void updatePath(Offset point) {
     path.lineTo(point.dx, point.dy);
+  }
+
+  void changeColor(Color newColor) {
+    color = newColor;
   }
 }
 
@@ -528,4 +501,50 @@ class ColorHelper {
       HSVColor.fromAHSV(1.0, hueValue, 1.0, 1.0).toColor();
 
   static double colorToHue(Color color) => HSVColor.fromColor(color).hue;
+}
+
+class ColorCircle extends StatelessWidget {
+  final int index;
+  final double width;
+
+  const ColorCircle({
+    Key? key,
+    required this.index,
+    required this.width,
+  }) : super(key: key);
+
+  static final Matrix4 _transform = Matrix4.identity()..scale(1.4);
+
+  @override
+  Widget build(BuildContext context) {
+    final colorPallete = ColorPalette.of(context);
+    final selected = colorPallete.selectedIndex == index;
+
+    return GestureDetector(
+      onTap: selected ? null : () => colorPallete.select(index),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(
+          begin: 0,
+          end: ColorHelper.colorToHue(colorPallete.colors[index]),
+        ),
+        duration: const Duration(milliseconds: 10),
+        builder: (context, value, child) {
+          return Container(
+            width: width,
+            height: width,
+            transformAlignment: Alignment.center,
+            transform: selected ? _transform : null,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colorPallete.colors[index],
+              border: Border.all(
+                color: selected ? Colors.black54 : Colors.white70,
+                width: 6,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
