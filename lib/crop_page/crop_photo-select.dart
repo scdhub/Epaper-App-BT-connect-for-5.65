@@ -50,9 +50,9 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
   //?
   @override
   void dispose() {
+    super.dispose();
     _scrollController.removeListener(_loadMoreMedias); //スクロール位置に応じて画像を読み込む
     _scrollController.dispose(); //メモリリークを防ぐため。widgetが破棄されるとき呼び出される
-    super.dispose();
   }
 
   void _loadAlbums() async {
@@ -64,6 +64,11 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
         //画像のみを取得
         type: RequestType.image,
       );
+      final Future<int> pages = albums[0].assetCountAsync;
+      int count = 0;
+      await pages.then((value) {
+        count = value;
+      });
       //アルバムリスト取得
       if (albums.isNotEmpty) {
         _currentAlbum = albums.first; //最初のアルバムを現在参照するアルバムに設定する
@@ -72,7 +77,7 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
         // 各アルバムの画像数を取得
         for (var album in albums) {
           final List<AssetEntity> entities =
-              await album.getAssetListPaged(page: 0, size: 100000000);
+              await album.getAssetListPaged(page: 0, size: count + 100);
           // final List<AssetEntity> entities = await album.getAssetList();
           _albumImageCounts[album] = entities.length;
         }
@@ -218,8 +223,12 @@ Future<List<Media>> fetchMedias({
   List<Media> medias = [];
 
   try {
+    int count = 0;
+    await album.assetCountAsync.then((value) {
+      count = value;
+    });
     final List<AssetEntity> entities =
-        await album.getAssetListPaged(page: 0, size: 100000000);
+        await album.getAssetListPaged(page: 0, size: count + 100);
 
     for (AssetEntity entity in entities) {
       Media media = Media(
