@@ -45,7 +45,7 @@ class _DrawingToPageState extends State<DrawingToPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DrawingPage()), //BT接続画面に遷移
+                  builder: (context) => const DrawingPage()), //BT接続画面に遷移
             );
           },
           child: const Column(

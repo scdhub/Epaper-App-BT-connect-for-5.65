@@ -27,7 +27,7 @@ class _TrustDevices_popupState extends State<TrustDevices_popup> {
         Container(
           width: 300,
           alignment: Alignment.center,
-          child: Row(children: [
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             TextButton(
               onPressed: () {
                 widget.onOk();

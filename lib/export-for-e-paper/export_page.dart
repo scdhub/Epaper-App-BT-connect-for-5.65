@@ -192,7 +192,7 @@ class _ExportPageState extends State<ExportPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color(0xff7077A1),
                         elevation: 10,
                         side: const BorderSide(
                           color: Colors.transparent,
@@ -252,7 +252,7 @@ class _ExportPageState extends State<ExportPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
+                        backgroundColor: const Color(0xffF6B17A),
                         elevation: 10,
                         side: const BorderSide(
                           color: Colors.transparent,
@@ -269,7 +269,7 @@ class _ExportPageState extends State<ExportPage> {
                             const Center(
                                 child: Text('解除',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black87,
                                       fontSize: 16,
                                     ))),
                       ),
@@ -300,20 +300,29 @@ class DeviceUnLockPop extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                 )),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("キャンセル"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              TextButton(
-                  child: const Text("OK"),
-                  //bt-connectのページに戻る
-                  onPressed: () async {
-                    onDelete();
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  }),
-            ],
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                        child: const Text("OK"),
+                        //bt-connectのページに戻る
+                        onPressed: () async {
+                          onDelete();
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        }),
+                    TextButton(
+                      child: const Text("キャンセル"),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),

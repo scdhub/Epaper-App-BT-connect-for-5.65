@@ -92,7 +92,7 @@ class _ImageTypeSelection_popupState extends State<ImageTypeSelection_popup> {
             child: ElevatedButton(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.black,
-                backgroundColor: Colors.pinkAccent,
+                backgroundColor: Color.fromARGB(255, 137, 150, 250),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0)),
               ),

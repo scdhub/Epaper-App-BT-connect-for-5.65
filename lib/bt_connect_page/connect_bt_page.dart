@@ -96,11 +96,11 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
   @override
   void initState() {
+    super.initState();
     //画面描画時、登録済みデバイスを表示する為
     _restoreValues();
 // Bluetooth 初期化と権限チェック
     initBluetooth();
-    super.initState();
   }
 
   bool isScanning = false; //スキャン開始、停止
@@ -201,162 +201,156 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       ),
       body: CustomPaint(
         painter: HexagonPainter(),
-        child: Container(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(50),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isScanning ? Colors.redAccent : Colors.grey,
-                    elevation: 10,
-                    //境界線の幅を設定。
-                    side: const BorderSide(
-                      color: Colors.black,
-                      width: 2,
-                    ),
-                    //ボタンの形状設定。角を丸めた長方形。
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(50),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isScanning ? Colors.redAccent : Colors.grey,
+                  elevation: 10,
+                  //境界線の幅を設定。
+                  side: const BorderSide(
+                    color: Colors.black,
+                    width: 2,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      if (isScanning) {
-                        stopScan();
-                      } else {
-                        deviceScan();
-                      }
-                      // isScanning = !isScanning;
-                    });
-                  },
-                  child: SizedBox(
-                    width: 170,
-                    child: Row(children: [
-                      isScanning
-                          ? Container(
-                              color: Colors.blueGrey,
-                              width: 10,
-                              height: 10,
-                            )
-                          : const Icon(Icons.restart_alt),
-                      const SizedBox(width: 10),
-                      Text(isScanning ? 'スキャン停止' : 'スキャン開始',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ))
-                    ]),
+                  //ボタンの形状設定。角を丸めた長方形。
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.white38,
-                child: const Text('登録済みデバイス',
-                    style: TextStyle(
-                      fontSize: 20,
-                    )),
-              ),
-              SizedBox(
-                height: 250,
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical, // 縦方向のスクロール
-                  itemCount: trustDevices.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      height: 50,
-                      margin: const EdgeInsets.all(5),
-                      alignment: Alignment.center,
-                      // width: double.infinity,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.rectangle, //長方形
-                        border: Border.all(
-                          color: Colors.black12,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: const [
-                          BoxShadow(
-                            offset: Offset(0, 5),
-                            color: Colors.grey,
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const SizedBox(
-                              width: 50,
-                            ),
-                            Expanded(
-                              child: Column(children: [
-                                Text(
-                                  trustDevices[index].trustName.isEmpty
-                                      ? 'デバイス名　不明'
-                                      : trustDevices[index].trustName,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  trustDevices[index].trustIpAddress,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ]),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    // 選択したデバイス名の情報を配信確認画面に渡す。
-                                    builder: (context) => ExportPage(
-                                      trustName: trustDevices[index].trustName,
-                                      trustIpAddress:
-                                          trustDevices[index].trustIpAddress,
-                                      trustDevice:
-                                          trustDevices[index].devicesData,
-                                      onDelete: () =>
-                                          _removeCounterValue(index),
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.info_outline_rounded),
-                            ),
-                          ]),
-                      // ),
-                    );
-                  },
+                onPressed: () {
+                  setState(() {
+                    if (isScanning) {
+                      stopScan();
+                    } else {
+                      deviceScan();
+                    }
+                    // isScanning = !isScanning;
+                  });
+                },
+                child: SizedBox(
+                  width: 170,
+                  child: Row(children: [
+                    isScanning
+                        ? const Icon(Icons.stop_circle)
+                        : const Icon(Icons.restart_alt),
+                    const SizedBox(width: 10),
+                    Text(isScanning ? 'スキャン停止' : 'スキャン開始',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ))
+                  ]),
                 ),
               ),
-              const SizedBox(height: 10),
-              Container(
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.white38,
-                child: const Text(
-                  '未登録デバイス',
+            ),
+            Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white38,
+              child: const Text('登録済みデバイス',
                   style: TextStyle(
                     fontSize: 20,
-                  ),
+                  )),
+            ),
+            SizedBox(
+              height: 250,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                scrollDirection: Axis.vertical, // 縦方向のスクロール
+                itemCount: trustDevices.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    height: 50,
+                    margin: const EdgeInsets.all(5),
+                    alignment: Alignment.center,
+                    // width: double.infinity,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.rectangle, //長方形
+                      border: Border.all(
+                        color: Colors.black12,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: const [
+                        BoxShadow(
+                          offset: Offset(0, 5),
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const SizedBox(
+                            width: 50,
+                          ),
+                          Expanded(
+                            child: Column(children: [
+                              Text(
+                                trustDevices[index].trustName.isEmpty
+                                    ? 'デバイス名　不明'
+                                    : trustDevices[index].trustName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                trustDevices[index].trustIpAddress,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ]),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  // 選択したデバイス名の情報を配信確認画面に渡す。
+                                  builder: (context) => ExportPage(
+                                    trustName: trustDevices[index].trustName,
+                                    trustIpAddress:
+                                        trustDevices[index].trustIpAddress,
+                                    trustDevice:
+                                        trustDevices[index].devicesData,
+                                    onDelete: () => _removeCounterValue(index),
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.info_outline_rounded),
+                          ),
+                        ]),
+                    // ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              alignment: Alignment.center,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white38,
+              child: const Text(
+                '未登録デバイス',
+                style: TextStyle(
+                  fontSize: 20,
                 ),
               ),
-              UnregisteredDevice(
-                scanDevices: scanDevices,
-                trustDevices: trustDevices,
-                addTrustDevice: _addTrustDevice,
-              ),
-            ],
-          ),
+            ),
+            UnregisteredDevice(
+              scanDevices: scanDevices,
+              trustDevices: trustDevices,
+              addTrustDevice: _addTrustDevice,
+            ),
+          ],
         ),
       ),
     );

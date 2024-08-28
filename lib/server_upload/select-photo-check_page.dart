@@ -46,30 +46,41 @@ class _SelectCheckState extends State<SelectCheck> {
   //サーバーに画像をアップロード中の表示と登録完了後のメッセージ表示
   void uploadMessage() {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(_isWriting ? '画像登録中...' : '登録完了'),
-            content: Text(_isWriting ? '' : 'E-paper配信関連に移りますか？'),
+            actionsAlignment: MainAxisAlignment.center,
+            title: Text(
+              _isWriting ? '画像登録中...' : '登録完了',
+              textAlign: TextAlign.center,
+            ),
+            content: Text(
+              _isWriting ? '' : 'E-paper配信関連に移りますか？',
+              style: const TextStyle(fontSize: 20, color: Colors.black),
+            ),
             actions: <Widget>[
               _isWriting
                   ? const CircularProgressIndicator()
-                  : Row(children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.pop(context);
-                        },
-                        child: const Text('キャンセル'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ConnectBTPage()));
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ])
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const ConnectBTPage()));
+                            },
+                            child: const Text('OK'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.pop(context);
+                            },
+                            child: const Text('キャンセル'),
+                          ),
+                        ])
             ],
           );
         });
@@ -118,7 +129,7 @@ class _SelectCheckState extends State<SelectCheck> {
   Future<void> postData(List<String?> uploadImages) async {
     //保存先URL
     Uri uri = Uri.parse(
-        "https://gqj75id27l.execute-api.ap-northeast-1.amazonaws.com/dev/signedUrl");
+        "https://3lewes86g0.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url");
     //保存に必要な情報を定義
     final headers = {
       'Content-Type': 'application/json',
@@ -133,7 +144,7 @@ class _SelectCheckState extends State<SelectCheck> {
       if (response.statusCode == 200) {
         // responseデータからデータを抜き取る
         final body = jsonDecode(response.body);
-        final signedUrls = body['signedUrls'];
+        final signedUrls = body['signed_urls'];
         for (var map in signedUrls) {
           for (var entry in map.entries) {
             if (kDebugMode) {
@@ -330,22 +341,24 @@ class _SelectCheckState extends State<SelectCheck> {
                       width: double.infinity,
                       height: 300,
                       decoration: const BoxDecoration(
-                        color: Colors.black87,
+                        color: Color.fromARGB(221, 57, 57, 57),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30.0),
                           topRight: Radius.circular(30.0),
+                          bottomLeft: Radius.circular(30.0),
+                          bottomRight: Radius.circular(30.0),
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(20.0),
                         child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Text('アプリに登録する',
                                   style: TextStyle(
-                                    fontSize: 40,
-                                    color: Colors.yellow[100],
-                                  )),
+                                      fontSize: 44,
+                                      color: Colors.yellow[100],
+                                      fontWeight: FontWeight.bold)),
                               SizedBox(
                                 width: double.infinity, //横幅
                                 height: 60, //高さ
@@ -353,10 +366,10 @@ class _SelectCheckState extends State<SelectCheck> {
                                   onPressed:
                                       _isWriting ? null : _showWriteDialog,
                                   style: ElevatedButton.styleFrom(
+                                    primary: Colors.grey[300],
+                                    onPrimary: Colors.purple,
                                     elevation: 10,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
+                                    shape: const StadiumBorder(),
                                   ),
                                   child: const Text('OK',
                                       style: TextStyle(
@@ -372,10 +385,10 @@ class _SelectCheckState extends State<SelectCheck> {
                                     Navigator.of(context).pop();
                                   },
                                   style: ElevatedButton.styleFrom(
+                                    primary: Colors.grey[300],
+                                    onPrimary: Colors.purple,
                                     elevation: 10,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
+                                    shape: const StadiumBorder(),
                                   ),
                                   child: const Text('キャンセル',
                                       style: TextStyle(
@@ -422,11 +435,13 @@ void missAppSeverMessage(BuildContext context) {
           content: const Text('サービスが一時的に利用できません。\nしばらくしてから再度お試しください。'),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[Text('OK')],
+                )),
           ],
         );
       });

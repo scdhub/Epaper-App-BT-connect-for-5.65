@@ -29,7 +29,7 @@ class HexagonPainter extends CustomPainter {
     // 正六角形の辺の長さ
     final double sideLength = radius * sqrt(3);
     // 正六角形の高さ
-    final double hexHeight = sideLength * sqrt(3) / 2;
+    final double hexHeight = sideLength * sqrt(3.2) / 2;
     // 正六角形の幅
     final double hexWidth = sideLength * 17 / 10;
 
