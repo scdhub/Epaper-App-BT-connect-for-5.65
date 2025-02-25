@@ -98,13 +98,13 @@ class _UnregisteredDeviceState extends State<UnregisteredDevice> {
             ),
           )
         : Container(
-            color: Colors.black45,
+            color: Colors.white54,
             alignment: Alignment.topCenter,
             width: MediaQuery.of(context).size.width,
             height: 25,
             child: const Text(
-              'スキャンを開始して、未登録デバイスを表示してください',
-              style: TextStyle(color: Colors.red, fontSize: 15),
+              'スキャンを開始して、未登録デバイスを表示してください。',
+              style: TextStyle(color: Colors.red, fontSize: 13),
             ),
           );
   }

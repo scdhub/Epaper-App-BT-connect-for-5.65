@@ -11,16 +11,34 @@ class DrawingSpace extends StatefulWidget {
 
 class _DrawingSpaceState extends State<DrawingSpace> {
   double penThickness = 5;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
+      child: Column(
         children: [
-          CanvasArea(changeThickness: penThickness),
+          //キャンバスエリアの指定
+          SizedBox(
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.7,
+            child: CanvasArea(changeThickness: penThickness),
+          ),
         ],
       ),
     );
   }
 }
+
+      // width: double.infinity,
+      // height: MediaQuery.of(context).size.height * 0.7,
+
+      // child: Stack(
+      //   alignment: Alignment.bottomCenter,
+      //
+      // ),
+//     );
+//   }
+// }

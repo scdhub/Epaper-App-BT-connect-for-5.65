@@ -375,7 +375,7 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                 preferredSize: const Size.fromHeight(56),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  height: 61,
+                  height: 64,
                   child: Column(children: [
                     Container(
                         margin: const EdgeInsets.fromLTRB(0, 1, 0, 0),
@@ -504,7 +504,7 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
               onPressed: () => Navigator.of(context).pop(),
             ),
 
-            backgroundColor: Colors.black,
+            // backgroundColor: Colors.black,
           )),
       // body: RefreshIndicator(
       //   onRefresh: onRefresh,

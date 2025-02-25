@@ -17,29 +17,29 @@ class _DrawingToPageState extends State<DrawingToPage> {
         // shape: BoxShape.rectangle,
         // color: Colors.white60,
         // border: Border.all(
-        //   // color: Colors.black12,
+        //   color: Colors.black12,
         //   width: 2,
         // ),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
-          BoxShadow(
-            offset: Offset(2, 5),
-            color: Colors.green,
-          ),
-        ],
+        // borderRadius: BorderRadius.circular(20),
+        // boxShadow: const [
+        //   BoxShadow(
+        //     offset: Offset(2, 5),
+        //     color: Colors.green,
+        //   ),
+        // ],
       ),
       width: 150,
       height: 150,
       child: ElevatedButton(
           style: TextButton.styleFrom(
-            foregroundColor: Colors.black,
-            // backgroundColor: Colors.greenAccent,
+            // foregroundColor: Colors.black,
+            backgroundColor: Color(0xFF80DEEA),
             side: const BorderSide(
-              color: Colors.greenAccent,
-              width: 2,
+              color: Colors.white,
+              width: 4,
             ),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+                borderRadius: BorderRadius.circular(20.0)),
           ),
           onPressed: () {
             Navigator.push(
@@ -55,14 +55,16 @@ class _DrawingToPageState extends State<DrawingToPage> {
                 Icon(
                   Icons.brush,
                   size: 50.0,
-                  color: Colors.greenAccent,
+                  // color: Colors.white,
                 ),
-                Text('　絵を描いて\n画像として登録',
+                SizedBox(height: 7),
+                Text('絵を描いて登録',
                     style: TextStyle(
-                      fontFamily: 'NotoSansJP',
+                      // fontFamily: 'NotoSansJP',
                       // fontWeight: FontWeight.w400,//Regular
-                      fontWeight: FontWeight.w500, //Midum
+                      fontWeight: FontWeight.bold, //Midum
                       fontSize: 14,
+                      // color: Colors.white,
                     )),
               ])),
     );

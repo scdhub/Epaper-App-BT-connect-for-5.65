@@ -72,9 +72,10 @@ class _TextInputPageState extends State<TextInputPage> {
   // Timer? _timer;
 
   final GlobalKey _globalKey = GlobalKey();
+
   Future<Uint8List> _capturePng() async {
     RenderRepaintBoundary boundary =
-        _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+    _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
@@ -99,14 +100,13 @@ class _TextInputPageState extends State<TextInputPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back, /*color: Colors.white*/
+          icon: const Icon(Icons.arrow_back, /*color: Colors.white*/
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'テキストから画像を生成',
-          // style: TextStyle(fontSize: 20, color: Colors.white),
+          '入力して登録',
+          // style: TextStyle(fontSize: 17,),
         ),
         actions: [
           IconButton(
@@ -119,121 +119,158 @@ class _TextInputPageState extends State<TextInputPage> {
             },
           ),
         ],
-        // title: const Text('テキストから画像を生成'),
-        // backgroundColor: Color(0xFF0080FF),
+
+        centerTitle: true,
       ),
+
+      //修正中
       body: CustomPaint(
         painter: HexagonPainter(),
         child: Column(
           children: [
-            Center(
-              child: Container(
-                color: const Color(0xFFE0E0E0),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 3,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          TextInputForm1(onTodoListChanged1: _updateText1),
-                          TextInputForm2(onTodoListChanged2: _updateText2),
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          TextInputForm3(onTodoListChanged3: _updateText3),
-                          TextInputForm4(onTodoListChanged4: _updateText4),
-                        ]),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          const TextFonts(), //選んだフォントを文字に反映できるように修正する必要がある
-                          const TextBold(), //文字に太文字を反映できるように修正する必要がある
-                          TextItalic(), //文字にイタリックな設定を反映できるように修正する必要がある
-                          TextUnderLine(), //文字に下線引けるように反映できるように修正する必要がある
-                        ]),
-                    Transform.scale(
-                        scale: 1.0,
-                        child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                '文字色:',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.black),
-                              ),
-                              TextColor(),
-                              Text(
-                                '文字サイズ:',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.black),
-                              ),
-                              TextFontSize(),
-                            ])),
+            Container(
+              color: const Color(0xFFE0E0E0),
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.4,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 均等配置
+                children: <Widget>[
 
-                    // 今のところ、押すと画像不一致エラーが出るように設定。
-                    // 後で、画像選択画面に遷移して、画像を選択して、エラーが出るように設定。
-                    // OutlinedButton(
-                    //   style: OutlinedButton.styleFrom(
-                    //     minimumSize: Size(300, 30),
-                    //     backgroundColor: Color(0xFF0080FF),
-                    //   ),
-                    //   onPressed: () async {
-                    //     _timer = Timer(
-                    //       Duration(seconds: 2), //閉じる時間
-                    //           () {
-                    //         Navigator.pop(context);
-                    //       },
-                    //     );
-                    //     await showDialog<String>(
-                    //         context: context,
-                    //         builder: (BuildContext context) => Dialog(
-                    //             backgroundColor: Colors.black,
-                    //             child: Padding(
-                    //               padding: const EdgeInsets.all(8.0),
-                    //               child: Column(
-                    //                   mainAxisSize: MainAxisSize.min,
-                    //                   mainAxisAlignment:
-                    //                   MainAxisAlignment.center,
-                    //                   children: <Widget>[
-                    //                     Icon(
-                    //                       Icons.cancel,
-                    //                       color: Colors.white,
-                    //                       size: 24,
-                    //                     ),
-                    //
-                    //                     // 今のところ見本のアンドロイドのアプリを元に作成。
-                    //                     // 一行で表示するには、サイズ調整必要。
-                    //                     Text('画像情報とスクリーン情報が一致しま',
-                    //                         style:
-                    //                         TextStyle(color: Colors.white)),
-                    //                     Text('せん',
-                    //                         style:
-                    //                         TextStyle(color: Colors.white)),
-                    //                   ]),
-                    //             )));
-                    //   },
-                    //   // child: Padding(
-                    //   //   padding:EdgeInsets.zero,
-                    //   child: Text(
-                    //     '背景テンプレート画像をインポート',
-                    //     style: TextStyle(
-                    //       color: Colors.white,
-                    //       fontSize: 12,
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
+                  //テキスト4つ
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextInputForm1(onTodoListChanged1: _updateText1),
+                      TextInputForm2(onTodoListChanged2: _updateText2),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      TextInputForm3(onTodoListChanged3: _updateText3),
+                      TextInputForm4(onTodoListChanged4: _updateText4),
+                    ],
+                  ),
+
+                  //テキストに入力した文字をカスタムできるところ
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, //間の調整
+                    children: <Widget>[
+                      const TextFonts(), //選んだフォントを文字に反映できるように修正する必要がある
+                      const TextBold(), //文字に太文字を反映できるように修正する必要がある
+                      TextItalic(), //文字にイタリックな設定を反映できるように修正する必要がある
+                      TextUnderLine(), //文字に下線引けるように反映できるように修正する必要がある
+                    ],
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text('文字色:', style: TextStyle(fontSize: 12)),
+                      TextColor(),
+                      const Text('文字サイズ:', style: TextStyle(fontSize: 12)),
+                      TextFontSize(),
+                    ],
+                  ),
+                ],
               ),
             ),
-            RepaintBoundary(
-              key: _globalKey,
-              child: Container(
+
+            //テキストに関する文字のデザイン編集
+            // Transform.scale(
+            //     scale: 1.0,
+            //     child: const Row(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: <Widget>[
+            //           Text('文字色:',
+            //             style: TextStyle(
+            //                 fontSize: 12,
+            //                 color: Colors.black),
+            //           ),
+            //           TextColor(),
+            //           Text('文字サイズ:',
+            //             style: TextStyle(
+            //                 fontSize: 12,
+            //                 color: Colors.black),
+            //           ),
+            //           TextFontSize(),
+            //         ],
+            //     ),
+            // ),
+
+            // 今のところ、押すと画像不一致エラーが出るように設定。
+            // 後で、画像選択画面に遷移して、画像を選択して、エラーが出るように設定。
+            // OutlinedButton(
+            //   style: OutlinedButton.styleFrom(
+            //     minimumSize: Size(300, 30),
+            //     backgroundColor: Color(0xFF0080FF),
+            //   ),
+            //   onPressed: () async {
+            //     _timer = Timer(
+            //       Duration(seconds: 2), //閉じる時間
+            //           () {
+            //         Navigator.pop(context);
+            //       },
+            //     );
+            //     await showDialog<String>(
+            //         context: context,
+            //         builder: (BuildContext context) => Dialog(
+            //             backgroundColor: Colors.black,
+            //             child: Padding(
+            //               padding: const EdgeInsets.all(8.0),
+            //               child: Column(
+            //                   mainAxisSize: MainAxisSize.min,
+            //                   mainAxisAlignment:
+            //                   MainAxisAlignment.center,
+            //                   children: <Widget>[
+            //                     Icon(
+            //                       Icons.cancel,
+            //                       color: Colors.white,
+            //                       size: 24,
+            //                     ),
+            //
+            //                     // 今のところ見本のアンドロイドのアプリを元に作成。
+            //                     // 一行で表示するには、サイズ調整必要。
+            //                     Text('画像情報とスクリーン情報が一致しま',
+            //                         style:
+            //                         TextStyle(color: Colors.white)),
+            //                     Text('せん',
+            //                         style:
+            //                         TextStyle(color: Colors.white)),
+            //                   ]),
+            //             )));
+            //   },
+            //   // child: Padding(
+            //   //   padding:EdgeInsets.zero,
+            //   child: Text(
+            //     '背景テンプレート画像をインポート',
+            //     style: TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 12,
+            //     ),
+            //   ),
+            // ),
+            //     ],
+            //   ),
+            // ),
+            // ),
+
+            Expanded( // ← 高さを自動調整
+              child: RepaintBoundary(
+                key: _globalKey,
+                child: Container(
                   color: Colors.grey,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 2,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  // height: MediaQuery.of(context).size.height / 2,
                   child: GestureDetector(
                     // _text1～４の入力した文字がすべて同時に動くため、_text単体で動くように修正が必要。
                     dragStartBehavior: DragStartBehavior.down,
@@ -245,18 +282,24 @@ class _TextInputPageState extends State<TextInputPage> {
                     child: Stack(
                       children: <Widget>[
                         Positioned(
-                            //入力始めは、特定の座標にて表示するようにする
-                            left: position.dx,
-                            top: position.dy,
-                            child: Column(children: [
+                          //入力始めは、特定の座標にて表示するようにする
+                          left: position.dx,
+                          top: position.dy,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
                               TextExportForm(todoList: _text1),
                               TextExportForm(todoList: _text2),
                               TextExportForm(todoList: _text3),
                               TextExportForm(todoList: _text4),
-                            ])),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  )),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

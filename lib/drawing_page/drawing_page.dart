@@ -298,7 +298,6 @@
 // }
 // //------------------------------------------------------------------------------
 
-import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -332,62 +331,78 @@ class _DrawingPageState extends State<DrawingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                _resetDrawing();
-                Navigator.of(context).pop();
-              }),
-          title: const Text(
-            'ペイント',
-            style: TextStyle(
-              fontSize: 20,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              _resetDrawing();
+              Navigator.of(context).pop();
+            }),
+        title: const Text(
+          '絵を描いて登録',
+          style: TextStyle(
+            // fontSize: 17,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check_outlined),
+            onPressed: () async {
+              // // 画像をキャプチャしUint8Listに変換
+              Uint8List imageByte = await _capturePng();
+              List<Uint8List> imageBytes = [imageByte];
+              // 新しいページに画像データを渡す
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectCheck(imageData: imageBytes),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+
+      //カラーパレット→色選択
+      body: ColorPalette(
+        notifier: ColorPaletteNotifier(),
+        child: CustomPaint(
+          painter: HexagonPainter(),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
+            child: ClipRect(
+              child: Column(children: [
+                RepaintBoundary(
+                  key: canvasKey,
+                  child: Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size
+                          .height * 0.7,//0.75×
+                      // height: (MediaQuery.of(context).size.height /
+                      //     1.448), // 画面の高さに合わせる
+                      // 1.4), // 画面の高さに合わせる
+                      child: DrawingSpace(selectedRadio: selectedRadio),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.greenAccent,
+                  width: MediaQuery
+                      .of(context).size.width,
+                  height: MediaQuery
+                      .of(context).size.height / 18,
+                  child: ColorPaletteSelect(selectedRadio: selectedRadio),
+                ),
+              ],
+              ),
             ),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check_outlined),
-              onPressed: () async {
-                // // 画像をキャプチャしUint8Listに変換
-                Uint8List imageByte = await _capturePng();
-                List<Uint8List> imageBytes = [imageByte];
-                // 新しいページに画像データを渡す
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectCheck(imageData: imageBytes),
-                  ),
-                );
-              },
-            ),
-          ],
         ),
-        body: ColorPalette(
-            notifier: ColorPaletteNotifier(),
-            child: CustomPaint(
-                painter: HexagonPainter(),
-                child: Container(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 78),
-                    child: ClipRect(
-                        child: Column(children: [
-                      RepaintBoundary(
-                        key: canvasKey,
-                        child: SizedBox(
-                          height: (MediaQuery.of(context).size.height /
-                              1.448), // 画面の高さに合わせる
-                          // 1.4), // 画面の高さに合わせる
-                          child: DrawingSpace(selectedRadio: selectedRadio),
-                        ),
-                      ),
-                      Container(
-                        color: Colors.greenAccent,
-                        width: MediaQuery.of(context).size.width,
-                        height: (MediaQuery.of(context).size.height / 12),
-                        child: ColorPaletteSelect(selectedRadio: selectedRadio),
-                      ),
-                    ]))))));
+      ),
+    );
   }
 
   // 描画画面を画像としてキャプチャする
@@ -419,13 +434,15 @@ class _ColorPaletteSelect extends State<ColorPaletteSelect> {
     return Container(
       color: Colors.orange,
       width: MediaQuery.of(context).size.width,
-      height: 60,
+      height: 80,
       child: Padding(
-        padding: const EdgeInsets.all(17),
+        padding: const EdgeInsets.all(5),//17
         child: Align(
           alignment: Alignment.bottomRight,
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisSize: MainAxisSize.min,//rowの幅を最小化
+              children: [
             for (var i = 0; i < colorPalette.colors.length; i++)
               ColorCircle(index: i, width: _circleWidth)
           ]),
@@ -434,6 +451,7 @@ class _ColorPaletteSelect extends State<ColorPaletteSelect> {
     );
   }
 }
+
 
 class ColorPath {
   final Path path = Path();
@@ -468,6 +486,7 @@ class ColorPaletteNotifier extends ChangeNotifier {
     const Color(0XFFFFFF00), //yellow
     const Color(0XFFFF8000), //orange
   ];
+
 
   int selectedIndexRadio = 0;
 
@@ -530,8 +549,8 @@ class ColorCircle extends StatelessWidget {
         duration: const Duration(milliseconds: 10),
         builder: (context, value, child) {
           return Container(
-            width: width,
-            height: width,
+            width: width*0.85,
+            height: width*0.85,
             transformAlignment: Alignment.center,
             transform: selected ? _transform : null,
             decoration: BoxDecoration(

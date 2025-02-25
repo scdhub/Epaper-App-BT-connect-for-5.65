@@ -14,28 +14,29 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white60,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
-          BoxShadow(
-            offset: Offset(2, 5),
-            color: Colors.blueGrey,
-          ),
-        ],
+        // color: Colors.white60,
+        // borderRadius: BorderRadius.circular(20),
+        //15
+        // boxShadow: const [
+        //   BoxShadow(
+        //     offset: Offset(2, 5),
+        //     color: Colors.blueGrey,
+        //   ),
+        // ],
       ),
       width: 150,
       height: 150,
       child: ElevatedButton(
           style: TextButton.styleFrom(
-            foregroundColor: Colors.black,
+            // foregroundColor: Colors.black,
             // backgroundColor: Colors.blueGrey,
-            backgroundColor: Colors.white,
+            backgroundColor: Color(0xFF9FA8DA),
             side: const BorderSide(
-              color: Colors.blueGrey,
-              width: 2,
+              color: Colors.white,
+              width: 4,
             ),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
+                borderRadius: BorderRadius.circular(20.0)),
           ),
           onPressed: () {
             showDialog(
@@ -49,15 +50,17 @@ class _ImportTypeSelectToPopupState extends State<ImportTypeSelectToPopup> {
               children: [
                 Icon(
                   Icons.install_mobile_rounded,
-                  size: 50.0,
-                  color: Colors.blueGrey,
+                  size: 40.0,
+                  // color: Colors.white,
                 ),
-                Text('スマホから\n画像を登録',
+                SizedBox(height: 7),
+                Text('スマホから登録',
                     style: TextStyle(
-                      fontFamily: 'NotoSansJP',
+                      // fontFamily: 'NotoSansJP',
                       // fontWeight: FontWeight.w400,//Regular
-                      fontWeight: FontWeight.w500, //Midum
+                      fontWeight: FontWeight.bold, //Midum
                       fontSize: 14,
+                      // color: Colors.white,
                     )),
               ])),
     );

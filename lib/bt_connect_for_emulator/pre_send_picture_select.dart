@@ -394,7 +394,7 @@ void selectImageCheckDialog(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AlertDialog(
-            title: const Text('選択画像を転送しますか？',
+            title: const Text('画像を転送しますか？',//選択
                 style: TextStyle(
                   fontSize: 20,
                 )),

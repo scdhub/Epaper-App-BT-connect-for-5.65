@@ -82,7 +82,7 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                     delId.add(item.idDel);
                   }
                   showLoadingModal(context);
-                  final status = await postData(delId);
+                  final status = await postData(delId); //☆同期的な実行？☆
                   Navigator.of(context).pop();
                   //削除成功と失敗の分岐
                   if (status == 200) {

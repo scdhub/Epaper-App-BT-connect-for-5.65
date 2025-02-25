@@ -49,7 +49,6 @@ class _PreExportPageState extends State<PreExportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Colors.blue,
         // backgroundColor: Color(0xFF87ff99),
         centerTitle: true,
         title: const Text(
@@ -64,26 +63,26 @@ class _PreExportPageState extends State<PreExportPage> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,//高さ全体を使用
               children: <Widget>[
                 Padding(
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                     child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.white38,
+                        color: Colors.blue,
                         child: const Text('接続 E-paper 情報',
                             style: TextStyle(
                               fontSize: 20,
+                              color: Colors.white,
                             )))),
                 Container(
                   // color:Colors.white,
-
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.blue,
                       border: Border.all(
-                        color: Colors.black12,
+                        color: Colors.white,
                         width: 2,
                       )),
                   child: Column(children: [
@@ -114,6 +113,7 @@ class _PreExportPageState extends State<PreExportPage> {
                     //     ]),
                     // SizedBox(height:5),
 
+                    //中の文字
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -232,7 +232,7 @@ class _PreExportPageState extends State<PreExportPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         // backgroundColor: isScanning ? Colors.blue : Colors.grey,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.blue, //E-paper規格情報の中身
                         elevation: 10,
                         side: const BorderSide(
                           color: Colors.transparent,
@@ -371,6 +371,8 @@ class _PreExportPageState extends State<PreExportPage> {
                           // ),
                         );
                       },
+
+                      //未登録デバイス
                       style: ElevatedButton.styleFrom(
                         // backgroundColor: isScanning ? Colors.blue : Colors.grey,
                         backgroundColor: Colors.deepOrange,

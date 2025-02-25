@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:iphone_bt_epaper/devices_data.dart';
 import '../app_body_color.dart';
+import '../theme.dart';
 import 'e_paper_send_picture_page.dart';
 import 'e-paper_info.dart';
+import '../theme.dart'; // theme.dartをインポート
 
 class ExportPage extends StatefulWidget {
   final String trustName;
@@ -37,7 +39,8 @@ class _ExportPageState extends State<ExportPage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'E ink E-paper',
+          'BTスキャン＆E-paper配信関連',
+          // style: TextStyle(fontSize: 17,)
         ),
       ),
       body: CustomPaint(
@@ -58,11 +61,12 @@ class _ExportPageState extends State<ExportPage> {
                         child: const Text('接続 E-paper 情報',
                             style: TextStyle(
                               fontSize: 20,
+                              color: Colors.white,
                             )))),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.blue,
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
@@ -107,11 +111,12 @@ class _ExportPageState extends State<ExportPage> {
                         child: const Text('E-paper規格情報',
                             style: TextStyle(
                               fontSize: 20,
+                              color: Colors.white,
                             )))),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color(0xFF29B6F6),
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
@@ -166,13 +171,14 @@ class _ExportPageState extends State<ExportPage> {
                         child: const Text('E-paper配信用画像の表示',
                             style: TextStyle(
                               fontSize: 16,
+                              color: Colors.white,
                             )))),
                 Container(
                   // color:Colors.white,
                   width: MediaQuery.of(context).size.width,
                   height: 80,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.blue,
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
@@ -192,14 +198,16 @@ class _ExportPageState extends State<ExportPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff7077A1),
+                        // backgroundColor: const Color(0xFF7E57C2),
                         elevation: 10,
                         side: const BorderSide(
-                          color: Colors.transparent,
+                          color: Colors.white,
+                          // color: Colors.transparent,　透明？
                           width: 1,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
+
                         ),
                       ),
                       child: SizedBox(
@@ -226,12 +234,14 @@ class _ExportPageState extends State<ExportPage> {
                         child: const Text('このデバイスの登録を解除',
                             style: TextStyle(
                               fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             )))),
                 Container(
                   // color:Colors.white,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Color(0xFF29B6F6),
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
@@ -252,10 +262,10 @@ class _ExportPageState extends State<ExportPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffF6B17A),
+                        backgroundColor: const  Color(0xFFAB47BC),
                         elevation: 10,
                         side: const BorderSide(
-                          color: Colors.transparent,
+                          color:  Colors.white,
                           width: 1,
                         ),
                         shape: RoundedRectangleBorder(
@@ -269,7 +279,7 @@ class _ExportPageState extends State<ExportPage> {
                             const Center(
                                 child: Text('解除',
                                     style: TextStyle(
-                                      color: Colors.black87,
+                                      color: Colors.white,
                                       fontSize: 16,
                                     ))),
                       ),
@@ -287,46 +297,93 @@ class _ExportPageState extends State<ExportPage> {
 
 class DeviceUnLockPop extends StatelessWidget {
   final VoidCallback onDelete;
+
   const DeviceUnLockPop({super.key, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AlertDialog(
-            title: const Text('登録を解除しますか？',
-                style: TextStyle(
-                  fontSize: 20,
-                )),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
+      child: AlertDialog(
+          backgroundColor: Colors.white,
+          //ダイアログメッセージの形
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          // mainAxisAlignment: MainAxisAlignment.center,
+          // children: [
+          //   AlertDialog(
+          title: Text(
+            "確認",
+            style: AppTheme.dialogTitleStyle,//theme.dartのスタイルを使用
+            textAlign: TextAlign.center,
+          ),
+
+          content: Column(
+              mainAxisSize: MainAxisSize.min, //サイズ調節
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
+                Text('登録を解除しますか？',
+                  style: AppTheme.dialogContentStyle,//theme.dartのスタイルを使用
+                  textAlign: TextAlign.center,
+                ),
+
+                //     style: TextStyle(
+                //       fontSize: 20,
+                //       // fontWeight: FontWeight.bold,
+                //     )),
+                // content:
+                const SizedBox(height:16),
+                Wrap(
+                  spacing: 10, // ボタン間の間隔
+                  runSpacing: 10, // 折り返した際の間隔
+                  alignment: WrapAlignment.center,
                   children: [
-                    TextButton(
-                        child: const Text("OK"),
-                        //bt-connectのページに戻る
+                    SizedBox(
+                      width: 100, // ボタンの横幅を制限
+                      child: ElevatedButton(
+                        style:AppTheme.dialogYesButtonStyle,//theme.dartのスタイルを使用
+                        // ElevatedButton.styleFrom(
+                        //   backgroundColor: const Color(0xFFFFA7A7), // ピンク
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(10),
+                        //   ),
+                        // ),
                         onPressed: () async {
                           onDelete();
                           Navigator.pop(context);
                           Navigator.pop(context);
-                        }),
-                    TextButton(
-                      child: const Text("キャンセル"),
-                      onPressed: () => Navigator.pop(context),
+                        },
+                        child: const Text(
+                          "はい",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: ElevatedButton(
+                        style: AppTheme.dialogNoButtonStyle, //theme.dartのスタイルを使用
+                        // ElevatedButton.styleFrom(
+                        //   backgroundColor: const Color(0xFFB0C4DE), // ふんわりしたブルー
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(10),
+                        //   ),
+                        // ),
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text(
+                          "いいえ",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                   ],
-                )
-              ],
-            ),
-          ),
-        ],
+                ),
+                const SizedBox(height: 16),
+              ]
+          )
       ),
-      // ),
     );
   }
 }

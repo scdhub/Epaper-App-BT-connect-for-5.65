@@ -103,11 +103,12 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
               padding: const EdgeInsets.all(50),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isScanning ? Colors.redAccent : Colors.grey,
-                  elevation: 10,
+                  backgroundColor: isScanning ? Colors.orangeAccent : Colors.white54,
+                  elevation: 4,//10,
+
                   //境界線の幅を設定。
                   side: const BorderSide(
-                    color: Colors.black,
+                    color: Colors.white,
                     width: 2,
                   ),
                   //ボタンの形状設定。角を丸めた長方形。
@@ -135,11 +136,11 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                   child: Row(children: [
                     isScanning
                         ? Container(
-                            color: Colors.blueGrey,
+                            color: Colors.white54,
                             width: 10,
                             height: 10,
                           )
-                        : const Icon(Icons.restart_alt),
+                        : const Icon(Icons.restart_alt, color: Colors.white),
                     const SizedBox(width: 10),
                     Text(isScanning ? 'スキャン停止' : 'スキャン開始',
                         style: const TextStyle(
@@ -157,6 +158,7 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
               child: const Text('登録済みデバイス',
                   style: TextStyle(
                     fontSize: 20,
+                    color: Colors.white,
                   )),
             ),
             SizedBox(
@@ -277,6 +279,7 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                                     }),
                               );
                             },
+
                             child: Container(
                                 height: 50,
                                 // color: Colors.blue,
@@ -307,7 +310,7 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                                     scanDevices[index].scanIpAddress,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.grey),
+                                        ),
                                   ),
                                 ])),
                           );
@@ -346,8 +349,16 @@ class TrustDevices_popup extends StatefulWidget {
 class _TrustDevices_popupState extends State<TrustDevices_popup> {
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('"${widget.scanName}"を登録しますか'),
+    return Center(
+        child: AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),),
+    title: Text('"${widget.scanName}"を登録しますか',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight:FontWeight.bold,
+                  color: Colors.black) ,),
       actions: <Widget>[
         const Divider(),
         Container(
@@ -368,6 +379,7 @@ class _TrustDevices_popupState extends State<TrustDevices_popup> {
           ]),
         ),
       ],
+        ),
     );
   }
 }

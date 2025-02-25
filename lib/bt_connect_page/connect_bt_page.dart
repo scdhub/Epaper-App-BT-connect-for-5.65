@@ -196,9 +196,14 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   context, (Route<dynamic> route) => route.isFirst);
             }),
         title: const Text(
-          'E ink E-paper',
+          //画面上に表示される
+          'BTスキャン＆E-paper配信関連',
+            style: TextStyle(
+              fontSize: 17,
+            ),
+          ),
         ),
-      ),
+
       body: CustomPaint(
         painter: HexagonPainter(),
         child: Column(
@@ -206,12 +211,13 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
             Padding(
               padding: const EdgeInsets.all(50),
               child: ElevatedButton(
+                //スキャン開始or停止ボタン
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isScanning ? Colors.redAccent : Colors.grey,
+                  backgroundColor: isScanning ? Color(0xFFD81B60):Color(0xFF1565C0),
                   elevation: 10,
                   //境界線の幅を設定。
                   side: const BorderSide(
-                    color: Colors.black,
+                    color: Colors.white,
                     width: 2,
                   ),
                   //ボタンの形状設定。角を丸めた長方形。
@@ -233,8 +239,8 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   width: 170,
                   child: Row(children: [
                     isScanning
-                        ? const Icon(Icons.stop_circle)
-                        : const Icon(Icons.restart_alt),
+                        ? const Icon(Icons.stop_circle,color: Colors.white,)
+                        : const Icon(Icons.restart_alt,color: Colors.white,),
                     const SizedBox(width: 10),
                     Text(isScanning ? 'スキャン停止' : 'スキャン開始',
                         style: const TextStyle(
@@ -248,10 +254,11 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
             Container(
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width,
-              color: Colors.white38,
+              color: Colors.white30,
               child: const Text('登録済みデバイス',
                   style: TextStyle(
                     fontSize: 20,
+                    color: Colors.white,
                   )),
             ),
             SizedBox(
@@ -296,7 +303,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                                     ? 'デバイス名　不明'
                                     : trustDevices[index].trustName,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,color: Colors.black),
                               ),
                               Text(
                                 trustDevices[index].trustIpAddress,
@@ -337,11 +344,12 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
             Container(
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width,
-              color: Colors.white38,
+              color: Colors.white30,
               child: const Text(
                 '未登録デバイス',
                 style: TextStyle(
                   fontSize: 20,
+                  color: Colors.white,
                 ),
               ),
             ),
