@@ -8,6 +8,8 @@ import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import '../app_body_color.dart';
 import 'select-photo-check_page.dart';
 
+import 'package:photo_manager/photo_manager.dart';
+
 class Media {
   final AssetEntity assetEntity;
   final Widget widget;
@@ -56,7 +58,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
     //　アルバムへのアクセス許可を確認する
     // final permitted = await PhotoManager.requestPermissionExtend();
     final permitted = await PhotoManager.requestPermissionExtend();
-    if (permitted.isAuth) {
+    if (permitted.isAuth || permitted.hasAccess) {
       albums = await PhotoManager.getAssetPathList(
         type: RequestType.image,
       );
