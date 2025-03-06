@@ -9,8 +9,8 @@ import 'package:http/http.dart' as http;
 import 'sever_data_bind.dart';
 
 class ServerImageDelCheckPopup extends StatefulWidget {
-  final List<DelData> selectDelImage;
-  final Future<void> Function() fetchData;
+  final List<ImageItem> selectDelImage;
+  final Future<void> Function(int) fetchData;
 
   const ServerImageDelCheckPopup(
       {super.key, required this.selectDelImage, required this.fetchData});
@@ -79,10 +79,10 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                 onPressed: () async {
                   List<String> delId = [];
                   for (var item in widget.selectDelImage) {
-                    delId.add(item.idDel);
+                    delId.add(item.id);
                   }
                   showLoadingModal(context);
-                  final status = await postData(delId); //☆同期的な実行？☆
+                  final status = await postData(delId);
                   Navigator.of(context).pop();
                   //削除成功と失敗の分岐
                   if (status == 200) {
@@ -90,7 +90,7 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                   } else {
                     showFailedModal(context);
                   }
-                  await widget.fetchData();
+                  await widget.fetchData(status);
                 },
                 child: const Text(
                   'OK',

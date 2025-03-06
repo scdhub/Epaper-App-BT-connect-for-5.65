@@ -5,7 +5,6 @@ import '../app_body_color.dart';
 import '../theme.dart';
 import 'e_paper_send_picture_page.dart';
 import 'e-paper_info.dart';
-import '../theme.dart'; // theme.dartをインポート
 
 class ExportPage extends StatefulWidget {
   final String trustName;
@@ -192,9 +191,9 @@ class _ExportPageState extends State<ExportPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SendPictureSelect(
-                                    deviceInfo: widget.trustDevice,
-                                  )),
+                            builder: (context) => NewPage(
+                              deviceInfo: widget.trustDevice,
+                            )),
                         );
                       },
                       style: ElevatedButton.styleFrom(

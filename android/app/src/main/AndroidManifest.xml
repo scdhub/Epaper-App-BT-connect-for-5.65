@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="iphone_bt_epaper"
         android:name="${applicationName}"
@@ -37,6 +38,7 @@
 
     <!-- API 31+ 用のパーミッション -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <!-- Tell Google Play Store that your app uses Bluetooth LE
  Set android:required="true" if bluetooth is necessary -->
