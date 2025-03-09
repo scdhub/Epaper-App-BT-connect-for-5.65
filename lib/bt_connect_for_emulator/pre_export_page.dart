@@ -4,6 +4,7 @@ import 'package:iphone_bt_epaper/bt_connect_for_emulator/pre_devices_data.dart';
 import '../app_body_color.dart';
 import '../export-for-e-paper/e-paper_info.dart';
 import 'pre_send_picture_select.dart';
+import '../theme.dart';
 
 class PreExportPage extends StatefulWidget {
   final String trustName;
@@ -57,19 +58,26 @@ class _PreExportPageState extends State<PreExportPage> {
         ),
       ),
       body: CustomPaint(
-        painter: HexagonPainter(),
+        painter: BackgroundPainter(),
+        // painter: HexagonPainter(),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Column(
-              mainAxisSize: MainAxisSize.min,//高さ全体を使用
+              mainAxisSize: MainAxisSize.min, //高さ全体を使用
               children: <Widget>[
                 Padding(
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                     child: Container(
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         color: Colors.blue,
                         child: const Text('接続 E-paper 情報',
                             style: TextStyle(
@@ -132,7 +140,10 @@ class _PreExportPageState extends State<PreExportPage> {
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                     child: Container(
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         color: Colors.white38,
                         child: const Text('E-paper規格情報',
                             style: TextStyle(
@@ -194,7 +205,10 @@ class _PreExportPageState extends State<PreExportPage> {
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                     child: Container(
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         color: Colors.white38,
                         child: const Text('E-paper配信用画像の表示',
                             style: TextStyle(
@@ -211,8 +225,8 @@ class _PreExportPageState extends State<PreExportPage> {
                         width: 2,
                       )),
                   child:
-                      // Column(children:[
-                      Padding(
+                  // Column(children:[
+                  Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                     child: ElevatedButton(
                       onPressed: () {
@@ -245,13 +259,13 @@ class _PreExportPageState extends State<PreExportPage> {
                       child: const SizedBox(
                         width: double.infinity,
                         child:
-                            // Row(children: [
-                            Center(
-                                child: Text('画像の選択　(配信 or 削除)',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ))),
+                        // Row(children: [
+                        Center(
+                            child: Text('画像の選択　(配信 or 削除)',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ))),
                       ),
                     ),
                   ),
@@ -281,7 +295,10 @@ class _PreExportPageState extends State<PreExportPage> {
                     padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                     child: Container(
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         color: Colors.white38,
                         child: const Text('このデバイスの登録を解除',
                             style: TextStyle(
@@ -298,19 +315,20 @@ class _PreExportPageState extends State<PreExportPage> {
                       )),
                   height: 80,
                   child:
-                      // Column(children:[
-                      Padding(
+                  // Column(children:[
+                  Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
                     child: ElevatedButton(
                       onPressed: () {
                         // getImage();
                         showDialog(
                           barrierDismissible:
-                              false, //dialog以外の部分をタップしても消えないようにする。
+                          false, //dialog以外の部分をタップしても消えないようにする。
                           context: context,
-                          builder: (context) => DeviceUnLockPop(
-                            onDelete: widget.onDelete,
-                          ),
+                          builder: (context) =>
+                              DeviceUnLockPop(
+                                onDelete: widget.onDelete,
+                              ),
                           //   Container(
                           // width:double.infinity,
                           // height: 200,
@@ -387,14 +405,22 @@ class _PreExportPageState extends State<PreExportPage> {
                       ),
                       child: const SizedBox(
                         width: double.infinity,
-                        child:
-                            // Row(children: [
-                            Center(
-                                child: Text('解除',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ))),
+                        child: Row
+                          (children: [
+                          Icon(
+                            IconData(0xe332, fontFamily: 'MaterialIcons'),
+                            // 画像アイコン
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                          Center(
+                              child: Text('解除',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ))),
+                        ],
+                        ),
                       ),
                     ),
                   ),

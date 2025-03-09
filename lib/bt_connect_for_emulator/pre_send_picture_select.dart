@@ -98,7 +98,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
   void _selectDelReversedData(dynamic reversedImage) {
     if (reversedImage is ReversedData) {
       bool isSelected =
-          _delReverseData.any((element) => element.idR == reversedImage.idR);
+      _delReverseData.any((element) => element.idR == reversedImage.idR);
       setState(() {
         if (isSelected) {
           _delReverseData
@@ -137,13 +137,19 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(56),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 height: 61,
                 child: Column(children: [
                   Container(
                       margin: const EdgeInsets.fromLTRB(0, 1, 0, 0),
                       alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
                       color: isOn ? Colors.yellow : Colors.deepOrange,
                       child: Text(
                         isOn ? '<<< 削除 MODE >>>' : '<<< 配信 MODE >>>',
@@ -154,7 +160,7 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                       InkWell(
                           onTap: () {
                             setState(
-                              () {
+                                  () {
                                 isOn = !isOn;
                                 _delImageDataList.clear();
                                 _delImageItems.clear();
@@ -164,7 +170,10 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                           },
                           child: Container(
                             alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width / 2,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width / 2,
                             height: 40,
                             decoration: BoxDecoration(
                                 color: isOn ? Colors.deepOrange : Colors.yellow,
@@ -218,12 +227,17 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                                   offset: Offset(2, 2),
                                 )
                               ]),
-                          width: MediaQuery.of(context).size.width / 2,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width / 2,
                           height: 40,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(gridReverse ? '登録日:降順へ' : '登録日:昇順へ',
+                              Text(gridReverse
+                                  ? '登録日:降順へ'
+                                  : '登録日:昇順へ',
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 20,
@@ -241,7 +255,9 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                     ],
                   ),
                 ]),
-              )), //高さ
+              )
+          ),
+          //高さ
 
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -252,132 +268,138 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
         ),
         body: isOn
             ? //削除機能ON
-            CustomPaint(
-                painter: HexagonPainter(),
-                child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.white60,
-                    child: imageItems.isEmpty
-                        ? const NonServerPictureMess() //サーバーに画像がない場合のメッセージ表示￥
-                        : ServerImageDelGridView(
-                            imageItems: gridReverse ? imageItems : reverseData,
-                            selectedMedias:
-                                gridReverse ? _delImageItems : _delReverseData,
-                            selectMedia: gridReverse
-                                ? _selectDelImageItems
-                                : _selectDelReversedData,
-                            scrollController: _scrollController,
-                            gridReverse: gridReverse,
-                            count: count,
-                          )))
-            //  削除機能OFF
+        CustomPaint(
+            // painter: HexagonPainter(),
+            painter: BackgroundPainter(),
+            child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.white60,
+                child: imageItems.isEmpty
+                    ? const NonServerPictureMess() //サーバーに画像がない場合のメッセージ表示￥
+                    : ServerImageDelGridView(
+                  imageItems: gridReverse ? imageItems : reverseData,
+                  selectedMedias:
+                  gridReverse ? _delImageItems : _delReverseData,
+                  selectMedia: gridReverse
+                      ? _selectDelImageItems
+                      : _selectDelReversedData,
+                  scrollController: _scrollController,
+                  gridReverse: gridReverse,
+                  count: count,
+                )))
+        //  削除機能OFF
             : CustomPaint(
-                painter: HexagonPainter(),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  // color: Colors.black,
-                  child: FutureBuilder(
-                    future: getImage(
-                      context: context,
-                      imageItems: imageItems,
-                      reverseData: reverseData,
-                      dateSort: dateSort,
-                    ),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<void> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        // 非同期処理が完了したら画像を表示
-                        if (imageItems.isEmpty) {
-                          return const NonServerPictureMess();
-                        } else {
-                          return
-                              // gridReverse ?
-                              GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, // 3マスずつ表示
-                              crossAxisSpacing: 1.0, // 縦幅
-                              mainAxisSpacing: 1.0, // 横幅
-                            ),
-                            itemCount: gridReverse
-                                ? imageItems.length
-                                : reverseData.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final photoIndex = index % imageItems.length;
-                              final photoIndexR = index % reverseData.length;
-                              return GestureDetector(
-                                onTap: gridReverse
-                                    // 古い順に並び替え
-                                    ? () {
-                                        var value = imageItems[photoIndex];
-                                        selectImageCheckDialog(
-                                            context: context,
-                                            imageUrl: value.url,
-                                            onSendOK: () {
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
-                                            });
-                                      }
-                                    //   新しい順に並び替え
-                                    : () {
-                                        var value = reverseData[photoIndexR];
-                                        selectImageCheckDialog(
-                                            context: context,
-                                            imageUrl: value.url,
-                                            onSendOK: () {
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
-                                            });
-                                      },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey[300]!, width: 1),
-                                  ),
-                                  child: Center(
-                                    child: FadeInImage.memoryNetwork(
-                                      placeholder: kTransparentImage,
-                                      image: gridReverse
-                                          ? imageItems[index].url
-                                          : reverseData[index].url,
-                                    ),
+            // painter: HexagonPainter(),
+            painter: BackgroundPainter(),
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              // color: Colors.black,
+              child: FutureBuilder(
+                future: getImage(
+                  context: context,
+                  imageItems: imageItems,
+                  reverseData: reverseData,
+                  dateSort: dateSort,
+                ),
+                builder:
+                    (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // 非同期処理が完了したら画像を表示
+                    if (imageItems.isEmpty) {
+                      return const NonServerPictureMess();
+                    } else {
+                      return
+                        // gridReverse ?
+                        GridView.builder(
+                          gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // 3マスずつ表示
+                            crossAxisSpacing: 1.0, // 縦幅
+                            mainAxisSpacing: 1.0, // 横幅
+                          ),
+                          itemCount: gridReverse
+                              ? imageItems.length
+                              : reverseData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final photoIndex = index % imageItems.length;
+                            final photoIndexR = index % reverseData.length;
+                            return GestureDetector(
+                              onTap: gridReverse
+                              // 古い順に並び替え
+                                  ? () {
+                                var value = imageItems[photoIndex];
+                                selectImageCheckDialog(
+                                    context: context,
+                                    imageUrl: value.url,
+                                    onSendOK: () {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    }
+                                    );
+                              }
+                              //   新しい順に並び替え
+                                  : () {
+                                var value = reverseData[photoIndexR];
+                                selectImageCheckDialog(
+                                    context: context,
+                                    imageUrl: value.url,
+                                    onSendOK: () {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey[300]!, width: 1),
+                                ),
+                                child: Center(
+                                  child: FadeInImage.memoryNetwork(
+                                    placeholder: kTransparentImage,
+                                    image: gridReverse
+                                        ? imageItems[index].url
+                                        : reverseData[index].url,
                                   ),
                                 ),
-                              );
-                            },
-                          );
-                        }
-                      } else {
-                        // 非同期処理中はローディングインジケータを表示
-                        return const Center(child: CircularProgressIndicator()
-                            // Container(color: Colors.white,width:30,height: 30,)
+                              ),
                             );
-                      }
-                    },
-                  ),
-                )),
+                          },
+                        );
+                    }
+                  } else {
+                    // 非同期処理中はローディングインジケータを表示
+                    return const Center(child: CircularProgressIndicator()
+                      // Container(color: Colors.white,width:30,height: 30,)
+                    );
+                  }
+                },
+              ),
+            )
+        ),
         floatingActionButton: isOn
             ? _delImageDataList.isNotEmpty
-                // delImageItems.isNotEmpty
-                ? FloatingActionButton(
-                    onPressed: () async {
-                      for (var item in _delImageDataList) {
-                        print(
-                            'ID: ${item.idDel}, URL: ${item.url}, Last Modified: ${item.lastModifiedDel}');
-                      }
-                      showDialog(
-                        context: context,
-                        builder: (context) => ServerImageDelCheckPopup(
-                            selectDelImage: _delImageDataList, fetchData: fetchData),
-                      );
-                    },
-                    backgroundColor: Colors.lightGreenAccent,
-                    // Display check icon
-                    child: const Icon(Icons.add_task_outlined),
-                  )
-                : null
+        // delImageItems.isNotEmpty
+            ? FloatingActionButton(
+          onPressed: () async {
+            for (var item in _delImageDataList) {
+              print(
+                  'ID: ${item.idDel}, URL: ${item.url}, Last Modified: ${item
+                      .lastModifiedDel}');
+            }
+            showDialog(
+              context: context,
+              builder: (context) =>
+                  ServerImageDelCheckPopup(
+                      selectDelImage: _delImageDataList, fetchData: fetchData),
+            );
+          },
+          backgroundColor: Colors.lightGreenAccent,
+          // Display check icon
+          child: const Icon(Icons.add_task_outlined),
+        )
+            : null
             : null);
   }
 }
@@ -389,61 +411,59 @@ void selectImageCheckDialog(
   showDialog(
     barrierDismissible: false, //dialog以外の部分をタップしても消えないようにする。
     context: context,
-    builder: (context) => Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AlertDialog(
-            title: const Text('画像を転送しますか？',//選択
-                style: TextStyle(
-                  fontSize: 20,
-                )),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black12, width: 2)),
-                    child: FadeInImage.memoryNetwork(
-                      placeholder: kTransparentImage,
-                      image: imageUrl,
-                    ),
+    builder: (context) =>
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AlertDialog(
+                title: const Text('画像を転送しますか？', //選択
+                    style: TextStyle(
+                      fontSize: 20,
+                    )
+                ),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Colors.black12, width: 2)),
+                        child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: imageUrl,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  // ボタン領域
+                  TextButton(
+                      child: const Text("キャンセル"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }),
+                  TextButton(
+                      child: const Text("OK"),
+                      onPressed: () {
+                        onSendOK();
+                        // Navigator.pop(context);
+                      }
                   ),
                 ],
               ),
-            ),
-            actions: <Widget>[
-              // ボタン領域
-              TextButton(
-                  child: const Text("キャンセル"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              TextButton(
-                  child: const Text("OK"),
-                  onPressed: () {
-                    onSendOK();
-                    // Navigator.pop(context);
-                  }),
             ],
           ),
-        ],
-      ),
-    ),
+        ),
   );
 }
 
 Future<void> ePaperSend({
   required BuildContext context,
 }) async {
-  Timer? _timer;
-  _timer = Timer(const Duration(seconds: 3), () {
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
-  });
   await showDialog(
     // barrierDismissible:false,//dialog以外の部分をタップしても消えないようにする。
     context: context,

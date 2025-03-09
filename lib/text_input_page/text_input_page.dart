@@ -125,7 +125,8 @@ class _TextInputPageState extends State<TextInputPage> {
 
       //修正中
       body: CustomPaint(
-        painter: HexagonPainter(),
+        // painter: HexagonPainter(),
+          painter: BackgroundPainter(),
         child: Column(
           children: [
             Container(

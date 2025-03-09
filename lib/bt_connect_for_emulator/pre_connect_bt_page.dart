@@ -25,26 +25,29 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
     //アプリのストレージにアクセスするため。
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //setStringListでSharedPreferencesに文字列のリストを保存
+
     prefs.setStringList(
       'item',
       value
-          .map((device) => '${device.trustName}:${device.trustIpAddress}')
+          .map((device) => '${device.trustName}：${device.trustIpAddress}')
           .toList(),
     );
   }
 
-//データ読み込み
+//データ読み込みについて（Blutooth情報はなし）
+  //sharedPreferences→trustDevicesへ保存する処理
   _restoreValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       //getStringListでSharedPreferencesに文字列のリストを取得
       trustDevices = (prefs.getStringList('item') ?? []).map((item) {
-        final parts = item.split(':');
+        final parts = item.split(':'); //"："で区切る。
         return PreTrustDevice(
-          trustName: parts[0],
-          trustIpAddress: parts[1],
+          trustName: parts[0], //デバイス名
+          trustIpAddress: parts[1], //IPアドレス
         );
-      }).toList();
+      })
+          .toList();
     });
   }
 
@@ -96,15 +99,17 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
         ),
       ),
       body: CustomPaint(
-        painter: HexagonPainter(),
+        painter: BackgroundPainter(),
+        // painter: HexagonPainter(),
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(50),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isScanning ? Colors.orangeAccent : Colors.white54,
-                  elevation: 4,//10,
+                  backgroundColor: isScanning ?
+                  Colors.orangeAccent : Colors.white54,
+                  elevation: 4, //10,
 
                   //境界線の幅を設定。
                   side: const BorderSide(
@@ -124,7 +129,8 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                       // DetectDeviceクラスに仮デバイス情報としてあるdevicesから
                       //ScanDeviceクラスに情報を入れる動作。
                       scanDevices = devices
-                          .map((device) => PreScanDevice(
+                          .map((device) =>
+                          PreScanDevice(
                               scanName: device.detectName,
                               scanIpAddress: device.detectIpAddress))
                           .toList();
@@ -136,10 +142,10 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                   child: Row(children: [
                     isScanning
                         ? Container(
-                            color: Colors.white54,
-                            width: 10,
-                            height: 10,
-                          )
+                      color: Colors.white54,
+                      width: 10,
+                      height: 10,
+                    )
                         : const Icon(Icons.restart_alt, color: Colors.white),
                     const SizedBox(width: 10),
                     Text(isScanning ? 'スキャン停止' : 'スキャン開始',
@@ -154,13 +160,14 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
             Container(
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width,
-              color: Colors.white38,
+              // color: Colors.white38,
               child: const Text('登録済みデバイス',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,
                   )),
             ),
+
             SizedBox(
               height: 250,
               child: ListView.builder(
@@ -175,19 +182,22 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      shape: BoxShape.rectangle, //長方形
+                      shape: BoxShape.rectangle,
+
+                      //長方形
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow: const [
-                        BoxShadow(
-                          offset: Offset(0, 5),
-                          color: Colors.grey,
-                        ),
-                      ],
+                      // boxShadow: const [
+                        // BoxShadow(
+                        //   offset: Offset(0, 5),
+                        //   color: Colors.grey,
+                        // ),
+                      // ],
                     ),
+
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -195,11 +205,14 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                             width: 50,
                           ),
                           Column(children: [
+
                             Text(
                               trustDevices[index].trustName,
                               style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              const TextStyle(fontWeight: FontWeight.bold),
                             ),
+
+                            //IPアドレスの色
                             Text(
                               trustDevices[index].trustIpAddress,
                               style: const TextStyle(
@@ -207,6 +220,7 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                                   color: Colors.grey),
                             ),
                           ]),
+
                           IconButton(
                             onPressed: () {
                               // _removeCounterValue(index);
@@ -216,12 +230,15 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
                                 context,
                                 MaterialPageRoute(
                                   // 選択したデバイス名の情報を配信確認画面に渡す。
-                                  builder: (context) => PreExportPage(
-                                    trustName: trustDevices[index].trustName,
-                                    trustIpAddress:
+                                  builder: (context) =>
+                                      PreExportPage(
+                                        trustName: trustDevices[index]
+                                            .trustName,
+                                        trustIpAddress:
                                         trustDevices[index].trustIpAddress,
-                                    onDelete: () => _removeCounterValue(index),
-                                  ),
+                                        onDelete: () =>
+                                            _removeCounterValue(index),
+                                      ),
                                 ),
                               );
                             },
@@ -234,6 +251,7 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
               ),
             ),
             const SizedBox(height: 10),
+
             Container(
               alignment: Alignment.center,
               width: MediaQuery.of(context).size.width,
@@ -249,85 +267,89 @@ class _ConnectBTPageState extends State<PreConnectBTPage> {
             // isScanning ?
             scanDevices.isNotEmpty
                 ? Expanded(
-                    child: ListView.builder(
-                      itemCount: scanDevices.length,
-                      itemBuilder: (context, index) {
-                        //登録済みデバイスとスキャンしたデバイスの名前とremoteIdが一致したら表示しない。
-                        if (trustDevices.any((device) =>
-                            device.trustName == scanDevices[index].scanName &&
-                            device.trustIpAddress ==
-                                scanDevices[index].scanIpAddress)) {
-                          return Container();
-                        } else {
-                          return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => TrustDevices_popup(
-                                    scanName: scanDevices[index].scanName,
-                                    onOk: () {
-                                      setState(() {
-                                        //OKを押したら、scanデバイスのデータを登録する。
-                                        trustDevices.add(PreTrustDevice(
-                                            trustName:
-                                                scanDevices[index].scanName,
-                                            trustIpAddress: scanDevices[index]
-                                                .scanIpAddress));
-                                        scanDevices.removeAt(index);
-                                        _saveStringList(trustDevices);
-                                      });
-                                    }),
-                              );
-                            },
-
-                            child: Container(
-                                height: 50,
-                                // color: Colors.blue,
-                                margin: const EdgeInsets.all(5),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: Colors.white60,
-                                  shape: BoxShape.rectangle,
-                                  border: Border.all(
-                                    color: Colors.black12,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      offset: Offset(0, 5),
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                                child: Column(children: [
-                                  Text(
-                                    scanDevices[index].scanName,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    scanDevices[index].scanIpAddress,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                ])),
-                          );
-                        }
+              child: ListView.builder(
+                itemCount: scanDevices.length,
+                itemBuilder: (context, index) {
+                  //登録済みデバイスとスキャンしたデバイスの名前とremoteIdが一致したら表示しない。
+                  if (trustDevices.any((device) =>
+                  device.trustName == scanDevices[index].scanName &&
+                      device.trustIpAddress ==
+                          scanDevices[index].scanIpAddress)) {
+                    return Container();
+                  } else {
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) =>
+                              TrustDevices_popup(
+                                  scanName: scanDevices[index].scanName,
+                                  onOk: () {
+                                    setState(() {
+                                      //OKを押したら、scanデバイスのデータを登録する。
+                                      trustDevices.add(PreTrustDevice(
+                                          trustName:
+                                          scanDevices[index].scanName,
+                                          trustIpAddress: scanDevices[index]
+                                              .scanIpAddress));
+                                      scanDevices.removeAt(index);
+                                      _saveStringList(trustDevices);
+                                    });
+                                  }),
+                        );
                       },
-                    ),
-                  )
+
+                      child: Container(
+                          height: 50,
+                          // color: Colors.blue,
+                          margin: const EdgeInsets.all(5),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                            // boxShadow: const [
+                              // BoxShadow(
+                              //   offset: Offset(0, 5),
+                              //   color: Colors.grey,
+                              // ),
+                            // ],
+                          ),
+                          child: Column(children: [
+                            Text(
+                              scanDevices[index].scanName,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              scanDevices[index].scanIpAddress,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ])),
+                    );
+                  }
+                },
+              ),
+            )
                 : Container(
-                    color: Colors.black45,
-                    alignment: Alignment.topCenter,
-                    width: MediaQuery.of(context).size.width,
-                    height: 25,
-                    child: const Text(
-                      'スキャンを開始して、未登録デバイスを表示してください',
-                      style: TextStyle(color: Colors.red, fontSize: 15),
-                    ),
-                  ),
+              color: Colors.black45,
+              alignment: Alignment.topCenter,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: 25,
+              child: const Text(
+                'スキャンを開始して、未登録デバイスを表示してください',
+                style: TextStyle(color: Colors.red, fontSize: 15),
+              ),
+            ),
           ],
         ),
       ),

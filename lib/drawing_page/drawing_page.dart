@@ -369,7 +369,8 @@ class _DrawingPageState extends State<DrawingPage> {
       body: ColorPalette(
         notifier: ColorPaletteNotifier(),
         child: CustomPaint(
-          painter: HexagonPainter(),
+          painter: BackgroundPainter(),
+          // painter: HexagonPainter(),
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
             child: ClipRect(

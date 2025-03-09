@@ -35,38 +35,61 @@ class AppTheme {
     minimumSize: const Size(150, 45), // 最小サイズ指定
   );
 
-  //ダイアログのタイトル文字
+  //基本のダイアログのタイトル文字
   static TextStyle dialogTitleStyle = const TextStyle(
     fontSize: 25,
     fontWeight: FontWeight.bold,
     color: Colors.black,
   );
 
-  // ダイアログの本文（コンテンツ）のスタイル
+  // 基本のダイアログのテキスト文字
   static TextStyle dialogContentStyle = const TextStyle(
-    fontSize: 18, // ★タイトルより少し小さめ
+    fontSize: 18,
     fontWeight: FontWeight.normal,
     color: Colors.black,
   );
 
-  // もう一つのボタンスタイル（「はい」のボタン用）
+  // ダイアログのボタンスタイル（「はい」とか「OK」のボタン用）
   static ButtonStyle dialogYesButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFFFFA7A7), // ボタンの色
-    foregroundColor: Colors.white, // ボタンの文字色
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10), // 丸みを持たせたボタン
-    ),
-    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // ボタンの内側の余白
-  );
-
-  // ダイアログのボタンスタイル（いいえボタン用）
-  static ButtonStyle dialogNoButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: const Color(0xFF80DEEA), // ボタンの色
     foregroundColor: Colors.white, // ボタンの文字色
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10), // ボタンの丸み
     ),
     padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // ボタンとボタンの内側の余白
+  );
+
+  // 基本のダイアログのボタンスタイル（「いいえ」とか「キャンセル」のボタン用）
+  static ButtonStyle dialogNoButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFFFFA7A7), // ボタンの色
+    foregroundColor: Colors.white, // ボタンの文字色
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),// ボタンの丸み
+    ),
+    padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0), // ボタンとボタンの内側の余白
+  );
+
+
+  // エラーダイアログタイトルスタイル（エラーっぽい赤色）
+  static TextStyle errordialogTitleStyle = const TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+  color: Colors.red,
+  );
+
+  // エラーダイアログ本文スタイル
+  static TextStyle errorContentStyle = const TextStyle(
+  fontSize: 16,
+  color: Colors.black,
+  );
+
+  // エラーダイアログボタンスタイル（OKボタン）
+  static ButtonStyle errordialogButtonStyle = ElevatedButton.styleFrom(
+  backgroundColor: Colors.red,
+  foregroundColor: Colors.white, // ボタン文字色
+  shape: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(12),
+  ),
   );
 
   // 明るいテーマでデザイン
@@ -94,7 +117,7 @@ class AppTheme {
       actionsIconTheme: IconThemeData(color: appBarTextColor), // アクションアイコン
       titleTextStyle: TextStyle(
         color: appBarTextColor, // タイトル文字色
-        fontSize: 20,
+        fontSize: 17,
         fontWeight: FontWeight.bold, //太字
       ),
     ),
@@ -106,6 +129,21 @@ class AppTheme {
     ),
   );
 }
+
+  // 注意ダイアログのタイトルスタイル（オレンジ色）
+  TextStyle warningDialogTitleStyle = const TextStyle(
+    fontSize: 25,
+    fontWeight: FontWeight.bold,
+    color: Color(0xFFFF9800), // オレンジ色
+  );
+
+  // 注意ダイアログの本文スタイル（黒色）
+  TextStyle warningDialogContentStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.normal,
+    color: Colors.black,
+  );
+
 
 
 

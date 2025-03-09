@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -7,9 +8,11 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 
 import '../app_body_color.dart';
+import '../theme.dart';
 import 'crop_photo_select_gridview.dart';
 import 'crop_page.dart';
 
+//画像を選択 & トリミングするコード
 class Media {
   final AssetEntity assetEntity;
   final Widget widget;
@@ -128,27 +131,67 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
     });
   }
 
-  // エラーダイアログを表示
+  // エラーダイアログを表示(エラーダイアログはtheme.dartでdesign管理中）
   void _showErrorDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('エラー'),
-          content:
-              const Text('この画像は選択できません。\n他の画像を選択するか\nスマホ内に保存されているか確認ください。'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+          title: Text('エラー',
+              style: AppTheme.errordialogTitleStyle,
+          ),
+
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 250, // ダイアログの幅
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center, // 中央揃え
+                crossAxisAlignment: CrossAxisAlignment.center, // 横方向も中央揃え
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'この画像は選択できません。',
+                    style: AppTheme.errorContentStyle, // エラーメッセージの本文スタイル
+                    textAlign: TextAlign.center, // テキストを中央揃え
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '他の画像を選択するか\nスマホ内に保存されているか確認ください。',
+                    style: AppTheme.errorContentStyle, // エラーメッセージの本文スタイル
+                    textAlign: TextAlign.center, // テキストを中央揃え
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: AppTheme.errordialogButtonStyle, // OKボタンのスタイル
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         );
       },
     );
   }
+        //エラー用スタイル
+  //         content:
+  //             const Text('この画像は選択できません。\n他の画像を選択するか\nスマホ内に保存されているか確認ください。'),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: const Text('OK'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +224,8 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
         ),
       ),
       body: CustomPaint(
-        painter: HexagonPainter(),
+        // painter: HexagonPainter(),
+        painter: BackgroundPainter(),
         child: MediasGridView(
           //画像をgridview表示するクラス
           medias: _medias,
@@ -190,14 +234,27 @@ class _CropImageSelectAlbumState extends State<CropImageSelect_Album> {
           scrollController: _scrollController,
         ),
       ),
+
       floatingActionButton: _selectedMedias.isEmpty
           ? null
           : FloatingActionButton(
+
               onPressed: () async {
                 try {
                   for (Media media in _selectedMedias) {
                     AssetEntity asset = media.assetEntity;
-                    cropImage(context, asset); //クロップ画面に移動する
+
+                    // AssetEntity から File を取得
+                    final File? file = await asset.file;
+
+                    if (file != null) {
+                      cropImage(context, imageFile: file);//asset.file でFileを取得してからcropImage() に渡す
+                    } else {
+                      print("選択した画像の File を取得できませんでした");
+                      _showErrorDialog();
+                    }
+                    //「AssetEntity」はギャラリーの画像を管理するオブジェクトなので直接Fileに入れることができない。
+                    // cropImage(context, asset as File); //クロップ画面に移動する
                   }
                 } catch (e) {
                   _showErrorDialog();

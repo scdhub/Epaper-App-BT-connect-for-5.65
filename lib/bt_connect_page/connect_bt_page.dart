@@ -29,6 +29,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
 
 //スキャンした時のデバイスデータを格納
   List<ScanResult> scanResult = [];
+
   // スキャンしたデバイス情報を格納
   List<BluetoothDevice> devicesList = [];
 
@@ -44,7 +45,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       'item',
       value
           .map((device) =>
-              '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
+      '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
           .toList(),
     );
   }
@@ -73,7 +74,8 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
           trustIpAddress: parts[1],
           devicesData: device,
         );
-      }).toList();
+      })
+          .toList();
     });
   }
 
@@ -89,7 +91,8 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
           'item',
           trustDevices
               .map((device) =>
-                  '${device.trustName}::${device.trustIpAddress}::${device.devicesData}')
+          '${device.trustName}::${device.trustIpAddress}::${device
+              .devicesData}')
               .toList());
     });
   }
@@ -120,6 +123,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
     // スキャンを開始する前にリストをクリア
     scanResult.clear();
     devicesList.clear();
+    scanDevices.clear();
 
     // BLEデバイスをスキャン
     FlutterBluePlus.startScan(timeout: const Duration(seconds: 30));
@@ -130,29 +134,42 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
       // スキャンした情報を格納する
       // scanResult = results;
       devicesList = results.map((r) => r.device).toList();
+
       // スキャン結果を反映
       scanDevices = devicesList
-          .map((device) => ScanDevice(
+          .map((device) =>
+          ScanDevice(
               scanName: device.platformName,
               scanIpAddress: device.remoteId.toString(),
               scanDevicesData: device))
+          .where((device) =>
+          device.scanName.isNotEmpty) // デバイス名が空のものを除外する。　
+          // ↓　追加するときは　　↑　isnotempty　の「 ）」を削除して追加してください。
+          // && device.scanName.startsWith("wd001_ble_")) //  「wd001_ble_」 のみ取得する。
           .toList();
+
       if (mounted) {
         setState(() {
-          // スキャンした情報を格納する
-          // scanResult = results;
-          devicesList = results.map((r) => r.device).toList();
-          // スキャン結果を反映
-          scanDevices = devicesList
-              .map((device) => ScanDevice(
-                  scanName: device.platformName,
-                  scanIpAddress: device.remoteId.toString(),
-                  scanDevicesData: device))
-              .toList();
           isScanning = true;
         });
       }
     });
+
+    //       // スキャンした情報を格納する
+    //       // scanResult = results;
+    //       devicesList = results.map((r) => r.device).toList();
+    //       // スキャン結果を反映
+    //       scanDevices = devicesList
+    //           .map((device) => ScanDevice(
+    //               scanName: device.platformName,
+    //               scanIpAddress: device.remoteId.toString(),//IPadress
+    //               scanDevicesData: device))
+    //           .toList();
+    //       isScanning = true;
+    //     });
+    //   }
+    // });
+
     //30s経ったら スキャンを停止する
     Future.delayed(const Duration(seconds: 30)).then((_) {
       if (mounted) {
@@ -164,7 +181,10 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
     });
   }
 
+  //ユーザーが接続可能なデバイスを押下　→　rustDevicesに追加されるので、ここでデバイス名が空のものは追加しないようにする。
   void _addTrustDevice(ScanDevice device) {
+    if (device.scanName.isEmpty) return; // デバイス名が空なら追加しない
+
     setState(() {
       trustDevices.add(TrustDevice(
         trustName: device.scanName,
@@ -198,23 +218,26 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
         title: const Text(
           //画面上に表示される
           'BTスキャン＆E-paper配信関連',
-            style: TextStyle(
-              fontSize: 17,
-            ),
+          style: TextStyle(
+            // fontSize: 17,
           ),
         ),
+      ),
 
       body: CustomPaint(
-        painter: HexagonPainter(),
+        painter: BackgroundPainter(),
+        // painter: HexagonPainter(),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(50),
+              padding: const EdgeInsets.all(35),
               child: ElevatedButton(
                 //スキャン開始or停止ボタン
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isScanning ? Color(0xFFD81B60):Color(0xFF1565C0),
-                  elevation: 10,
+                  backgroundColor: isScanning ? Color(0xFFD81B60) : Color(
+                      0xFF1565C0),
+                  elevation: 5,
+                  // elevation: 10,
                   //境界線の幅を設定。
                   side: const BorderSide(
                     color: Colors.white,
@@ -222,8 +245,9 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   ),
                   //ボタンの形状設定。角を丸めた長方形。
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  minimumSize: const Size(double.infinity, 50), // 高さを60にUP！
                 ),
                 onPressed: () {
                   setState(() {
@@ -236,11 +260,12 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   });
                 },
                 child: SizedBox(
-                  width: 170,
+                  width: 160,
+
                   child: Row(children: [
                     isScanning
-                        ? const Icon(Icons.stop_circle,color: Colors.white,)
-                        : const Icon(Icons.restart_alt,color: Colors.white,),
+                        ? const Icon(Icons.stop_circle, color: Colors.white,)
+                        : const Icon(Icons.restart_alt, color: Colors.white,),
                     const SizedBox(width: 10),
                     Text(isScanning ? 'スキャン停止' : 'スキャン開始',
                         style: const TextStyle(
@@ -251,10 +276,32 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 ),
               ),
             ),
+            //テキストをスキャンボタンの下に配置
+            Container(
+              color: Colors.white,
+              alignment: Alignment.center,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: 25,
+              child: const Text(
+                '☆配信を行うにはデバイス登録後、右アイコンを押下ください。',
+                // 'スキャンを開始して、デバイスを登録してください。',
+                style: TextStyle(color: Colors.red,
+                  fontSize: 12, fontWeight:
+                  FontWeight.bold, // 太字にして強調
+                ),
+              ),
+            ),
+
             Container(
               alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white30,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              color: Color(0xFF1565C0),
               child: const Text('登録済みデバイス',
                   style: TextStyle(
                     fontSize: 20,
@@ -269,6 +316,14 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                 scrollDirection: Axis.vertical, // 縦方向のスクロール
                 itemCount: trustDevices.length,
                 itemBuilder: (context, index) {
+                  // デバイス名が空なら非表示にする
+                  // if (trustDevices[index].trustName.isEmpty) {
+                  if (trustDevices[index].trustName
+                      .trim()
+                      .isEmpty) {
+                    return const SizedBox.shrink(); // 何も表示しない
+                  }
+
                   return Container(
                     height: 50,
                     margin: const EdgeInsets.all(5),
@@ -283,37 +338,54 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow: const [
-                        BoxShadow(
-                          offset: Offset(0, 5),
-                          color: Colors.grey,
-                        ),
-                      ],
+                      // boxShadow: const [
+                      //   BoxShadow(
+                      //     offset: Offset(0, 5),
+                      //     color: Colors.grey,
+                      //   ),
+                      // ],
                     ),
+
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const SizedBox(
-                            width: 50,
+                          // 左側にデバイスアイコンを追加
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Icon(
+                              Icons.perm_device_info_sharp,
+                              size: 25,
+                              color: Colors.grey,
+                            ),
                           ),
+                          // const SizedBox(
+                          //   width: 50,
+                          // ),
+
+                          //デバイスリスト
                           Expanded(
-                            child: Column(children: [
-                              Text(
-                                trustDevices[index].trustName.isEmpty
-                                    ? 'デバイス名　不明'
-                                    : trustDevices[index].trustName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,color: Colors.black),
-                              ),
-                              Text(
-                                trustDevices[index].trustIpAddress,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ]),
+                            child: Column(
+                                children: [
+                                  Text(
+                                    trustDevices[index].trustName,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                    // trustDevices[index].trustName.isEmpty
+                                    //     ? 'デバイス名　不明'
+                                    //     : trustDevices[index].trustName,
+                                    // style: const TextStyle(
+                                    //     fontWeight: FontWeight.bold,color: Colors.black),
+                                  ),
+                                  Text(
+                                    trustDevices[index].trustIpAddress,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ]),
                           ),
                           IconButton(
                             onPressed: () {
@@ -321,18 +393,21 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                                 context,
                                 MaterialPageRoute(
                                   // 選択したデバイス名の情報を配信確認画面に渡す。
-                                  builder: (context) => ExportPage(
-                                    trustName: trustDevices[index].trustName,
-                                    trustIpAddress:
+                                  builder: (context) =>
+                                      ExportPage(
+                                        trustName: trustDevices[index]
+                                            .trustName,
+                                        trustIpAddress:
                                         trustDevices[index].trustIpAddress,
-                                    trustDevice:
+                                        trustDevice:
                                         trustDevices[index].devicesData,
-                                    onDelete: () => _removeCounterValue(index),
-                                  ),
+                                        onDelete: () =>
+                                            _removeCounterValue(index),
+                                      ),
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.info_outline_rounded),
+                            icon: const Icon(Icons.info_outline_rounded,color: Color(0xFFE57373),size: 28,),
                           ),
                         ]),
                     // ),
@@ -341,22 +416,28 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
               ),
             ),
             const SizedBox(height: 10),
+
+            //未登録デバイスのラベル
             Container(
               alignment: Alignment.center,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white30,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              color: Color(0xFF1565C0),
               child: const Text(
-                '未登録デバイス',
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.white,
                 ),
+                // '未登録デバイス',
+                "接続可能なデバイス",
               ),
             ),
             UnregisteredDevice(
-              scanDevices: scanDevices,
-              trustDevices: trustDevices,
-              addTrustDevice: _addTrustDevice,
+              scanDevices: scanDevices, //スキャンした未登録のデバイス一覧
+              trustDevices: trustDevices, //既に登録されたデバイス一覧
+              addTrustDevice: _addTrustDevice, //未登録デバイスを trustDevices に追加する処理
             ),
           ],
         ),

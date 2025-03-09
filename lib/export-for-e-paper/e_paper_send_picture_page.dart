@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
-import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'dart:developer';
+// import 'dart:io';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -10,6 +10,7 @@ import 'package:iphone_bt_epaper/export-for-e-paper/sever_data_bind.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../app_body_color.dart';
 // import '../bt_connect_page/connect_bt_page.dart';
+import '../theme.dart';
 import 'server_get-image.dart';
 import 'server_image_delete_check_popup.dart';
 import 'scrollappbar.dart';
@@ -64,7 +65,7 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
 
   void _loadContents() {
     if (_scrollController.position.pixels /
-            _scrollController.position.maxScrollExtent >
+        _scrollController.position.maxScrollExtent >
         0.80) {
       if (_items.length != imageItems.length) {
         _addContents();
@@ -259,7 +260,7 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
   void _selectDelReversedData(dynamic reversedImage) {
     if (reversedImage is ReversedData) {
       bool isSelected =
-          _delReverseData.any((element) => element.idR == reversedImage.idR);
+      _delReverseData.any((element) => element.idR == reversedImage.idR);
       setState(() {
         if (isSelected) {
           _delReverseData
@@ -374,13 +375,19 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
             bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(56),
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
                   height: 64,
                   child: Column(children: [
                     Container(
                         margin: const EdgeInsets.fromLTRB(0, 1, 0, 0),
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
                         color: isOn
                             ? const Color(0xff7077A1)
                             : const Color(0xffF6B17A),
@@ -404,14 +411,17 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                                     offset: Offset(2, 2),
                                   )
                                 ]),
-                            width: MediaQuery.of(context).size.width / 2,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width / 2,
                             height: 40,
                             child: InkWell(
-                                // highlightColor: const Color(0xffF6B17A),
-                                // splashColor: const Color(0xff7077A1),
+                              // highlightColor: const Color(0xffF6B17A),
+                              // splashColor: const Color(0xff7077A1),
                                 onTap: () {
                                   setState(
-                                    () {
+                                        () {
                                       isOn = !isOn;
                                       _delImageDataList.clear();
                                       _delImageItems.clear();
@@ -424,14 +434,14 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                                   alignment: Alignment.center,
                                   child: isOn
                                       ? const Text('配信モードへ',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20))
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20))
                                       : const Text('削除モードへ',
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 211, 219, 223),
-                                              fontSize: 20)),
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 211, 219, 223),
+                                          fontSize: 20)),
                                 ))),
 
                         Ink(
@@ -446,7 +456,10 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                                   offset: Offset(2, 2),
                                 )
                               ]),
-                          width: MediaQuery.of(context).size.width / 2,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width / 2,
                           height: 40,
                           child: InkWell(
                             onTap: () {
@@ -478,7 +491,9 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(gridReverse ? '登録日:降順へ' : '登録日:昇順へ',
+                                    Text(gridReverse
+                                        ? '登録日:降順へ'
+                                        : '登録日:昇順へ',
                                         style: const TextStyle(
                                           color: Color.fromARGB(
                                               255, 211, 219, 223),
@@ -513,142 +528,147 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
         child: Stack(children: [
           isOn
               ? //削除機能ON
-              CustomPaint(
-                  painter: HexagonPainter(),
-                  child: isGetImages
-                      ? SizedBox(
-                          width: double.infinity,
-                          height: double.infinity,
-                          child: imageItems.isEmpty
-                              ? const NonServerPictureMess() //サーバーに画像がない場合のメッセージ表示￥
-                              : ServerImageDelGridView(
-                                  imageItems:
-                                      gridReverse ? imageItems : reverseData,
-                                  selectedMedias: gridReverse
-                                      ? _delImageItems
-                                      : _delReverseData,
-                                  selectMedia: gridReverse
-                                      ? _selectDelImageItems
-                                      : _selectDelReversedData,
-                                  scrollController: _scrollController,
-                                  gridReverse: gridReverse,
-                                  count: count,
-                                ))
-                      : const Center(child: CircularProgressIndicator()))
-              //  削除機能OFF
+          CustomPaint(
+              painter: BackgroundPainter(),
+              // painter: HexagonPainter(),
+              child: isGetImages
+                  ? SizedBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: imageItems.isEmpty
+                      ? const NonServerPictureMess() //サーバーに画像がない場合のメッセージ表示￥
+                      : ServerImageDelGridView(
+                    imageItems:
+                    gridReverse ? imageItems : reverseData,
+                    selectedMedias: gridReverse
+                        ? _delImageItems
+                        : _delReverseData,
+                    selectMedia: gridReverse
+                        ? _selectDelImageItems
+                        : _selectDelReversedData,
+                    scrollController: _scrollController,
+                    gridReverse: gridReverse,
+                    count: count,
+                  ))
+                  : const Center(child: CircularProgressIndicator()))
+          //  削除機能OFF
               : CustomPaint(
-                  painter: HexagonPainter(),
-                  child: isGetImages
-                      ? imageItems.isEmpty
-                          ? const NonServerPictureMess()
-                          : Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 3.0),
-                              child: GridView.builder(
-                                controller: _scrollController,
-                                physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics()),
-                                padding: const EdgeInsets.fromLTRB(
-                                    0, 0, 0, 150), // 下部のpadding
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4, // 4マスずつ表示
-                                  crossAxisSpacing: 1.0, // 縦幅
-                                  mainAxisSpacing: 1.0, // 横幅
-                                ),
-                                itemCount: _items.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final photoIndex = index % imageItems.length;
-                                  final photoIndexR =
-                                      index % reverseData.length;
-                                  return GestureDetector(
-                                      onTap: gridReverse
-                                          // 古い順に並び替え
-                                          ? () {
-                                              var value =
-                                                  imageItems[photoIndex];
-                                              selectImageCheckDialog(
-                                                  context: context,
-                                                  imageUrl: value.url,
-                                                  onSendOK: () {
-                                                    // Navigator.pop(context);
-                                                    //       Navigator.pop(context);
-                                                    onDiscoverServicesPressed(
-                                                        sendImage: value.url);
-                                                    // ePaperSend(context: context);
-                                                  });
-                                            }
-                                          //   新しい順に並び替え
-                                          : () {
-                                              var value =
-                                                  reverseData[photoIndexR];
-                                              selectImageCheckDialog(
-                                                  context: context,
-                                                  imageUrl: value.url,
-                                                  onSendOK: () {
-                                                    // Navigator.pop(context);
-                                                    //       Navigator.pop(context);
-                                                    onDiscoverServicesPressed(
-                                                        sendImage: value.url);
+              painter: BackgroundPainter(),
+              // painter: HexagonPainter(),
+              child: isGetImages
+                  ? imageItems.isEmpty
+                  ? const NonServerPictureMess()
+                  : Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 3.0),
+                child: GridView.builder(
+                  controller: _scrollController,
+                  physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics()),
+                  padding: const EdgeInsets.fromLTRB(
+                      0, 0, 0, 150),
+                  // 下部のpadding
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4, // 4マスずつ表示
+                    crossAxisSpacing: 1.0, // 縦幅
+                    mainAxisSpacing: 1.0, // 横幅
+                  ),
+                  itemCount: _items.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final photoIndex = index % imageItems.length;
+                    final photoIndexR =
+                        index % reverseData.length;
+                    return GestureDetector(
+                      onTap: gridReverse
+                      // 古い順に並び替え
+                          ? () {
+                        var value =
+                        imageItems[photoIndex];
+                        selectImageCheckDialog(
+                            context: context,
+                            imageUrl: value.url,
+                            onSendOK: () {
+                              // Navigator.pop(context);
+                              //       Navigator.pop(context);
+                              onDiscoverServicesPressed(
+                                  sendImage: value.url);
+                              // ePaperSend(context: context);
+                            });
+                      }
+                      //   新しい順に並び替え
+                          : () {
+                        var value =
+                        reverseData[photoIndexR];
+                        selectImageCheckDialog(
+                            context: context,
+                            imageUrl: value.url,
+                            onSendOK: () {
+                              // Navigator.pop(context);
+                              //       Navigator.pop(context);
+                              onDiscoverServicesPressed(
+                                  sendImage: value.url);
 
-                                                    // ePaperSend(context: context);
-                                                  });
-                                            },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey[300]!,
-                                              width: 1),
-                                        ),
-                                        child: gridReverse
-                                            ? Image.network(
-                                                imageItems[index].url,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return Image.network(
-                                                      imageItems[index].url,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                    return Image.network(
-                                                      imageItems[index].url,
-                                                      errorBuilder: (c, o, s) {
-                                                        return const Icon(
-                                                          Icons.error,
-                                                          color: Colors.red,
-                                                        );
-                                                      },
-                                                    );
-                                                  });
-                                                },
-                                              )
-                                            : Image.network(
-                                                reverseData[index].url
-                                                //   ,
-                                                //   errorBuilder: (context, error,
-                                                //       stackTrace) {
-                                                //     return Image.network(
-                                                //         reverseData[index].url,
-                                                //         errorBuilder: (context,
-                                                //             error, stackTrace) {
-                                                //       return Image.network(
-                                                //         reverseData[index].url,
-                                                //         errorBuilder: (c, o, s) {
-                                                //           print('***ERROR***');
-                                                //           return const Icon(
-                                                //             Icons.error,
-                                                //             color: Colors.red,
-                                                //           );
-                                                //         },
-                                                //       );
-                                                //     });
-                                                //   },
-                                                // )
-                                                ),
-                                      ));
-                                },
-                              ))
-                      // ローディング中の表示
-                      : const Center(child: CircularProgressIndicator())),
+                              // ePaperSend(context: context);
+                            });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey[300]!,
+                              width: 1),
+                        ),
+                        child: gridReverse
+                            ? Image.network(
+                          imageItems[index].url,
+                          errorBuilder: (context, error,
+                              stackTrace) {
+                            return Image.network(
+                                imageItems[index].url,
+                                errorBuilder: (context,
+                                    error, stackTrace) {
+                                  return Image.network(
+                                    imageItems[index].url,
+                                    errorBuilder: (c, o, s) {
+                                      return const Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      );
+                                    },
+                                  );
+                                });
+                          },
+                        )
+                            : Image.network(
+                            reverseData[index].url
+                          //   ,
+                          //   errorBuilder: (context, error,
+                          //       stackTrace) {
+                          //     return Image.network(
+                          //         reverseData[index].url,
+                          //         errorBuilder: (context,
+                          //             error, stackTrace) {
+                          //       return Image.network(
+                          //         reverseData[index].url,
+                          //         errorBuilder: (c, o, s) {
+                          //           print('***ERROR***');
+                          //           return const Icon(
+                          //             Icons.error,
+                          //             color: Colors.red,
+                          //           );
+                          //         },
+                          //       );
+                          //     });
+                          //   },
+                          // )
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+              // ローディング中の表示
+                  : const Center(child: CircularProgressIndicator())),
         ]),
       ),
       floatingActionButton: Row(
@@ -656,27 +676,29 @@ class _SendPictureSelectState extends State<SendPictureSelect> {
         children: [
           isOn
               ? _delImageDataList.isNotEmpty
-                  ? FloatingActionButton(
-                      onPressed: () async {
-                        for (var item in _delImageDataList) {
-                          if (kDebugMode) {
-                            print(
-                                'ID: ${item.idDel}, URL: ${item.url}, Last Modified: ${item.lastModifiedDel}');
-                          }
-                        }
-                        await showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) => ServerImageDelCheckPopup(
-                              selectDelImage: _delImageDataList,
-                              fetchData: fetchData),
-                        );
-                      },
-                      backgroundColor: Colors.lightGreenAccent,
-                      // Display check icon
-                      child: const Icon(Icons.add_task_outlined),
-                    )
-                  : const SizedBox.shrink()
+              ? FloatingActionButton(
+            onPressed: () async {
+              for (var item in _delImageDataList) {
+                if (kDebugMode) {
+                  print(
+                      'ID: ${item.idDel}, URL: ${item
+                          .url}, Last Modified: ${item.lastModifiedDel}');
+                }
+              }
+              await showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) =>
+                    ServerImageDelCheckPopup(
+                        selectDelImage: _delImageDataList,
+                        fetchData: fetchData),
+              );
+            },
+            backgroundColor: Colors.lightGreenAccent,
+            // Display check icon
+            child: const Icon(Icons.add_task_outlined),
+          )
+              : const SizedBox.shrink()
               : const SizedBox.shrink(),
         ],
       ),
@@ -692,63 +714,72 @@ void selectImageCheckDialog(
   showDialog(
     barrierDismissible: false, //dialog以外の部分をタップしても消えないようにする。
     context: context,
-    builder: (context) => Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AlertDialog(
-            title: const Text('選択画像を配信しますか？',
-                style: TextStyle(
-                  fontSize: 20,
-                )),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Colors.black12, width: 2)),
-                        child: FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: imageUrl,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                        child: const Text("OK"),
-                        onPressed: () {
-                          onSendOK();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        }),
-                    TextButton(
-                        child: const Text("キャンセル"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                  ],
-                )
-              ],
-            ),
+    // builder: (context) => Center(
+    //   child: Column(
+    builder: (context) => AlertDialog(
+          // child: Column(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          // children: [
+          //   AlertDialog(
+
+          title: Text('選択画像を配信しますか？',
+            style: AppTheme.dialogContentStyle,
+            textAlign: TextAlign.center,
           ),
-        ],
-      ),
-      // ),
-    ),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // SingleChildScrollView( //スクロールする
+              //   child: ListBody(　//リスト化する
+              //     children: <Widget>[
+                    Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          border:
+                          Border.all(color: Colors.black12, width: 2)
+                      ),
+                      child: FadeInImage.memoryNetwork(
+                        placeholder: kTransparentImage,
+                        image: imageUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  // ],
+                // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    style: AppTheme.dialogYesButtonStyle,
+                    // child: const Text("OK"),
+                    onPressed: () {
+                      onSendOK();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text("はい"),
+                  ),
+                  ElevatedButton(
+                    style: AppTheme.dialogNoButtonStyle,
+                    // child: const Text("キャンセル"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("いいえ"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+    // ),
   );
 }
 // }
+
 
 class NonServerPictureMess extends StatelessWidget {
   const NonServerPictureMess({super.key});
@@ -763,7 +794,7 @@ class NonServerPictureMess extends StatelessWidget {
           size: 300,
         ),
         Text(
-          '　　登録画像がありません\n\nまずは画像を登録しましょう！',
+          '　　登録画像がありません。\n\nまずは画像を登録しましょう！',
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ]),

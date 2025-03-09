@@ -1,13 +1,19 @@
-import 'dart:math';
-
+// import 'dart:math';
 import 'package:flutter/material.dart';
 
-//無数の正六角形を描画
-class HexagonPainter extends CustomPainter {
+import 'theme.dart';
+
+//無数の正六角形を描画　
+//HexagonPainter クラスが背景として六角形を描画しようとしている部分があるので関数名を修正しました。
+// painter: HexagonPainter(),　→　painter: BackgroundPainter(),
+class  BackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = Colors.white; // #F4A7B9（淡いピンク）
+    // 背景色を設定する
+    final paint = Paint()..color = AppTheme.primaryColor; // AppTheme.primaryColor を使用
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    // final Paint paint = Paint()
+    //   ..color = Colors.white; // #F4A7B9（淡いピンク）
 
 
 //     // 背景を塗りつぶし
@@ -80,7 +86,7 @@ class HexagonPainter extends CustomPainter {
 
     @override
     bool shouldRepaint(CustomPainter oldDelegate) {
-      return false;
+      return false;// 背景の再描画が必要ない場合
     }
   }
 

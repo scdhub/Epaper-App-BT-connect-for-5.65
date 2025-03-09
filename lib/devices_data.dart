@@ -1,9 +1,9 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class TrustDevice {
-  final String trustName;
-  final String trustIpAddress;
-  final BluetoothDevice devicesData;
+  final String trustName;// 未登録デバイス一覧
+  final String trustIpAddress;// 登録済みデバイス一覧
+  final BluetoothDevice devicesData;// 未登録デバイスを登録する関数
 
   TrustDevice(
       {required this.trustName,
