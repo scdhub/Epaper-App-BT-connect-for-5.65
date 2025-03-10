@@ -238,11 +238,9 @@ class _ExportPageState extends State<ExportPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  SendPictureSelect(
-                                    deviceInfo: widget.trustDevice,
-                                  ),
-                          ),
+                              builder: (context) => NewPage(
+                                deviceInfo: widget.trustDevice,
+                              )),
                         );
                       },
                       style: ElevatedButton.styleFrom(

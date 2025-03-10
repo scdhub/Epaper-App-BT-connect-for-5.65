@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../text_input_page/text_input_page.dart';
+import '../theme.dart';
 
 class TextToPage extends StatefulWidget {
   const TextToPage({super.key});
@@ -12,7 +13,9 @@ class TextToPage extends StatefulWidget {
 class _TextToPageState extends State<TextToPage> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
+
       // decoration: BoxDecoration(
       // shape: BoxShape.rectangle,
       // border: Border.all(
@@ -28,8 +31,8 @@ class _TextToPageState extends State<TextToPage> {
       //   ),
       // ),
 
-      width: 300,
-      height: 65,
+      width: screenWidth * 0.8, // 画面幅の80%に設定
+      height: 70,
       // width: 150,
       // height: 150,
       child: ElevatedButton(
@@ -54,20 +57,21 @@ class _TextToPageState extends State<TextToPage> {
           );
         },
         // child: const Column(
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           // crossAxisAlignment: CrossAxisAlignment.center,
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('入力して登録',
-              style: TextStyle(
+              style: AppTheme.buttonTextStyle,
+              // style: TextStyle(
                 // fontFamily: 'NotoSansJP',
                 // fontWeight: FontWeight.w400,//Regular
-                fontWeight: FontWeight.bold, //Midum
-                fontSize: 16,//14
-              ),
+              //   fontWeight: FontWeight.bold, //Midum
+              //   fontSize: 16,//14
+              // ),
             ),
-            Icon(
+            const Icon(
               Icons.edit_note_outlined,
               size: 40,//50
               // color: Colors.white,

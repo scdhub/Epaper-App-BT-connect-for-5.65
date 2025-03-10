@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../bt_connect_page/connect_bt_page.dart';
+import '../theme.dart';
 
 
 class BlueToothConnectToPage extends StatefulWidget {
@@ -69,15 +70,15 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
         },
 
         // child: const Column(
-        child: const Row(
+        child: Row(
           //位置
           //   crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,//下記、並び順に左右（テキスト：左、アイコン：右）
           children: [
             Text(data,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppTheme.buttonTextStyle,
             ),
-            Icon(
+            const Icon(
               Icons.bluetooth_outlined,
               size: 30.0, //45.0
               // color: Colors.white,

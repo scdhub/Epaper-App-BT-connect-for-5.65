@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import '../import_type_select_page/take-photo_page.dart';
+import '../theme.dart';
 
 class TopTakeAPicturePage extends StatelessWidget {
   const TopTakeAPicturePage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
-      width: 300,
+      width: screenWidth * 0.8, // 画面幅の80%に設定
       height: 70,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -20,14 +24,14 @@ class TopTakeAPicturePage extends StatelessWidget {
         onPressed: () {
           getImageFromCamera(context);
         },
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               '撮影して登録',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppTheme.buttonTextStyle,
             ),
-            Icon(Icons.camera_alt, size: 30.0),
+            const Icon(Icons.camera_alt, size: 30.0),
           ],
         ),
       ),

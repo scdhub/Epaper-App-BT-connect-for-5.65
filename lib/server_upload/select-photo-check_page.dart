@@ -119,9 +119,8 @@ class _SelectCheckState extends State<SelectCheck> {
                 padding: const EdgeInsets.all(16.0), // ダイアログ内の余白
                 child: SizedBox(
                   width: 250, // 幅を調整
-                  height: 250, // 高さを調整
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min, // コンテンツに合わせて高さを調整
                     children: [
                       //動作
                       if (_isWriting)
@@ -134,6 +133,8 @@ class _SelectCheckState extends State<SelectCheck> {
                           'BTスキャン＆E-paper配信関連に移りますか？',
                           style: AppTheme.dialogContentStyle, // 本文のスタイル
                         ),
+
+                      const SizedBox(height: 20,),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -197,78 +198,6 @@ class _SelectCheckState extends State<SelectCheck> {
 // `StatefulBuilder` の `setState` を保存するためのグローバル変数
   late StateSetter updateDialogState;
 
-  // void uploadMessage() {
-  //   showDialog(
-  //     barrierDismissible: false,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return Center(
-  //         child: StatefulBuilder(
-  //           builder: (BuildContext context, StateSetter setState) {
-  //             return AlertDialog(
-  //               backgroundColor: Colors.white,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(20),
-  //               ),
-  //             title: Center(
-  //               child : _isWriting
-  //                   ? const Text('画像登録中...', // 登録中
-  //                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))
-  //                   : const Text('登録完了', // 完了後
-  //                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-  //             ),
-  //               content: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   if (_isWriting) const CircularProgressIndicator(), // 進行中はインジケーター表示
-  //                   if (!_isWriting) const Text('BTスキャン＆E-paper配信関連に移りますか？'),
-  //                   const SizedBox(height: 15),
-  //                   Wrap(
-  //                     spacing: 10, // ボタン間の間隔
-  //                     runSpacing: 10, // 折り返した際の間隔
-  //                     alignment: WrapAlignment.center,
-  //                     children: [
-  //                       SizedBox(
-  //                         width: 100, // ボタンの横幅を統一
-  //                         child: ElevatedButton(
-  //                           style: AppTheme.dialogYesButtonStyle,
-  //                           onPressed: _isWriting
-  //                               ? null // 画像登録中は無効
-  //                               : () {
-  //                             Navigator.of(context).push(
-  //                               MaterialPageRoute(
-  //                                 builder: (context) => const ConnectBTPage(),
-  //                               ),
-  //                             );
-  //                           },
-  //                           child: const Text('はい',
-  //                               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-  //                         ),
-  //                       ),
-  //                       SizedBox(
-  //                         width: 100,
-  //                         child: ElevatedButton(
-  //                           style: AppTheme.dialogNoButtonStyle,
-  //                           onPressed: _isWriting
-  //                               ? null // 画像登録中は無効
-  //                               : () {
-  //                             Navigator.of(context).pop(); // ダイアログを閉じる
-  //                           },
-  //                           child: const Text('いいえ',
-  //                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
 // 画像アップロード処理を非同期で行う
   Future<void> _showWriteDialog() async {
@@ -302,138 +231,6 @@ class _SelectCheckState extends State<SelectCheck> {
   }
 
 
-//   //サーバーに画像をアップロード中の表示と登録完了後のメッセージ表示
-//   void uploadMessage() {
-//     showDialog(
-//         barrierDismissible: false,
-//         context: context,
-//         builder: (BuildContext context) {
-//           return Center(
-//             child: AlertDialog(
-//               backgroundColor: Colors.white,
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//
-//               title:_isWriting //登録中はnull,なので登録中は登録完了テキストは表示されない
-//               ?null
-//               :const Text('登録完了',
-//                 style: TextStyle(
-//                 fontSize: 20,
-//                 fontWeight: FontWeight.bold,
-//             ),
-//                 textAlign: TextAlign.center,
-//           ),
-//                 // _isWriting ? '画像登録中...' : '登録完了',
-//                 //書き込み中の状況に応じて動作が変更
-//                   TextStyle(
-//                   fontSize: 25,
-//                   color: Colors.black,),
-//                 textAlign: TextAlign.center,
-//               ),
-//
-//               content: _isWriting//登録中はタイトルが消える。
-//                   ? const Padding(
-//                 padding: EdgeInsets.symmetric(vertical: 20),
-//                 child: Center(child: CircularProgressIndicator()),
-//               )
-//
-//                  content : Column(
-//                 mainAxisSize: MainAxisSize.min,
-//                 children: [
-//                   if (_isWriting)
-//                     const CircularProgressIndicator(), // 画像登録中なので〇のぐるぐるが表示されている
-//                   Text('BTスキャン＆E-paper配信関連に移りますか？',
-//                     style: AppTheme.dialogContentStyle,//theme.dartのスタイルを使用
-//                     textAlign: TextAlign.center,
-//                       const TextStyle(
-//                         fontSize: 18,
-//                         color: Colors.black),
-//
-//                   ),
-//                   const SizedBox(height: 15),
-//
-//                   Wrap(
-//                       spacing: 10, // ボタン間の間隔
-//                       runSpacing: 10, // 折り返した際の間隔
-//                       alignment: WrapAlignment.center,
-//                       children: [
-//                         SizedBox(
-//                           width: 100, // ボタンの横幅を統一
-//                           child: ElevatedButton(
-//                             style:AppTheme.dialogYesButtonStyle,
-//                               // ElevatedButton.styleFrom(
-//                               // backgroundColor: const Color(0xFFFFA7A7),
-//                               // shape: RoundedRectangleBorder(
-//                               //   borderRadius: BorderRadius.circular(10),
-//                               // ),
-//                             // ),
-//                             onPressed: _isWriting
-//                                 ? null // 画像登録中は無効
-//                                 : () {
-//                               Navigator.of(context).push(
-//                                 MaterialPageRoute(
-//                                   builder: (context) => const ConnectBTPage(),
-//                                 ),
-//                               );
-//                             },
-//
-//                             child: const Text('はい',
-//                               style: TextStyle(
-//                                   fontWeight:
-//                                   FontWeight.bold,
-//                                   color: Colors.white),
-//                             ),
-//                           ),
-//                         ),
-//                         SizedBox(
-//                           width: 100,
-//                           child: ElevatedButton(
-//                             style:AppTheme.dialogNoButtonStyle,//theme.dartのスタイルを使用
-//
-//                             // TextButton.styleFrom(
-//                               // padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-//                               // backgroundColor: const Color(0xFFB0C4DE),
-//                               // shape: RoundedRectangleBorder(
-//                               //   borderRadius: BorderRadius.circular(
-//                               //       10), // 丸いボタン
-//                               // ),
-//                             // ),
-//                             onPressed: _isWriting
-//                             ? null // 画像登録中は無効
-//                              : () {
-//                               Navigator.of(context).pop();
-//                               Navigator.pop(context);
-//                             },
-//                             child: const Text(
-//                               "いいえ",
-//                               style: TextStyle(
-//                                   color: Colors.white,
-//                                   fontWeight: FontWeight.bold),
-//                               // TextButton(
-//                               //   onPressed: () {
-//                               //     Navigator.of(context).pop();
-//                               //     Navigator.pop(context);
-//                               //   },
-//                               //   child: const Text('いいえ',
-//                               //     style: TextStyle(fontWeight: FontWeight.bold,
-//                               //         color: Colors.white),),
-//                               //   style: TextButton.styleFrom(
-//                               //     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-//                               //     backgroundColor: const Color(0xFFB0C4DE),
-//                               //     shape: RoundedRectangleBorder(
-//                               //     borderRadius: BorderRadius.circular(10), // 丸いボタン
-//                             ),
-//                           ),
-//                         ),
-//                       ]
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
-//         });
-//   }
 
 // // 画像アップロード処理を非同期で行う
 //   //ここで二つ出てしまっている・・・
@@ -478,22 +275,8 @@ class _SelectCheckState extends State<SelectCheck> {
             contentTextStyle: AppTheme.errorContentStyle,
             // エラーダイアログの本文スタイル
             actionsAlignment: MainAxisAlignment.center,
-            // titleTextStyle: const TextStyle(
-            //   fontSize: 20,
-            //   color: Colors.red,
-            // ),
-            // contentTextStyle: const TextStyle(
             title: const Text('登録エラー',
               textAlign: TextAlign.center,
-              //   fontSize: 15,
-              //   color: Colors.black, // メッセージの文字色
-              // ),
-              //
-              // title: const Text('登録エラー',
-              // style: TextStyle(
-              //   fontSize: 20,
-              // ),
-              // textAlign: TextAlign.center,
             ),
             content: const Text(
               '登録中に一時的な問題が発生しました。\nしばらくしてから再度お試しください。',
@@ -504,7 +287,8 @@ class _SelectCheckState extends State<SelectCheck> {
             ),
             actions: <Widget>[
               _isWriting
-                  ? const CircularProgressIndicator()
+                  ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.black),  backgroundColor: Colors.white70,)
                   : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,

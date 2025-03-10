@@ -286,7 +286,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                   .width,
               height: 25,
               child: const Text(
-                '☆配信を行うにはデバイス登録後、右アイコンを押下ください。',
+                '※配信を行うにはデバイス登録後、右アイコンを押下ください。',
                 // 'スキャンを開始して、デバイスを登録してください。',
                 style: TextStyle(color: Colors.red,
                   fontSize: 12, fontWeight:

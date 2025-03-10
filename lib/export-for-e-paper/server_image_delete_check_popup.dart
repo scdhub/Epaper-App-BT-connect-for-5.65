@@ -10,8 +10,8 @@ import '../theme.dart';
 import 'sever_data_bind.dart';
 
 class ServerImageDelCheckPopup extends StatefulWidget {
-  final List<DelData> selectDelImage;
-  final Future<void> Function() fetchData;
+  final List<ImageItem> selectDelImage;
+  final Future<void> Function(int) fetchData;
 
   const ServerImageDelCheckPopup(
       {super.key, required this.selectDelImage, required this.fetchData});
@@ -65,15 +65,15 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
       backgroundColor: Colors.white,
       title:
           // Text('スマホから画像を\nインポート方法選択',
-          Text('注意',
-            style: warningDialogTitleStyle,
+          const Text('注意',
+            style: AppTheme.warningDialogTitleStyle,
             textAlign: TextAlign.center,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('選択した画像は\n完全に削除されます。\n 復元はできません。\n削除しますか？',
-            style: warningDialogContentStyle,
+          const Text('選択した画像は\n完全に削除されます。\n 復元はできません。\n削除しますか？',
+            style: AppTheme.warningDialogContentStyle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
@@ -87,10 +87,10 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                 onPressed: () async {
                   List<String> delId = [];
                   for (var item in widget.selectDelImage) {
-                    delId.add(item.idDel);
+                    delId.add(item.id);
                   }
                   showLoadingModal(context);
-                  final status = await postData(delId); //☆同期的な実行？☆
+                  final status = await postData(delId);
                   Navigator.of(context).pop();
                   //削除成功と失敗の分岐
                   if (status == 200) {
@@ -98,7 +98,7 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                   } else {
                     showFailedModal(context);
                   }
-                  await widget.fetchData();
+                  await widget.fetchData(status);
                 },
 
                 child: const Text(
@@ -106,7 +106,7 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                 ),
               ),
 
-              SizedBox(width: 15,),
+              const SizedBox(width: 10,),
 
 
               ElevatedButton(
@@ -133,13 +133,13 @@ void showSuccessModal(BuildContext context) {
         actionsAlignment: MainAxisAlignment.center,
         title: Text(
           '削除が成功しました!',
-          style: AppTheme.dialogTitleStyle,// 統一されたタイトルスタイル
+          style: AppTheme.dialogContentStyle,
           textAlign: TextAlign.center,
         ),
 
         actions: <Widget>[
           TextButton(
-            style: AppTheme.dialogYesButtonStyle, // 統一されたボタンスタイル
+            style: AppTheme.dialogYesButtonStyle,
             child: const Text(
               'OK',
               style: TextStyle(fontSize: 16, color: Colors.white),
@@ -163,7 +163,7 @@ void showFailedModal(BuildContext context) {
         actionsAlignment: MainAxisAlignment.center,
         title: Text(
           '削除が失敗しました!',
-          style: AppTheme.dialogTitleStyle,// 統一されたタイトルスタイル
+          style: AppTheme.dialogContentStyle,
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -196,10 +196,11 @@ void showLoadingModal(BuildContext context) {
           content: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(),
+              const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.black),  backgroundColor: Colors.white70,),
               const SizedBox(width: 30),
               Text('Loading...',
-                style: AppTheme.dialogContentStyle, // 統一された内容スタイル
+                style: AppTheme.dialogContentStyle,
               ),
             ],
           ),

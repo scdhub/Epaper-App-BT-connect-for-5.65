@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../drawing_page/drawing_page.dart';
+import '../theme.dart';
 
 class DrawingToPage extends StatefulWidget {
   const DrawingToPage({super.key});
@@ -54,21 +55,22 @@ class _DrawingToPageState extends State<DrawingToPage> {
             );
           },
           // child: const Column(
-        child: const Row(
+        child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               // crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('絵を描いて登録',
-                  style: TextStyle(
+                  style: AppTheme.buttonTextStyle,
+                  // style: TextStyle(
                     // fontFamily: 'NotoSansJP',
                     // fontWeight: FontWeight.w400,//Regular
-                    fontWeight: FontWeight.bold, //Midum
-                    fontSize: 16,//14
+                    // fontWeight: FontWeight.bold, //Midum
+                    // fontSize: 16,//14
                     // color: Colors.white,
-                  ),
+                  // ),
                 ),
-                Icon(
+                const Icon(
                   Icons.brush,
                   size: 30.0,
                   // size: 50.0,

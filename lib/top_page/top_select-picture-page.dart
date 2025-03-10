@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../server_upload/photo-select_page.dart';
+import '../theme.dart';
 
 class TopSelectPicturePage extends StatelessWidget {
   const TopSelectPicturePage({super.key});
@@ -31,14 +32,14 @@ class TopSelectPicturePage extends StatelessWidget {
             );
         },
 
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'アルバムから登録',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: AppTheme.buttonTextStyle,
             ),
-            Icon(Icons.photo_library, size: 30.0),
+            const Icon(Icons.photo_library, size: 30.0),
           ],
         ),
       ),

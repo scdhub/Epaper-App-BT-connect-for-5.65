@@ -388,12 +388,12 @@ class _PreSendPictureSelectState extends State<PreSendPictureSelect> {
                   'ID: ${item.idDel}, URL: ${item.url}, Last Modified: ${item
                       .lastModifiedDel}');
             }
-            showDialog(
-              context: context,
-              builder: (context) =>
-                  ServerImageDelCheckPopup(
-                      selectDelImage: _delImageDataList, fetchData: fetchData),
-            );
+            // showDialog(
+            //   context: context,
+            //   builder: (context) =>
+            //       ServerImageDelCheckPopup(
+            //           selectDelImage: _delImageDataList, fetchData: fetchData),
+            // );
           },
           backgroundColor: Colors.lightGreenAccent,
           // Display check icon
