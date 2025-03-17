@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,8 @@ import 'package:iphone_bt_epaper/export-for-e-paper/server_image_delete_check_po
 import 'package:iphone_bt_epaper/export-for-e-paper/sever_data_bind.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import '../theme.dart';
 
 class NewPage extends StatefulWidget {
   final BluetoothDevice deviceInfo;
@@ -138,13 +143,24 @@ class _NewPage extends State<NewPage> {
       setState(() {
         // 削除成功時、サーバーから再取得しないで初期取得Listから削除->再描画
         // 削除失敗時、削除リストのみ初期化(✓マークリセットの再描画)
+        // キャッシュをクリアして画像を削除
         if (status == 200) {
           for (int i = 0; i < _deleteItems.length; i++) {
             _items.removeWhere((v) => v.id == _deleteItems[i].id);
+
+            // 画像キャッシュ削除
+            DefaultCacheManager().removeFile(_items[i].url);
+            CachedNetworkImage.evictFromCache(_items[i].url);
+            }
           }
-        }
-        _deleteItems.clear();
-      });
+          _deleteItems.clear();
+          _items = List.from(imageItems); //更
+      }
+    );
+      _deleteItems.clear();
+      // imageCache.clear();
+      // imageCache.clearLiveImages();
+      // initialize();  // initialize() を呼び出して、再度画像リストを取得
     }
   }
 
@@ -175,40 +191,40 @@ class _NewPage extends State<NewPage> {
                   selectedBorderColor: Colors.blue[800],
                   selectedColor: Colors.white,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    constraints: BoxConstraints(
-                        minHeight: AppBar().preferredSize.height * 0.65,
-                        minWidth: MediaQuery.of(context).size.width / 5
-                    ),
-                    isSelected: selectedMode,
-                    onPressed: (int index) {
-                      setState(() {
-                        if (index == 0) {
-                          selectedMode[0] = true;
-                          selectedMode[1] = false;
-                          deleteMode = false;
-                        } else {
-                          selectedMode[0] = false;
-                          selectedMode[1] = true;
-                          deleteMode = true;
-                        }
-                        if (!deleteMode) {
-                          _deleteItems.clear();
-                        }
-                      });
-                    },
+                  constraints: BoxConstraints(
+                      minHeight: AppBar().preferredSize.height * 0.65,
+                      minWidth: MediaQuery.of(context).size.width / 5
+                  ),
+                  isSelected: selectedMode,
+                  onPressed: (int index) {
+                    setState(() {
+                      if (index == 0) {
+                        selectedMode[0] = true;
+                        selectedMode[1] = false;
+                        deleteMode = false;
+                      } else {
+                        selectedMode[0] = false;
+                        selectedMode[1] = true;
+                        deleteMode = true;
+                      }
+                      if (!deleteMode) {
+                        _deleteItems.clear();
+                      }
+                    });
+                  },
                   children: const[
-                      Row(
-                        children: [
-                          Icon(Icons.ios_share),
-                          Text('  配信')
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.delete),
-                          Text('  削除')
-                        ],
-                      )],
+                    Row(
+                      children: [
+                        Icon(Icons.ios_share),
+                        Text('  配信')
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.delete),
+                        Text('  削除')
+                      ],
+                    )],
                 ),
                 Row(
                   children: [
@@ -239,8 +255,8 @@ class _NewPage extends State<NewPage> {
                         color: Colors.blue,
                       ),
                     ),
-                ],),
-            ],),
+                  ],),
+              ],),
           ),
           Expanded(
               child: Center(
@@ -248,8 +264,7 @@ class _NewPage extends State<NewPage> {
                       ? const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(Colors.black),
                     backgroundColor: Colors.white70,
-                  ) /// ローディング中はインジケーターを表示
-                  // : _createGridView()
+                  ) // ローディング中はインジケーターを表示
                       : Container(
                       child: _items.isEmpty
                           ? NonServerPictureMess()
@@ -257,18 +272,30 @@ class _NewPage extends State<NewPage> {
                   )
               )
           )
-        ],),
+      ],),
       persistentFooterButtons: deleteMode
           ? (_deleteItems.isNotEmpty)
             ? [
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    _deleteItems.clear();
+                    _deleteItems = List.from(_items);  // すべて選択
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(150, 50),
+                    fixedSize: const Size(90, 50),//幅,高
+                    backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
+                child: const Text('全選択'),
+              ),
+
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _deleteItems.clear();  // すべて解除
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(125, 50),
                     backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
                 child: const Text('全選択解除'),),
               ElevatedButton(
@@ -292,7 +319,7 @@ class _NewPage extends State<NewPage> {
                     fixedSize: const Size(50, 50),
                     backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
                 child: const Text('削除'),),
-            ]
+              ]
             : null
           : null,
     );
@@ -356,7 +383,9 @@ class _NewPage extends State<NewPage> {
       child: Stack(
           children: <Widget>[
             CachedNetworkImage(
+              key: ValueKey(_items[index].url), //キャッシュを更新するためのキー
               imageUrl: _items[index].url,
+              cacheManager: DefaultCacheManager(), //キャッシュマネージャーを統一
               width: 200,
               height: 200,
               errorWidget: (context, url, error) =>
@@ -374,7 +403,7 @@ class _NewPage extends State<NewPage> {
                   ),
                   Positioned.fill(
                       child: Padding(
-                          padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
+                        padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
                         child: CachedNetworkImage(
                           imageUrl: _items[index].url,
                         ),
@@ -410,10 +439,12 @@ void selectImageCheckDialog(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AlertDialog(
-            title: const Text('選択画像を配信しますか？',
-                style: TextStyle(
-                  fontSize: 20,
-                )),
+      title: Align(
+      alignment: Alignment.center, // タイトルを中央に寄せる
+            child: Text('選択画像を配信しますか？',
+        style: AppTheme.dialogContentStyle, // 本文のスタイル
+                ),
+      ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -434,19 +465,26 @@ void selectImageCheckDialog(
                     ],
                   ),
                 ),
+                const SizedBox(height: 10,),
+
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center, // 中央寄せ
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextButton(
-                        child: const Text("OK"),
+                        style: AppTheme.dialogYesButtonStyle,
+                        child: Text("はい",
+                         ),
+                        // child: const Text("OK"),
                         onPressed: () {
                           onSendOK();
                           Navigator.pop(context);
                           Navigator.pop(context);
                         }),
+                    const SizedBox(width: 30), // ボタン間のスペースを調整
                     TextButton(
-                        child: const Text("キャンセル"),
+                        style: AppTheme.dialogNoButtonStyle,
+                        child: Text("いいえ"),
                         onPressed: () {
                           Navigator.pop(context);
                         }),

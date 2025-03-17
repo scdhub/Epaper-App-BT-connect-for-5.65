@@ -1,6 +1,6 @@
 //サーバーからデータを読み取る
 import 'dart:convert';
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

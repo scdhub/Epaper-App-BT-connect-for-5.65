@@ -15,10 +15,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'E ink E-paper',
+      title:'CanvasEP',
+      //'E ink E-paper',
       theme: AppTheme.lightTheme, // `theme.dart` のテーマを適用
       themeMode: ThemeMode.system, // システムの設定に従う
-      home: const TopPage(title: 'E ink E-paper'),
+      home: const TopPage(title: 'CanvasEP'),//'E ink E-paper'
     );
   }
 }

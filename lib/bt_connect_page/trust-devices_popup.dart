@@ -21,6 +21,11 @@ class TrustDevices_popup extends StatefulWidget {
 class _TrustDevices_popupState extends State<TrustDevices_popup> {
   @override
   Widget build(BuildContext context) {
+    // デバイス名が不明な場合は表示しない
+    if (widget.scanName.isEmpty) {
+      return const SizedBox.shrink(); // 何も表示しない
+    }
+
     return Center(
       child: AlertDialog(
         backgroundColor: Colors.white,
@@ -32,14 +37,12 @@ class _TrustDevices_popupState extends State<TrustDevices_popup> {
           children: [
             Text(
               "確認",
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.center,//テキストは中央
               style: AppTheme.dialogTitleStyle, //theme.dartのスタイルを使用
             ),
             const SizedBox(height: 15,),
-            Text(
-              widget.scanName.isNotEmpty
-                  ? '"デバイス名: ${widget.scanName}" を登録しますか？'
-                  : '"IP: ${widget.scanIpAddress}" を登録しますか？',
+            Text('"デバイス名: ${widget.scanName}" を登録しますか？',
+            // widget.scanName.isNotEmpty
               // ? '"IP:${widget.scanIpAddress}"を登録しますか？'
               // : '"デバイス名：${widget.scanName}"を登録しますか？',
               textAlign: TextAlign.center,
@@ -109,11 +112,13 @@ class _TrustDevices_popupState extends State<TrustDevices_popup> {
                     //     borderRadius: BorderRadius.circular(10),
                     //   ),
                     // ),
-                    onPressed: () => Navigator.pop(context, 'Cancel'),
-                    child: const Text('いいえ', style: TextStyle(
+                    onPressed: ()
+                    => Navigator.pop(context, 'Cancel'),
+
+                    child: const Text('いいえ',
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        //
                       ),
                     ),
                   ),

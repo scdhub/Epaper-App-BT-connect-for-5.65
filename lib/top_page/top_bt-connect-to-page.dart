@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../bt_connect_page/connect_bt_page.dart';
+import '../theme.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 
@@ -46,47 +47,47 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
 
   @override
   Widget build(BuildContext context) {
-    const data = '　BTスキャン &\nE-paper配信関連';
+    const data ='E-paperに配信';
+
+    // スマホ画面の幅を取得
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-    //   decoration: BoxDecoration(
-    //     shape: BoxShape.rectangle,
-    //     color: Colors.white,
-    //     border: Border.all(
-    //       // color: Colors.black12,
-    //       width: 2,
-    //     ),
-    //     borderRadius: BorderRadius.circular(20),
-    //     boxShadow: const [
-    //       BoxShadow(
-    //         offset: Offset(2, 5),
-    //         color: Colors.blue,
-    //       ),
-    //     ],
-    //   ),
-      width: 150,
-      height: 150,
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            // elevation: 10,
-            // foregroundColor: Colors.white,
-            // backgroundColor: Color(0xFF80DEEA),
-            side: const BorderSide(
-              color: Colors.white,
-              width: 4,
-            ),
-            //ボタンの形状設定。角を丸めた長方形。
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+      //   decoration: BoxDecoration(
+      //     shape: BoxShape.rectangle,
+      //     color: Colors.white,
+      //     border: Border.all(
+      //       // color: Colors.black12,
+      //       width: 2,
+      //     ),
+      //     borderRadius: BorderRadius.circular(20),
+      //     boxShadow: const [
+      //       BoxShadow(
+      //         offset: Offset(2, 5),
+      //         color: Colors.blue,
+      //       ),
+      //     ],
+      //   ),
 
-            // backgroundColor: Colors.lightBlueAccent,
-            // shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(10.0)),
+      width: screenWidth * 0.8, // 画面幅の80%に設定
+      height: 70,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF304FFE),
+          side: const BorderSide(color: Colors.white, width: 2,
           ),
-          //   shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(10.0)),
-          // ),
+          //ボタンの形状設定。角を丸めた長方形。
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+
+          // backgroundColor: Colors.lightBlueAccent,
+          // shape: RoundedRectangleBorder(
+          //     borderRadius: BorderRadius.circular(10.0)),
+        ),
+        //   shape: RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(10.0)),
+        // ),
 
           //画面遷移の動き
           onPressed: () async {
@@ -98,24 +99,20 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
             );
           },
 
-          child: const Column(
-            //位置
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.bluetooth_outlined,
-                  size: 45.0,
-                  // color: Colors.white,
-                ),
-                SizedBox(height: 7),
-                Text(data,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      // color: Colors.white,
-                    )),
-              ])),
+        child: Row(
+          //位置
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,//下記、並び順に左右（テキスト：左、アイコン：右）
+          children: [
+            Text(data,
+              style: AppTheme.buttonTextStyle,
+            ),
+            const Icon(
+              Icons.bluetooth_outlined,
+              size: 30.0,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

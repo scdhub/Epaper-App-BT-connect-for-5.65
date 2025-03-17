@@ -27,23 +27,32 @@ class ExportPage extends StatefulWidget {
 class _ExportPageState extends State<ExportPage> {
   var processRate = 0.5;
   E_paperInfo e_paperInfo;
+
   //信頼済みデバイスデータ格納List
   List<TrustDevice> trustDevices = [];
+
 //e_paperInfoの初期化。null回避
   _ExportPageState() : e_paperInfo = E_paperInfo();
 
   @override
   Widget build(BuildContext context) {
+    // デバイス名が不明（空文字）の場合は何も表示しない
+    if (widget.trustName.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'BTスキャン＆E-paper配信関連',
-          // style: TextStyle(fontSize: 17,)
+          'E-paperに配信',
+          // style: TextStyle(
+          //   fontSize: 17,)
         ),
       ),
       body: CustomPaint(
-        painter: HexagonPainter(),
+        // painter: HexagonPainter(),
+        painter: BackgroundPainter(),
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Padding(
@@ -56,47 +65,52 @@ class _ExportPageState extends State<ExportPage> {
                     child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.white38,
+                        color: const Color(0xFF1A237E),
                         child: const Text('接続 E-paper 情報',
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.white,
-                            )))),
+                            ),
+                        ),
+                    ),
+                ),
                 Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Colors.blue,
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
                       )),
                   child: Column(children: [
                     Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('デバイス名',
-                              style: TextStyle(
-                                fontSize: 20,
-                              )),
-                          Text(
-                              widget.trustName.isEmpty
-                                  ? '不明'
-                                  : widget.trustName,
-                              style: const TextStyle(
-                                fontSize: 20,
-                              )),
-                        ]),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('デバイス名',
+                            style: TextStyle(
+                              fontSize: 18,
+                              // fontSize: 20,
+                            )),
+                        Text(
+                          // widget.trustName.isEmpty
+                          //     ? '不明'
+                          widget.trustName,
+                          style: const TextStyle(
+                            fontSize: 18,//20
+                          ),
+                        )
+                      ],
+                    ),
                     const SizedBox(height: 5),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text('IP',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               )),
                           Text(widget.trustIpAddress,
                               style: const TextStyle(
-                                fontSize: 15,
+                                fontSize: 18,
                               )),
                         ]),
                   ]),
@@ -106,7 +120,7 @@ class _ExportPageState extends State<ExportPage> {
                     child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.white38,
+                        color: const Color(0xFF1A237E),
                         child: const Text('E-paper規格情報',
                             style: TextStyle(
                               fontSize: 20,
@@ -115,7 +129,6 @@ class _ExportPageState extends State<ExportPage> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Color(0xFF29B6F6),
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
@@ -126,11 +139,11 @@ class _ExportPageState extends State<ExportPage> {
                         children: [
                           const Text('画面サイズ',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               )),
                           Text(e_paperInfo.screenSize,
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               ))
                         ]),
                     const SizedBox(height: 5),
@@ -139,11 +152,11 @@ class _ExportPageState extends State<ExportPage> {
                         children: [
                           const Text('解像度',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               )),
                           Text(e_paperInfo.resolutions,
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               ))
                         ]),
                     const SizedBox(height: 5),
@@ -152,11 +165,11 @@ class _ExportPageState extends State<ExportPage> {
                         children: [
                           const Text('色',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               )),
                           Text(e_paperInfo.colors,
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                               ))
                         ]),
                   ]),
@@ -166,27 +179,31 @@ class _ExportPageState extends State<ExportPage> {
                     child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.white38,
-                        child: const Text('E-paper配信用画像の表示',
+                        color: const Color(0xFF512DA8),
+                        child: const Text('E-paperへの画像配信/画像削除',
+                            //'E-paper配信用画像の表示',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 20,
                               color: Colors.white,
-                            )))),
+                            )
+                        ),
+                    ),
+                ),
                 Container(
                   // color:Colors.white,
                   width: MediaQuery.of(context).size.width,
                   height: 80,
                   decoration: BoxDecoration(
-                      color: Colors.blue,
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
                       )),
                   child:
-                      // Column(children:[
-                      Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                    child: ElevatedButton(
+                  // Column(children:[
+                  Padding(
+                    // padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                    padding: const EdgeInsets.fromLTRB(15, 10, 10, 15),
+                    child: ElevatedButton.icon(
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -198,28 +215,28 @@ class _ExportPageState extends State<ExportPage> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        // backgroundColor: const Color(0xFF7E57C2),
+                        backgroundColor: Color(0xFF2962FF),
                         elevation: 10,
                         side: const BorderSide(
                           color: Colors.white,
-                          // color: Colors.transparent,　透明？
-                          width: 1,
+                          // color: Colors.transparent,　
+                          width: 2,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child:
-                            // Row(children: [
-                            const Center(
-                                child: Text('配信 or 削除',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ))),
+                      icon: const Icon(
+                        Icons.image, // 画像アイコンを使用
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        '配信 / 削除',
+                        //'配信 or 削除',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
@@ -230,58 +247,57 @@ class _ExportPageState extends State<ExportPage> {
                     child: Container(
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
-                        color: Colors.white38,
-                        child: const Text('このデバイスの登録を解除',
+                        color: const Color(0xFF512DA8),
+                        child: const Text('デバイスの接続を解除',
+                          //このデバイスの登録を解除',
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
                               color: Colors.white,
                             )))),
                 Container(
                   // color:Colors.white,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                      color: Color(0xFF29B6F6),
                       border: Border.all(
                         color: Colors.black12,
                         width: 2,
                       )),
                   height: 80,
                   child:
-                      // Column(children:[
-                      Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                    child: ElevatedButton(
+                  // Column(children:[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 10, 15),
+                    child: ElevatedButton.icon(
                       onPressed: () {
                         showDialog(
                           barrierDismissible:
-                              false, //dialog以外の部分をタップしても消えないようにする。
+                          false, //dialog以外の部分をタップしても消えないようにする。
                           context: context,
                           builder: (context) =>
                               DeviceUnLockPop(onDelete: widget.onDelete),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const  Color(0xFFAB47BC),
+                        backgroundColor: Colors.redAccent,
                         elevation: 10,
                         side: const BorderSide(
-                          color:  Colors.white,
-                          width: 1,
+                          color: Colors.white,
+                          width: 2,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child:
-                            // Row(children: [
-                            const Center(
-                                child: Text('解除',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                    ))),
+                      icon: const Icon(
+                        Icons.bluetooth_disabled, // Bluetooth接続解除アイコン
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        'デバイス解除',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),

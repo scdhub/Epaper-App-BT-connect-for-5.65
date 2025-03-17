@@ -1,15 +1,17 @@
 import 'dart:developer';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
 import '../app_body_color.dart';
+import '../crop_page/crop_page.dart';
 import 'select-photo-check_page.dart';
+
 
 import 'package:photo_manager/photo_manager.dart';
 
+//画像を選択するコード
 class Media {
   final AssetEntity assetEntity;
   final Widget widget;
@@ -165,7 +167,8 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
         ),
       ),
       body: CustomPaint(
-        painter: HexagonPainter(),
+        painter: BackgroundPainter(),
+        // painter: HexagonPainter(),
         child: MediasGridView(
           // メディアのアイテムを渡す。
           medias: _medias,
@@ -181,24 +184,28 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
           ? null
           : FloatingActionButton(
               onPressed: () async {
-                List<Uint8List?> imageDataList = [];
-                for (Media media in _selectedMedias) {
-                  // 選択した画像をUint8List形式に変換する
-                  Uint8List? data = await getMediaData(media.assetEntity);
-                  if (data != null) {
-                    //List<Uint8List>に入れる
-                    imageDataList.add(data);
-                  }
-                }
-                Navigator.push(
-                  // ignore: use_build_context_synchronously
-                  context,
-                  MaterialPageRoute(
-                    //サーバーupload画面に選択した画像を渡す。
-                    builder: (context) => SelectCheck(imageData: imageDataList),
-                  ),
-                );
-              },
+      if (_selectedMedias.isNotEmpty) {
+        // 🔹 アルバムで選択した画像を `cropImage` に渡す！
+        cropImage(context, asset: _selectedMedias.first.assetEntity);
+      }
+    },
+                // List<Uint8List?> imageDataList = [];
+                // for (Media media in _selectedMedias) {
+                //   // 選択した画像をUint8List形式に変換する
+                //   Uint8List? data = await getMediaData(media.assetEntity);
+                //   if (data != null) {
+                //     //List<Uint8List>に入れる→変数に入れる
+                //     imageDataList.add(data);
+                //   }
+                // }
+                // Navigator.push(
+                //   // ignore: use_build_context_synchronously
+                //   context,
+                //   MaterialPageRoute(
+                //     //サーバーupload画面に選択した画像を渡す。→　クロップに渡す。
+                //     builder: (context) => SelectCheck(imageData: imageDataList),
+                //   ),
+                // );
               backgroundColor: Colors.lightGreenAccent,
               child: const Icon(Icons.add_task_outlined),
             ),

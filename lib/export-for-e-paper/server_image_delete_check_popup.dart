@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 // import 'e_paper_send_picture_page.dart';
+import '../theme.dart';
 import 'sever_data_bind.dart';
 
 class ServerImageDelCheckPopup extends StatefulWidget {
@@ -56,26 +58,33 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
     }
   }
 
+  //デザインはtheme.dartで統一
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
-      backgroundColor: const Color(0xffF6B17A),
+      backgroundColor: Colors.white,
       title:
           // Text('スマホから画像を\nインポート方法選択',
-          const Text(
-        '!　注意　！',
-        textAlign: TextAlign.center,
+          const Text('注意',
+            style: AppTheme.warningDialogTitleStyle,
+            textAlign: TextAlign.center,
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('選択した画像は、完全に削除されます。\n 復元はできません。\n本当に削除してもよろしいですか？'),
+          const Text('選択した画像は\n完全に削除されます。\n 復元はできません。\n削除しますか？',
+            style: AppTheme.warningDialogContentStyle,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextButton(
+              ElevatedButton(
+                style: AppTheme.dialogYesButtonStyle, // OKボタンのスタイル適用
                 onPressed: () async {
                   List<String> delId = [];
                   for (var item in widget.selectDelImage) {
@@ -92,16 +101,20 @@ class _ServerImageDelCheckPopupState extends State<ServerImageDelCheckPopup> {
                   }
                   await widget.fetchData(status);
                 },
+
                 child: const Text(
-                  'OK',
-                  style: TextStyle(fontSize: 20, color: Colors.black),
+                  'はい',//OK
                 ),
               ),
-              TextButton(
+
+              const SizedBox(width: 10,),
+
+
+              ElevatedButton(
                 onPressed: () => Navigator.pop(context, 'Cancel'),
+                style: AppTheme.dialogNoButtonStyle,
                 child: const Text(
-                  'キャンセル',
-                  style: TextStyle(fontSize: 20, color: Colors.black),
+                  'いいえ',//キャンセル
                 ),
               ),
             ],
@@ -119,15 +132,18 @@ void showSuccessModal(BuildContext context) {
     builder: (BuildContext context) {
       return AlertDialog(
         actionsAlignment: MainAxisAlignment.center,
-        title: const Text(
+        title: Text(
           '削除が成功しました!',
+          style: AppTheme.dialogContentStyle,
           textAlign: TextAlign.center,
         ),
+
         actions: <Widget>[
           TextButton(
+            style: AppTheme.dialogYesButtonStyle,
             child: const Text(
               'OK',
-              style: TextStyle(fontSize: 20, color: Colors.black),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -146,15 +162,17 @@ void showFailedModal(BuildContext context) {
     builder: (BuildContext context) {
       return AlertDialog(
         actionsAlignment: MainAxisAlignment.center,
-        title: const Text(
+        title: Text(
           '削除が失敗しました!',
+          style: AppTheme.dialogContentStyle,
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
           TextButton(
+            style: AppTheme.dialogYesButtonStyle,
             child: const Text(
               'OK',
-              style: TextStyle(fontSize: 20, color: Colors.black),
+              style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -174,13 +192,17 @@ void showLoadingModal(BuildContext context) {
       // ignore: deprecated_member_use
       return WillPopScope(
         onWillPop: () async => false,
-        child: const AlertDialog(
+        child: AlertDialog(
+          backgroundColor: Colors.white, // 背景を白
           content: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 30),
-              Text('Loading'),
+              const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.black),  backgroundColor: Colors.white70,),
+              const SizedBox(width: 30),
+              Text('Loading...',
+                style: AppTheme.dialogContentStyle,
+              ),
             ],
           ),
         ),
