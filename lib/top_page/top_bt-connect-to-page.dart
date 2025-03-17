@@ -14,7 +14,7 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
   @override
   Widget build(BuildContext context) {
     const data ='E-paperに配信';
-        '　BTスキャン &\nE-paper配信関連';
+        'E-paperに配信';
 
     // スマホ画面の幅を取得
     double screenWidth = MediaQuery.of(context).size.width;

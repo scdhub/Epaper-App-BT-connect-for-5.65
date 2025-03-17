@@ -217,7 +217,7 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
             }),
         title: const Text(
           //画面上に表示される
-          'BTスキャン＆E-paper配信関連',
+          'E-paperに配信',
           style: TextStyle(
             // fontSize: 17,
           ),

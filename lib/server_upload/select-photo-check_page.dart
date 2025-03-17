@@ -30,9 +30,7 @@ class _SelectCheckState extends State<SelectCheck> {
   final List<File> files = [];
   // final ScrollController _scrollController = ScrollController(); // 横スクロール用コントローラー
   List<Uint8List?> selectedImages = []; // 複数選択を管理するリスト
-
-
-  //png形式に変換する為にファイルとして、画像を保存する必要がある
+  int count = 1;  //png形式に変換する為にファイルとして、画像を保存する必要がある
   // final List<File> files = [];
 
   // 最初の画像を選択状態にする
@@ -413,6 +411,8 @@ class _SelectCheckState extends State<SelectCheck> {
       if (response.statusCode == 200) {
         if (kDebugMode) {
           print('ファイルアップロード成功2！');
+          print('count: $count');
+          count++;
         }
 
         // // ここで `uploadMessage();` を呼ばず、ダイアログは開いたまま更新する

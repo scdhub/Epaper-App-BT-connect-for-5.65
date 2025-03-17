@@ -120,15 +120,29 @@ class _NewPage extends State<NewPage> {
   Future<void> fetchData(status) async {
     if (mounted) {
       setState(() {
+        //
         // 削除成功時、サーバーから再取得しないで初期取得Listから削除->再描画
         // 削除失敗時、削除リストのみ初期化(✓マークリセットの再描画)
+        // キャッシュをクリアして画像を削除
         if (status == 200) {
-          for (int i = 0; i < _deleteItems.length; i++) {
-            _items.removeWhere((v) => v.id == _deleteItems[i].id);
+          // for (var item in _deleteItems) {
+          //   _items.removeWhere((v) => v.id == item.id);
+            for (int i = 0; i < _deleteItems.length; i++) {
+              _items.removeWhere((v) => v.id == _deleteItems[i].id);
+
+              // 画像キャッシュ削除
+              DefaultCacheManager().removeFile(_items[i].url);
+              CachedNetworkImage.evictFromCache(_items[i].url);
+            }
           }
-        }
-        _deleteItems.clear();
-      });
+          _deleteItems.clear();
+          _items = List.from(imageItems); //更
+      }
+    );
+      _deleteItems.clear();
+      imageCache.clear();
+      imageCache.clearLiveImages();
+      initialize();  // initialize() を呼び出して、再度画像リストを取得
     }
   }
 
@@ -297,10 +311,13 @@ class _NewPage extends State<NewPage> {
         mainAxisSpacing: 4.0,  // 横の空間
         crossAxisCount: 3,
       ),
+
       itemCount: _items.length,
       itemBuilder: (BuildContext context, int index) {
-        bool isSelected = false;
+        bool isSelected = _deleteItems.any((v) => v.id == _items[index].id);
         return _createImageTap(index, isSelected);
+        // bool isSelected = false;
+        // return _createImageTap(index, isSelected);
       },
     );
   }
@@ -349,7 +366,9 @@ class _NewPage extends State<NewPage> {
       child: Stack(
           children: <Widget>[
             CachedNetworkImage(
+              key: ValueKey(_items[index].url), //キャッシュを更新するためのキー
               imageUrl: _items[index].url,
+              cacheManager: DefaultCacheManager(), //キャッシュマネージャーを統一
               width: (MediaQuery.of(context).size.width * 1/2.0)-3,
               height: (MediaQuery.of(context).size.height * 1/7)-6,
               errorWidget: (context, url, error) =>
@@ -389,6 +408,8 @@ class _NewPage extends State<NewPage> {
     );
   }
 }
+
+
 
 // class DialogHelper{
 void selectImageCheckDialog(
