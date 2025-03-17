@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/server_get-image.dart';
 import 'package:iphone_bt_epaper/export-for-e-paper/server_image_delete_check_popup.dart';
@@ -10,8 +11,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class NewPage extends StatefulWidget {
   final BluetoothDevice deviceInfo;
+  final String trustName;
   final CacheManager? cacheManager;
-  const NewPage({super.key, required this.deviceInfo, this.cacheManager});
+  const NewPage({super.key, required this.deviceInfo, required this.trustName, this.cacheManager});
 
   @override
   State<StatefulWidget> createState() => _NewPage();
@@ -31,6 +33,8 @@ class _NewPage extends State<NewPage> {
 
   List<ReversedData> reverseData = []; //サーバーデータ：新しい順 // 未使用
   List<DateSort> dateSort = []; //日付並び替え  // 未使用
+
+  static const platform = MethodChannel('com.example.iphone_bt_epaper/channel');
 
   @override
   void initState() {
@@ -112,6 +116,20 @@ class _NewPage extends State<NewPage> {
     */
     //デバイスとの接続を切る
     await widget.deviceInfo.disconnect();
+  }
+
+  // BL接続
+  Future<String?> callNativeMethod(url) async {
+    debugPrint("trustName: ${widget.trustName}");
+    debugPrint("deviceInfo.platformName: ${widget.deviceInfo.platformName}");
+    try {
+      final String? result = await platform.invokeMethod('callSdk', {'deviceName': '${widget.trustName}', 'imageUrl': '${url}'});
+      debugPrint("Result from EInkSDK of Kotlin $result");
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint("Failed to call native method: '${e.message}'.");
+      return null;
+    }
   }
 
   // 削除時に画像一覧を更新する関数
@@ -316,9 +334,7 @@ class _NewPage extends State<NewPage> {
               context: context,
               imageUrl: _items[index].url,
               onSendOK: () {
-                onDiscoverServicesPressed(
-                    sendImage: _items[index].url
-                );
+                callNativeMethod(_items[index].url);
               }
             );
           },

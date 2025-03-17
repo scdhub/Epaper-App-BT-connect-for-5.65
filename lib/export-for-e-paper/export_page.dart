@@ -193,6 +193,7 @@ class _ExportPageState extends State<ExportPage> {
                           MaterialPageRoute(
                             builder: (context) => NewPage(
                               deviceInfo: widget.trustDevice,
+                              trustName: widget.trustName,
                             )),
                         );
                       },

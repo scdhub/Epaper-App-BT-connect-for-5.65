@@ -15,6 +15,11 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+
+        // libsディレクトリを追加
+        flatDir {
+            dirs 'android/app/libs'
+        }
     }
 }
 
