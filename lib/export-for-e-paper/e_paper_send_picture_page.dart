@@ -248,11 +248,16 @@ class _NewPage extends State<NewPage> {
                       ? const CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(Colors.black),
                     backgroundColor: Colors.white70,
-                  ) // ローディング中はインジケーターを表示
-                      : _createGridView()
+                  ) /// ローディング中はインジケーターを表示
+                  // : _createGridView()
+                      : Container(
+                      child: _items.isEmpty
+                          ? NonServerPictureMess()
+                          : _createGridView()
+                  )
               )
           )
-      ],),
+        ],),
       persistentFooterButtons: deleteMode
           ? (_deleteItems.isNotEmpty)
             ? [
@@ -352,8 +357,8 @@ class _NewPage extends State<NewPage> {
           children: <Widget>[
             CachedNetworkImage(
               imageUrl: _items[index].url,
-              width: (MediaQuery.of(context).size.width * 1/2.0)-3,
-              height: (MediaQuery.of(context).size.height * 1/7)-6,
+              width: 200,
+              height: 200,
               errorWidget: (context, url, error) =>
               const Icon(Icons.error), // 画像エラー時のウィジェット
               fit: BoxFit.contain,
@@ -455,4 +460,25 @@ void selectImageCheckDialog(
       // ),
     ),
   );
+}
+
+class NonServerPictureMess extends StatelessWidget {
+  const NonServerPictureMess({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Stack(alignment: Alignment.center, children: [
+        Icon(
+          Icons.warning_amber_outlined,
+          color: Colors.white38,
+          size: 300,
+        ),
+        Text(
+          '　　登録画像がありません\n\nまずは画像を登録しましょう！',
+          style: TextStyle(color: Colors.black, fontSize: 18),
+        ),
+      ]),
+    );
+  }
 }
