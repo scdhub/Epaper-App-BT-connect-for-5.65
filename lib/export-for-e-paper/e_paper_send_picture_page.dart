@@ -27,24 +27,41 @@ class NewPage extends StatefulWidget {
 class _NewPage extends State<NewPage> {
   List<ImageItem> imageItems = []; // サーバーデータ
   List<ImageItem> _items = []; // 表示使用用画像リスト
-  List<ImageItem> _deleteItems = [];  // 削除用選択リスト
+  List<ImageItem> _deleteItems = []; // 削除用選択リスト
   List<BluetoothService> services = []; //接続したデバイスのサービス情報を読み取る
-  final List<bool> selectedMode = [true, false];  // 画像操作Button用リスト
+  final List<bool> selectedMode = [true, false]; // 画像操作Button用リスト
   String? sortItemLis = 'new'; // 画像順表示名　初期：新しい順
   int selectedModeIndex = 1;
-  bool deleteMode = false;  // 画面操作状態、削除状態切り替え
-  bool selectedItem = false;  // 画像選択状態
-  bool isLoading = true;  // 画像読込状態
+  bool deleteMode = false; // 画面操作状態、削除状態切り替え
+  bool selectedItem = false; // 画像選択状態
+  bool isLoading = true; // 画像読込状態
+  bool isConnecting = false;  // 画像送信処理状態
 
   List<ReversedData> reverseData = []; //サーバーデータ：新しい順 // 未使用
   List<DateSort> dateSort = []; //日付並び替え  // 未使用
 
   static const platform = MethodChannel('com.example.iphone_bt_epaper/channel');
 
+  // SDKcallback_message
+  static const BasicMessageChannel<String> _channel =
+  BasicMessageChannel<String>(
+      'com.example.iphone_bt_epaper/channel', StringCodec());
+  String? _receivedMessage = null;
+
   @override
   void initState() {
     super.initState();
     initialize();
+
+    // メッセージを受信するリスナーを設定
+    _channel.setMessageHandler((String? message) async {
+      _receivedMessage = message ?? "メッセージがありません";
+      debugPrint("  ■_receivedMessage: $_receivedMessage");
+      if (message != null) {
+        isConnecting = false;
+      }
+      return "Flutter でメッセージを受信しました！"; // Kotlin 側に返す
+    });
   }
 
   Future<void> initialize() async {
@@ -57,7 +74,7 @@ class _NewPage extends State<NewPage> {
     );
     setState(() {
       // 画像順ソート new->old
-      imageItems.sort((a,b) => b.lastModified.compareTo(a.lastModified));
+      imageItems.sort((a, b) => b.lastModified.compareTo(a.lastModified));
       isLoading = false;
       _items = imageItems;
     });
@@ -126,10 +143,11 @@ class _NewPage extends State<NewPage> {
   // BL接続
   Future<String?> callNativeMethod(url) async {
     debugPrint("trustName: ${widget.trustName}");
-    debugPrint("deviceInfo.platformName: ${widget.deviceInfo.platformName}");
     try {
-      final String? result = await platform.invokeMethod('callSdk', {'deviceName': '${widget.trustName}', 'imageUrl': '${url}'});
-      debugPrint("Result from EInkSDK of Kotlin $result");
+      debugPrint("call Kotlin");
+      final String? result = await platform.invokeMethod('callSdk',
+          {'deviceName': '${widget.trustName}', 'imageUrl': '${url}'});
+      debugPrint("Result from Kotlin $result");
       return result;
     } on PlatformException catch (e) {
       debugPrint("Failed to call native method: '${e.message}'.");
@@ -151,12 +169,12 @@ class _NewPage extends State<NewPage> {
             // 画像キャッシュ削除
             DefaultCacheManager().removeFile(_items[i].url);
             CachedNetworkImage.evictFromCache(_items[i].url);
-            }
           }
-          _deleteItems.clear();
-          _items = List.from(imageItems); //更
+        }
+        _deleteItems.clear();
+        _items = List.from(imageItems); //更
       }
-    );
+      );
       _deleteItems.clear();
       // imageCache.clear();
       // imageCache.clearLiveImages();
@@ -434,69 +452,67 @@ void selectImageCheckDialog(
   showDialog(
     barrierDismissible: false, //dialog以外の部分をタップしても消えないようにする。
     context: context,
-    builder: (context) => Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AlertDialog(
-      title: Align(
-      alignment: Alignment.center, // タイトルを中央に寄せる
-            child: Text('選択画像を配信しますか？',
-        style: AppTheme.dialogContentStyle, // 本文のスタイル
-                ),
-      ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                            border:
-                            Border.all(color: Colors.black12, width: 2)),
-                        child: FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: imageUrl,
-                        ),
-                      ),
-                    ],
+    builder: (context) {
+      return AlertDialog(
+        title: Align(
+        alignment: Alignment.center, // タイトルを中央に寄せる
+              child: Text('選択画像を配信しますか？',
+          style: AppTheme.dialogContentStyle, // 本文のスタイル
                   ),
-                ),
-                const SizedBox(height: 10,),
+        ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                          width: 250,
+                          height: 200,
+                          decoration: BoxDecoration(
+                              border:
+                              Border.all(color: Colors.black12, width: 2)),
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image: imageUrl,
+                          ),
+                        ),
+                  const SizedBox(height: 10,),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // 中央寄せ
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                        style: AppTheme.dialogYesButtonStyle,
-                        child: Text("はい",
-                         ),
-                        // child: const Text("OK"),
-                        onPressed: () {
-                          onSendOK();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        }),
-                    const SizedBox(width: 30), // ボタン間のスペースを調整
-                    TextButton(
-                        style: AppTheme.dialogNoButtonStyle,
-                        child: Text("いいえ"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-      // ),
-    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // 中央寄せ
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          width: 100, // ボタンの横幅を統一
+                          child: ElevatedButton(
+                            style: AppTheme.dialogYesButtonStyle,
+                            onPressed: () {
+                              onSendOK();
+                              Navigator.pop(context);
+                            },
+                            child: const Text("はい",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white)),
+                          ),
+                          ),
+                        ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          child: SizedBox(
+                            width: 100,
+                            child: ElevatedButton(
+                                style: AppTheme.dialogNoButtonStyle,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("いいえ")),
+                      ))
+                    ]
+                  ),
+                ],
+              ),
+            );
+    },
   );
 }
 
