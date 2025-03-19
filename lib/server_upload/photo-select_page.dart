@@ -125,6 +125,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
             (element) => element.assetEntity.id == media.assetEntity.id);
       } else {
         // 選択されていない場合、追加する。
+        _selectedMedias.clear();
         _selectedMedias.add(media);
       }
     });
@@ -144,7 +145,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
               value: e,
               child: Text(
                 e.name.isEmpty ? "" : "${e.name}($imageCount)",
-                style: TextStyle(color: Colors.yellow[100]),
+                style: TextStyle(color: Colors.blue),
               ),
             );
           }).toList(),
@@ -180,35 +181,21 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
           scrollController: _scrollController,
         ),
       ),
-      floatingActionButton: _selectedMedias.isEmpty
+      persistentFooterButtons: _selectedMedias.isEmpty
           ? null
-          : FloatingActionButton(
+          : [
+            ElevatedButton(
               onPressed: () async {
-      if (_selectedMedias.isNotEmpty) {
-        // 🔹 アルバムで選択した画像を `cropImage` に渡す！
-        cropImage(context, asset: _selectedMedias.first.assetEntity);
-      }
-    },
-                // List<Uint8List?> imageDataList = [];
-                // for (Media media in _selectedMedias) {
-                //   // 選択した画像をUint8List形式に変換する
-                //   Uint8List? data = await getMediaData(media.assetEntity);
-                //   if (data != null) {
-                //     //List<Uint8List>に入れる→変数に入れる
-                //     imageDataList.add(data);
-                //   }
-                // }
-                // Navigator.push(
-                //   // ignore: use_build_context_synchronously
-                //   context,
-                //   MaterialPageRoute(
-                //     //サーバーupload画面に選択した画像を渡す。→　クロップに渡す。
-                //     builder: (context) => SelectCheck(imageData: imageDataList),
-                //   ),
-                // );
-              backgroundColor: Colors.lightGreenAccent,
-              child: const Icon(Icons.add_task_outlined),
-            ),
+                if (_selectedMedias.isNotEmpty) {
+                  // 🔹 アルバムで選択した画像を `cropImage` に渡す！
+                  cropImage(context, asset: _selectedMedias.first.assetEntity);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(90, 50),//幅,高
+                  backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
+              child: const Text('選択'),
+            ),]
     );
   }
 }
@@ -331,7 +318,7 @@ class MediasGridView extends StatelessWidget {
         physics: const BouncingScrollPhysics(), //バウンド効果あるスクロール
         itemCount: medias.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+          crossAxisCount: 3,
           mainAxisSpacing: 4,
           crossAxisSpacing: 3,
         ),

@@ -74,7 +74,7 @@ class MainActivity: FlutterActivity() {
                 output = "onBLEDeviceConnectCanceled"
                 sendMessageToFlutter(messageChannel)
 //                // BL接続切断
-//                Log.d("MainActivity", "call connectBleDevice")
+//                Log.d("MainActivity", "call cancelConnection")
 //                sdk?.cancelConnection()
             }
             override fun onBLEDeviceConnectComplete() {
@@ -114,7 +114,7 @@ class MainActivity: FlutterActivity() {
                 output = "onSendImageToDeviceComplete"
                 sendMessageToFlutter(messageChannel)
                 // BL接続切断
-                Log.d("MainActivity", "call connectBleDevice")
+                Log.d("MainActivity", "call cancelConnection")
                 sdk?.cancelConnection()
             }
             override fun onSendImageToDeviceFailed(error: SDKError?) {
@@ -124,7 +124,7 @@ class MainActivity: FlutterActivity() {
                 output = "onSendImageToDeviceFailed: ${error?.message}"
                 sendMessageToFlutter(messageChannel)
                 // BL接続切断
-                Log.d("MainActivity", "call connectBleDevice")
+                Log.d("MainActivity", "call cancelConnection")
                 sdk?.cancelConnection()
             }
             // 呼び出しタイミング：不明　仕様書記載なし
@@ -134,7 +134,7 @@ class MainActivity: FlutterActivity() {
                 output = "onSendImageToDeviceCanceled"
                 sendMessageToFlutter(messageChannel)
                 // BL接続切断
-                Log.d("MainActivity", "call connectBleDevice")
+                Log.d("MainActivity", "call cancelConnection")
                 sdk?.cancelConnection()
             }
             override fun onSendImageToDeviceProgress(progressPercent: Int) {
