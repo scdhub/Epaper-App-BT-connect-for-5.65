@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,7 +19,11 @@ class NewPage extends StatefulWidget {
   final BluetoothDevice deviceInfo;
   final String trustName;
   final CacheManager? cacheManager;
-  const NewPage({super.key, required this.deviceInfo, required this.trustName, this.cacheManager});
+  const NewPage(
+      {super.key,
+      required this.deviceInfo,
+      required this.trustName,
+      this.cacheManager});
 
   @override
   State<StatefulWidget> createState() => _NewPage();
@@ -35,7 +40,11 @@ class _NewPage extends State<NewPage> {
   bool deleteMode = false; // 画面操作状態、削除状態切り替え
   bool selectedItem = false; // 画像選択状態
   bool isLoading = true; // 画像読込状態
-  bool isConnecting = false;  // 画像送信処理状態
+  bool isConnected = false; // BLE処理状態
+  double? progressPercent = 0.0;
+  bool isSending = false;
+  String? resultTitle;
+  String? resultContext;
 
   List<ReversedData> reverseData = []; //サーバーデータ：新しい順 // 未使用
   List<DateSort> dateSort = []; //日付並び替え  // 未使用
@@ -44,9 +53,9 @@ class _NewPage extends State<NewPage> {
 
   // SDKcallback_message
   static const BasicMessageChannel<String> _channel =
-  BasicMessageChannel<String>(
-      'com.example.iphone_bt_epaper/channel', StringCodec());
-  String? _receivedMessage = null;
+      BasicMessageChannel<String>(
+          'com.example.iphone_bt_epaper/channel', StringCodec());
+  // String? _receivedMessage = null;
 
   @override
   void initState() {
@@ -55,13 +64,63 @@ class _NewPage extends State<NewPage> {
 
     // メッセージを受信するリスナーを設定
     _channel.setMessageHandler((String? message) async {
-      _receivedMessage = message ?? "メッセージがありません";
-      debugPrint("  ■_receivedMessage: $_receivedMessage");
-      if (message != null) {
-        isConnecting = false;
-      }
-      return "Flutter でメッセージを受信しました！"; // Kotlin 側に返す
+      return await handleReceivedMessage(message);
     });
+  }
+
+  // メッセージ受信後の処理
+  Future<String> handleReceivedMessage(String? message) {
+    if (message != null) {
+      // 受信した JSON を `Map<String, dynamic>` に変換
+      final Map<String, dynamic> decodedData = jsonDecode(message);
+
+
+      // LinearProgressIndicator表示開始
+      if (decodedData['callbackName'] == "onBLEDeviceConnectComplete") {
+        setState(() {
+          isSending = true;
+        });
+      }
+
+      // 進捗率
+      if (decodedData['callbackName'] == "onSendImageToDeviceProgress") {
+        setState(() {
+          progressPercent = (decodedData['progressPercent'] ?? 0) / 100;
+          debugPrint(
+              "LinearProgressIndicator progressPercent: $progressPercent");
+        });
+      }
+
+      // LinearProgressIndicator表示終了
+      if ((decodedData['callbackName'].startsWith("onSendImageToDevice")) &&
+          (decodedData['callbackName'] != "onSendImageToDeviceProgress")) {
+        progressPercent = 0.0;
+        setState(() {
+          isSending = false;
+        });
+      }
+
+      // Dialog表示
+      if ((decodedData['callbackName'] != "onSendImageToDeviceFailed") || (decodedData['callbackName'] != "onSendImageToDeviceCanceled")) {
+        if ((decodedData['callbackName'].endsWith("Failed")) ||
+            (decodedData['callbackName'] == "onBLEDeviceDisconnect") ||
+            (decodedData['callbackName'].endsWith("Canceled"))) {
+          resultTitle = decodedData['callbackName'];
+          resultContext = decodedData['message'];
+          progressPercent = 0.0;
+          setState(() {
+            isSending = false;
+            isConnected = false;
+          });
+          debugPrint("isSending: $isSending");
+          bLEConnectedMessage();
+        }
+      }
+      debugPrint('Received JSON: $decodedData');
+      debugPrint(
+          'callbackName: ${decodedData['callbackName']}, message: ${decodedData['message']}, progressPercent: ${decodedData['progressPercent']}');
+    }
+    return Future.value("Flutter でメッセージを受信しました！"); // Kotlin 側に返す
   }
 
   Future<void> initialize() async {
@@ -142,7 +201,7 @@ class _NewPage extends State<NewPage> {
 
   // BL接続
   Future<String?> callNativeMethod(url) async {
-    debugPrint("trustName: ${widget.trustName}");
+    debugPrint("url: ${url}");
     try {
       debugPrint("call Kotlin");
       final String? result = await platform.invokeMethod('callSdk',
@@ -173,8 +232,7 @@ class _NewPage extends State<NewPage> {
         }
         _deleteItems.clear();
         _items = List.from(imageItems); //更
-      }
-      );
+      });
       _deleteItems.clear();
       // imageCache.clear();
       // imageCache.clearLiveImages();
@@ -185,161 +243,192 @@ class _NewPage extends State<NewPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('配信用登録画像一覧'),
-      ),
-
-      body: Column(
-        children: [
-          // AppBar下の固定バー
-          Container(
-            height: AppBar().preferredSize.height,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ToggleButtons(
-                  color: Colors.blue,
-                  fillColor: Colors.blue[300],
-                  borderColor: Colors.blue[100],
-                  splashColor: Colors.blue[300],
-                  selectedBorderColor: Colors.blue[800],
-                  selectedColor: Colors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  constraints: BoxConstraints(
-                      minHeight: AppBar().preferredSize.height * 0.65,
-                      minWidth: MediaQuery.of(context).size.width / 5
-                  ),
-                  isSelected: selectedMode,
-                  onPressed: (int index) {
-                    setState(() {
-                      if (index == 0) {
-                        selectedMode[0] = true;
-                        selectedMode[1] = false;
-                        deleteMode = false;
-                      } else {
-                        selectedMode[0] = false;
-                        selectedMode[1] = true;
-                        deleteMode = true;
-                      }
-                      if (!deleteMode) {
-                        _deleteItems.clear();
-                      }
-                    });
-                  },
-                  children: const[
-                    Row(
-                      children: [
-                        Icon(Icons.ios_share),
-                        Text('  配信')
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.delete),
-                        Text('  削除')
-                      ],
-                    )],
-                ),
-                Row(
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text('配信用登録画像一覧'),
+          ),
+          body: Column(
+            children: [
+              // AppBar下の固定バー
+              Container(
+                height: AppBar().preferredSize.height,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('表示順：', style: TextStyle(color: Colors.blue,),),
-                    DropdownButton(  // 画像ソート順選択
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'new',
-                          child: Text('新しい順', style: TextStyle(color: Colors.blue,),),
-                        ),
-                        DropdownMenuItem(
-                          value: 'old',
-                          child: Text('古い順', style: TextStyle(color: Colors.blue,),),
-                        )
-                      ],
-                      onChanged: (String? value) {
+                    ToggleButtons(
+                      color: Colors.blue,
+                      fillColor: Colors.blue[300],
+                      borderColor: Colors.blue[100],
+                      splashColor: Colors.blue[300],
+                      selectedBorderColor: Colors.blue[800],
+                      selectedColor: Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      constraints: BoxConstraints(
+                          minHeight: AppBar().preferredSize.height * 0.65,
+                          minWidth: MediaQuery.of(context).size.width / 5),
+                      isSelected: selectedMode,
+                      onPressed: (int index) {
                         setState(() {
-                          if (sortItemLis != value) {
-                            sortItemLis = value;  // 画像順ソートドロップダウンtitle
-                            _items = _items.reversed.toList();
+                          if (index == 0) {
+                            selectedMode[0] = true;
+                            selectedMode[1] = false;
+                            deleteMode = false;
+                          } else {
+                            selectedMode[0] = false;
+                            selectedMode[1] = true;
+                            deleteMode = true;
+                          }
+                          if (!deleteMode) {
                             _deleteItems.clear();
                           }
                         });
                       },
-                      value: sortItemLis,
-                      underline: Container(
-                        height: 1,
-                        color: Colors.blue,
-                      ),
+                      children: const [
+                        Row(
+                          children: [Icon(Icons.ios_share), Text('  配信')],
+                        ),
+                        Row(
+                          children: [Icon(Icons.delete), Text('  削除')],
+                        )
+                      ],
                     ),
-                  ],),
-              ],),
-          ),
-          Expanded(
-              child: Center(
-                  child: isLoading
-                      ? const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.black),
-                    backgroundColor: Colors.white70,
-                  ) // ローディング中はインジケーターを表示
-                      : Container(
-                      child: _items.isEmpty
-                          ? NonServerPictureMess()
-                          : _createGridView()
-                  )
-              )
-          )
-      ],),
-      persistentFooterButtons: deleteMode
-          ? (_deleteItems.isNotEmpty)
-            ? [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _deleteItems = List.from(_items);  // すべて選択
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(90, 50),//幅,高
-                    backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
-                child: const Text('全選択'),
+                    Row(
+                      children: [
+                        const Text(
+                          '表示順：',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                        DropdownButton(
+                          // 画像ソート順選択
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'new',
+                              child: Text(
+                                '新しい順',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: 'old',
+                              child: Text(
+                                '古い順',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            )
+                          ],
+                          onChanged: (String? value) {
+                            setState(() {
+                              if (sortItemLis != value) {
+                                sortItemLis = value; // 画像順ソートドロップダウンtitle
+                                _items = _items.reversed.toList();
+                                _deleteItems.clear();
+                              }
+                            });
+                          },
+                          value: sortItemLis,
+                          underline: Container(
+                            height: 1,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _deleteItems.clear();  // すべて解除
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(125, 50),
-                    backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
-                child: const Text('全選択解除'),),
-              ElevatedButton(
-                onPressed: () async {
-                  for (var item in _deleteItems) {
-                    if (kDebugMode) {
-                      print(
-                          'ID: ${item.id}, URL: ${item.url}, Last Modified: ${item.lastModified}');
-                    }
-                  }
-                  await showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) =>
-                        ServerImageDelCheckPopup(
-                            selectDelImage: _deleteItems,
-                            fetchData: fetchData),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(50, 50),
-                    backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
-                child: const Text('削除'),),
-              ]
-            : null
-          : null,
+              Expanded(
+                  child: Center(
+                      child: isLoading
+                          ? const CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(Colors.black),
+                              backgroundColor: Colors.white70,
+                            ) // ローディング中はインジケーターを表示
+                          : Container(
+                              child: _items.isEmpty
+                                  ? NonServerPictureMess()
+                                  : _createGridView())))
+            ],
+          ),
+          persistentFooterButtons: deleteMode
+              ? (_deleteItems.isNotEmpty)
+                  ? [
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _deleteItems = List.from(_items); // すべて選択
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(90, 50), //幅,高
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF29B6F6)),
+                        child: const Text('全選択'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _deleteItems.clear(); // すべて解除
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(125, 50),
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF29B6F6)),
+                        child: const Text('全選択解除'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          for (var item in _deleteItems) {
+                            if (kDebugMode) {
+                              print(
+                                  'ID: ${item.id}, URL: ${item.url}, Last Modified: ${item.lastModified}');
+                            }
+                          }
+                          await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) => ServerImageDelCheckPopup(
+                                selectDelImage: _deleteItems,
+                                fetchData: fetchData),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: const Size(50, 50),
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF29B6F6)),
+                        child: const Text('削除'),
+                      ),
+                    ]
+                  : null
+              : null,
+        ),
+        if (isConnected)
+          const Positioned.fill(
+              child: ModalBarrier(
+            color: Colors.black54,
+            dismissible: false, // ユーザー操作をブロック
+          )),
+        if (isConnected && !isSending)
+          const Center(child: CircularProgressIndicator()),
+        if (isConnected && isSending)
+          Container(
+              alignment: Alignment.bottomCenter,
+              child: LinearProgressIndicator(
+                minHeight: 10.0, // ラインの高さ
+            value: progressPercent,
+          ))
+      ],
     );
   }
 
@@ -348,7 +437,7 @@ class _NewPage extends State<NewPage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisSpacing: 3.0, // 縦の空間
-        mainAxisSpacing: 4.0,  // 横の空間
+        mainAxisSpacing: 4.0, // 横の空間
         crossAxisCount: 3,
       ),
       itemCount: _items.length,
@@ -363,31 +452,32 @@ class _NewPage extends State<NewPage> {
   Widget _createImageTap(index, isSelected) {
     return GestureDetector(
       onTap: deleteMode
-          ? () {  // 画像削除時複数選択処理
-            // 画像選択/解除判定　削除リストに追加されているか確認
-            isSelected = _deleteItems.any((v) => v.id == _items[index].id);
-            // 選択✓マーク表示のためsetState()
-            setState(() {
-              if (isSelected) {
-                // 選択解除処理
-                // 削除リストから削除
-                _deleteItems.removeWhere((v) => v.id == _items[index].id);
-              } else {
-                // 選択処理
-                // 削除リストに追加
-                _deleteItems.add(_items[index]);
-              }
-            });
-          }
-          : () {  // 画像登録処理
-            selectImageCheckDialog(
-              context: context,
-              imageUrl: _items[index].url,
-              onSendOK: () {
-                callNativeMethod(_items[index].url);
-              }
-            );
-          },
+          ? () {
+              // 画像削除時複数選択処理
+              // 画像選択/解除判定　削除リストに追加されているか確認
+              isSelected = _deleteItems.any((v) => v.id == _items[index].id);
+              // 選択✓マーク表示のためsetState()
+              setState(() {
+                if (isSelected) {
+                  // 選択解除処理
+                  // 削除リストから削除
+                  _deleteItems.removeWhere((v) => v.id == _items[index].id);
+                } else {
+                  // 選択処理
+                  // 削除リストに追加
+                  _deleteItems.add(_items[index]);
+                }
+              });
+            }
+          : () {
+              // 画像登録処理
+              selectImageCheckDialog(
+                  context: context,
+                  imageUrl: _items[index].url,
+                  onSendOK: () {
+                    callNativeMethod(_items[index].url);
+                  });
+            },
       child: _createCheckMark(index, isSelected),
     );
   }
@@ -398,122 +488,152 @@ class _NewPage extends State<NewPage> {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black26, width: 1), // 青色の枠線
       ),
-      child: Stack(
-          children: <Widget>[
-            CachedNetworkImage(
-              key: ValueKey(_items[index].url), //キャッシュを更新するためのキー
-              imageUrl: _items[index].url,
-              cacheManager: DefaultCacheManager(), //キャッシュマネージャーを統一
-              width: 200,
-              height: 200,
-              errorWidget: (context, url, error) =>
+      child: Stack(children: <Widget>[
+        CachedNetworkImage(
+          key: ValueKey(_items[index].url), //キャッシュを更新するためのキー
+          imageUrl: _items[index].url,
+          cacheManager: DefaultCacheManager(), //キャッシュマネージャーを統一
+          width: 200,
+          height: 200,
+          errorWidget: (context, url, error) =>
               const Icon(Icons.error), // 画像エラー時のウィジェット
-              fit: BoxFit.contain,
-            ),
-            // ✓マーク表示
-            if (isSelected = _deleteItems.any((v) => v.id == _items[index].id))
-              Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Container(
-                      color: const Color(0xFF4FC3F7),
-                    ),
-                  ),
-                  Positioned.fill(
-                      child: Padding(
-                        padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
-                        child: CachedNetworkImage(
-                          imageUrl: _items[index].url,
-                        ),
-                      )),
-                  Positioned.fill(
-                      child: Container(
-                          color: Colors.black.withOpacity(0.3),
-                          child: const Icon(
-                              Icons.check_circle,
-                              size: 30,
-                              color: Colors.white//.withOpacity(0.8),
-                          )
-                      )
-                  )
-                ],
-              )
-          ]
-      ),
+          fit: BoxFit.contain,
+        ),
+        // ✓マーク表示
+        if (isSelected = _deleteItems.any((v) => v.id == _items[index].id))
+          Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: Container(
+                  color: const Color(0xFF4FC3F7),
+                ),
+              ),
+              Positioned.fill(
+                  child: Padding(
+                padding: EdgeInsets.all(isSelected ? 10.0 : 0.0),
+                child: CachedNetworkImage(
+                  imageUrl: _items[index].url,
+                ),
+              )),
+              Positioned.fill(
+                  child: Container(
+                      color: Colors.black.withOpacity(0.3),
+                      child: const Icon(Icons.check_circle,
+                          size: 30, color: Colors.white //.withOpacity(0.8),
+                          )))
+            ],
+          )
+      ]),
     );
   }
-}
 
 // class DialogHelper{
-void selectImageCheckDialog(
-    {required BuildContext context,
+  void selectImageCheckDialog(
+      {required BuildContext context,
       required String imageUrl,
       required Function onSendOK}) {
-  showDialog(
-    barrierDismissible: false, //dialog以外の部分をタップしても消えないようにする。
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Align(
-        alignment: Alignment.center, // タイトルを中央に寄せる
-              child: Text('選択画像を配信しますか？',
-          style: AppTheme.dialogContentStyle, // 本文のスタイル
-                  ),
-        ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                          width: 250,
-                          height: 200,
-                          decoration: BoxDecoration(
-                              border:
-                              Border.all(color: Colors.black12, width: 2)),
-                          child: FadeInImage.memoryNetwork(
-                            placeholder: kTransparentImage,
-                            image: imageUrl,
-                          ),
-                        ),
-                  const SizedBox(height: 10,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // 中央寄せ
-                    // mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: 100, // ボタンの横幅を統一
-                          child: ElevatedButton(
-                            style: AppTheme.dialogYesButtonStyle,
-                            onPressed: () {
-                              onSendOK();
-                              Navigator.pop(context);
-                            },
-                            child: const Text("はい",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white)),
-                          ),
-                          ),
-                        ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                          child: SizedBox(
-                            width: 100,
-                            child: ElevatedButton(
-                                style: AppTheme.dialogNoButtonStyle,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("いいえ")),
-                      ))
-                    ]
-                  ),
-                ],
+    showDialog(
+      barrierDismissible: false, //dialog以外の部分をタップしても消えないようにする。
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Align(
+            alignment: Alignment.center, // タイトルを中央に寄せる
+            child: Text(
+              '選択画像を配信しますか？',
+              style: AppTheme.dialogContentStyle, // 本文のスタイル
+            ),
+          ),
+          // content: Column(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 250,
+                height: 200,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12, width: 2)),
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: imageUrl,
+                ),
               ),
-            );
-    },
-  );
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // 中央寄せ
+                  // mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        width: 100, // ボタンの横幅を統一
+                        child: ElevatedButton(
+                          style: AppTheme.dialogYesButtonStyle,
+                          onPressed: () {
+                            onSendOK();
+                            setState(() {
+                              isConnected = true;
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: const Text("はい",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: SizedBox(
+                      width: 100,
+                      child: ElevatedButton(
+                          style: AppTheme.dialogNoButtonStyle,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("いいえ")),
+                    ))
+                  ]),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void bLEConnectedMessage() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              titleTextStyle: AppTheme.errordialogTitleStyle,
+              // エラーダイアログのタイトルスタイル
+              contentTextStyle: AppTheme.errorContentStyle,
+              // エラーダイアログの本文スタイル
+              actionsAlignment: MainAxisAlignment.center,
+              title: Text(
+                resultTitle ?? "",
+                textAlign: TextAlign.center,
+              ),
+              content: Text(
+                resultContext ?? "",
+                textAlign: TextAlign.center,
+              ),
+              actions: <Widget>[
+                ElevatedButton(
+                  style: AppTheme.errordialogButtonStyle, // エラーダイアログボタンスタイル
+                  // TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ]);
+        });
+  }
 }
 
 class NonServerPictureMess extends StatelessWidget {

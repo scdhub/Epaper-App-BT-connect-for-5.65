@@ -13,6 +13,8 @@ import io.flutter.plugin.common.BasicMessageChannel // callback.message 送信�
 import io.flutter.plugin.common.StringCodec
 import android.os.Handler
 import android.os.Looper
+import org.json.JSONObject
+//import org.json.JSONArray
 
 import android.util.Log // Log出力用
 
@@ -22,6 +24,11 @@ class MainActivity: FlutterActivity() {
     var deviceName: String? = null
     var imageUrl: String? = null
     var output: String? = null    // FlutterへのBL接続状況返却
+    var json = JSONObject()
+    var data: MutableMap<String, Any?> = mutableMapOf(
+            "callbackName" to "",
+            "message" to "",
+            "progressPercent" to 0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +40,31 @@ class MainActivity: FlutterActivity() {
 
         fun sendMessageToFlutter(channel: BasicMessageChannel<String>) {
             Handler(Looper.getMainLooper()).postDelayed({
-                channel.send(output)
+                json = JSONObject(data)
+                channel.send(json.toString())
             }, 500) // 0.5秒ごとに送信
+        }
+
+//        fun updateValues(values: Map<String, Any?>) {
+//            for ((key, newValue) in values) {
+//                // 値の型を確認し、適切に処理
+//                if (data.containsKey(key)) {
+//                    when (newValue) {
+//                        is String -> data[key] = newValue // String型
+//                        is String? -> data[key] = newValue // String?型
+//                        is Int? -> data[key] = newValue // Int?型
+//                        else -> println("無効な型です: $key")
+//                    }
+//                } else {
+//                    println("指定されたキーは存在しません: $key")
+//                }
+//            }
+//        }
+
+        fun updateValues(callbackName: String, message: String?, progressPercent: Int?) {
+            data["callbackName"] = callbackName
+            data["message"] = message
+            data["progressPercent"] = progressPercent
         }
 
         // デリゲートの実装
@@ -42,12 +72,15 @@ class MainActivity: FlutterActivity() {
             override fun onSetupSDKStart() {
                 // SDK初期化開始時の通知　optinal
                 Log.d("MainActivity", "onSetupSDKStart")
+//                updateValues("onSetupSDKStart", "Start", null)
+//                sendMessageToFlutter(messageChannel)
             }
             override fun onSetupSDKComplete() {
                 // セットアップ完了時の処理
                 Log.d("MainActivity", "onSetupSDKComplete")
                 // Flutter側へメッセージ送信
-                output = "onSetupSDKComplete"
+//                output = "onSetupSDKComplete"
+                updateValues("onSetupSDKComplete", "Complete", null)
                 sendMessageToFlutter(messageChannel)
                 // BL接続
                 Log.d("MainActivity", "call connectBleDevice")
@@ -57,12 +90,18 @@ class MainActivity: FlutterActivity() {
                 // セットアップ失敗時の処理
                 Log.d("MainActivity", "onSetupSDKFailed: ${error?.message}")
                 // Flutter側へメッセージ送信
-                output = "onSetupSDKFailed: ${error?.message}"
+//                output = "onSetupSDKFailed: ${error?.message}"
+//                output = "Failed"
+//                data["callbackName"] = "onSetupSDKFailed"
+//                data["message"] = error?.message
+                updateValues("onSetupSDKFailed", error?.message, null)
                 sendMessageToFlutter(messageChannel)
             }
             // その他必要なコールバックの実装
             override fun onBLEDeviceCancelFailed(error: SDKError?) {
                 Log.d("MainActivity", "onBLEDeviceCancelFailed: ${error?.message}")
+                updateValues("onBLEDeviceCancelFailed", error?.message, null)
+                sendMessageToFlutter(messageChannel)
             }
             //            override fun onBLEDeviceConnectStart() {
 //                // BL接続開始時の通知　optional
@@ -71,7 +110,8 @@ class MainActivity: FlutterActivity() {
                 // BL接続キャンセル時の処理
                 Log.d("MainActivity", "onBLEDeviceConnectCanceled")
                 // Flutter側へメッセージ送信
-                output = "onBLEDeviceConnectCanceled"
+//                output = "onBLEDeviceConnectCanceled"
+                updateValues("onBLEDeviceConnectCanceled", "DeviceConnectCanceled", null)
                 sendMessageToFlutter(messageChannel)
 //                // BL接続切断
 //                Log.d("MainActivity", "call cancelConnection")
@@ -81,7 +121,8 @@ class MainActivity: FlutterActivity() {
                 // BL接続成功時の処理
                 Log.d("MainActivity", "onBLEDeviceConnectComplete")
                 // Flutter側へメッセージ送信
-                output = "onBLEDeviceConnectComplete"
+//                output = "onBLEDeviceConnectComplete"
+                updateValues("onBLEDeviceConnectComplete", "Complete", null)
                 sendMessageToFlutter(messageChannel)
                 // 画像送信
                 Log.d("MainActivity", "call sendImageToDevice")
@@ -91,7 +132,9 @@ class MainActivity: FlutterActivity() {
                 // BL接続失敗時の処理
                 Log.d("MainActivity", "onBLEDeviceConnectFailed: ${error?.message}")
                 // Flutter側へメッセージ送信
-                output = "onBLEDeviceConnectFailed: ${error?.message}"
+//                output = "onBLEDeviceConnectFailed: ${error?.message}"
+//                output = "Failed"
+                updateValues("onBLEDeviceConnectFailed", error?.message, null)
                 sendMessageToFlutter(messageChannel)
             }
 
@@ -99,19 +142,23 @@ class MainActivity: FlutterActivity() {
                 // BL切断成功時の処理
                 Log.d("MainActivity", "onBLEDeviceDisconnect")
                 // Flutter側へメッセージ送信
-                output = "onBLEDeviceDisconnect"
+//                output = "onBLEDeviceDisconnect"
+                updateValues("onBLEDeviceDisconnect", "DeviceDisconnect", null)
                 sendMessageToFlutter(messageChannel)
             }
 
             override fun onSendImageToDeviceStart() {
                 // 画像送信開始時通知　optional
                 Log.d("MainActivity", "onSendImageToDeviceStart")
+                updateValues("onSendImageToDeviceStart", "Start", null)
+                sendMessageToFlutter(messageChannel)
             }
             override fun onSendImageToDeviceComplete() {
                 // 画像送信成功時の処理
                 Log.d("MainActivity", "onSendImageToDeviceComplete")
                 // Flutter側へメッセージ送信
-                output = "onSendImageToDeviceComplete"
+//                output = "onSendImageToDeviceComplete"
+                updateValues("onSendImageToDeviceComplete", "Complete", null)
                 sendMessageToFlutter(messageChannel)
                 // BL接続切断
                 Log.d("MainActivity", "call cancelConnection")
@@ -121,7 +168,9 @@ class MainActivity: FlutterActivity() {
                 // 画像送信失敗時の処理
                 Log.d("MainActivity", "onSendImageToDeviceFailed: ${error?.message}")
                 // Flutter側へメッセージ送信
-                output = "onSendImageToDeviceFailed: ${error?.message}"
+//                output = "onSendImageToDeviceFailed: ${error?.message}"
+//                output = "Failed"
+                updateValues("onSendImageToDeviceFailed", error?.message, null)
                 sendMessageToFlutter(messageChannel)
                 // BL接続切断
                 Log.d("MainActivity", "call cancelConnection")
@@ -131,7 +180,8 @@ class MainActivity: FlutterActivity() {
             override fun onSendImageToDeviceCanceled() {
                 Log.d("MainActivity", "onSendImageToDeviceCanceled")
                 // Flutter側へメッセージ送信
-                output = "onSendImageToDeviceCanceled"
+//                output = "onSendImageToDeviceCanceled"
+                updateValues("onSendImageToDeviceCanceled", "DeviceCanceled", null)
                 sendMessageToFlutter(messageChannel)
                 // BL接続切断
                 Log.d("MainActivity", "call cancelConnection")
@@ -141,21 +191,27 @@ class MainActivity: FlutterActivity() {
                 // 画像送信進捗通知　optional
                 Log.d("MainActivity", "onSendImageToDeviceProgress: ${progressPercent}")
                 // Flutter側へメッセージ送信
-                output = "onSendImageToDeviceProgress: ${progressPercent.toString()}"
+//                output = "onSendImageToDeviceProgress: ${progressPercent.toString()}"
+//                output = progressPercent.toString()
+                updateValues("onSendImageToDeviceProgress", "SendImage", progressPercent)
                 sendMessageToFlutter(messageChannel)
             }
         }
 
         MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             if (call.method == "callSdk") {
-                // SDKファクトリーのインスタンスを取得
-                val factory = DefaultSDKFactory.instance
-                Log.d("MainActivity", "factory: $factory")
 
-                // SDKインスタンスを作成
-                Log.d("MainActivity", "call createSDK")
-                sdk = factory.createSDK()
-                Log.d("MainActivity", "createSDK: $sdk")
+                Log.d("MainActivity", "SDK instance: $sdk")
+                if (sdk == null) {
+                    // SDKファクトリーのインスタンスを取得
+                    val factory = DefaultSDKFactory.instance
+                    Log.d("MainActivity", "factory: $factory")
+
+                    // SDKインスタンスを作成
+                    Log.d("MainActivity", "call createSDK")
+                    sdk = factory.createSDK()
+                    Log.d("MainActivity", "createSDK: $sdk")
+                }
                 // SDKの初期化
                 Log.d("MainActivity", "call setupSDK")
                 val res = sdk?.setupSDK(context, delegate)
