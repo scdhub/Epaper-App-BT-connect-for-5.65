@@ -55,7 +55,6 @@ class _NewPage extends State<NewPage> {
   static const BasicMessageChannel<String> _channel =
       BasicMessageChannel<String>(
           'com.example.iphone_bt_epaper/channel', StringCodec());
-  // String? _receivedMessage = null;
 
   @override
   void initState() {
@@ -64,6 +63,7 @@ class _NewPage extends State<NewPage> {
 
     // メッセージを受信するリスナーを設定
     _channel.setMessageHandler((String? message) async {
+      debugPrint("receiveMessage: $message");
       return await handleReceivedMessage(message);
     });
   }
@@ -73,7 +73,6 @@ class _NewPage extends State<NewPage> {
     if (message != null) {
       // 受信した JSON を `Map<String, dynamic>` に変換
       final Map<String, dynamic> decodedData = jsonDecode(message);
-
 
       // LinearProgressIndicator表示開始
       if (decodedData['callbackName'] == "onBLEDeviceConnectComplete") {
@@ -100,8 +99,9 @@ class _NewPage extends State<NewPage> {
         });
       }
 
-      // Dialog表示
-      if ((decodedData['callbackName'] != "onSendImageToDeviceFailed") || (decodedData['callbackName'] != "onSendImageToDeviceCanceled")) {
+      // Dialog表示   ■BLEConnect条件追加
+      if ((decodedData['callbackName'] != "onSendImageToDeviceFailed") ||
+          (decodedData['callbackName'] != "onSendImageToDeviceCanceled")) {
         if ((decodedData['callbackName'].endsWith("Failed")) ||
             (decodedData['callbackName'] == "onBLEDeviceDisconnect") ||
             (decodedData['callbackName'].endsWith("Canceled"))) {
@@ -426,8 +426,8 @@ class _NewPage extends State<NewPage> {
               alignment: Alignment.bottomCenter,
               child: LinearProgressIndicator(
                 minHeight: 10.0, // ラインの高さ
-            value: progressPercent,
-          ))
+                value: progressPercent,
+              ))
       ],
     );
   }
