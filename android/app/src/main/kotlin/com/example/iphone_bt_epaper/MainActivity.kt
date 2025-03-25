@@ -14,8 +14,6 @@ import io.flutter.plugin.common.StringCodec
 import android.os.Handler
 import android.os.Looper
 import org.json.JSONObject
-//import org.json.JSONArray
-import kotlinx.coroutines.Dispatchers
 
 import android.util.Log // Log出力用
 
@@ -24,7 +22,7 @@ class MainActivity: FlutterActivity() {
     var sdk: EInkSDK? = null
     var deviceName: String? = null
     var imageUrl: String? = null
-    private var isMessageSent = false
+    private val sendingMessages = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +39,10 @@ class MainActivity: FlutterActivity() {
 
             Log.d("channel.send", "data: $data")
 
-//            if (isMessageSent) return  // すでに送信済みなら何もしない
+            if (sendingMessages.contains(callbackName)) return  // すでに送信済みなら何もしない
+            // 送信中リストに追加
+            sendingMessages.add(callbackName)
 
-//            isMessageSent = true
             Handler(Looper.getMainLooper()).removeCallbacksAndMessages(null) // 既存の送信をキャンセル
 
             Handler(Looper.getMainLooper()).postDelayed({
@@ -52,8 +51,9 @@ class MainActivity: FlutterActivity() {
                 Log.d("channel.send", "channel.send data: $data")
                 channel.send(json.toString())
                 Log.d("channel.send", "channel.send end")
-//                isMessageSent = false
-//                Log.d("MainActivity", "reset isMessageSent: $isMessageSent")
+                // 送信完了後、リストから削除
+                sendingMessages.remove(callbackName)
+                Log.d("MainActivity", "reset isMessageSent: $sendingMessages")
             }, 0)
         }
 
@@ -197,7 +197,7 @@ class MainActivity: FlutterActivity() {
                 deviceName = call.argument<String>("deviceName")
                 imageUrl = call.argument<String>("imageUrl")
 
-                result.success(output)
+                result.success("called Kotlin")
             } else {
                 result.notImplemented()
             }
