@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,24 +10,25 @@ import 'package:iphone_bt_epaper/export-for-e-paper/server_image_delete_check_po
 import 'package:iphone_bt_epaper/export-for-e-paper/sever_data_bind.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'bluetooth_connection_state.dart';
 
 import '../theme.dart';
 
-class NewPage extends StatefulWidget {
+class SendPictureSelect extends StatefulWidget {
   final BluetoothDevice deviceInfo;
   final String trustName;
   final CacheManager? cacheManager;
-  const NewPage(
+  const SendPictureSelect(
       {super.key,
       required this.deviceInfo,
       required this.trustName,
       this.cacheManager});
 
   @override
-  State<StatefulWidget> createState() => _NewPage();
+  State<StatefulWidget> createState() => _SendPictureSelect();
 }
 
-class _NewPage extends State<NewPage> {
+class _SendPictureSelect extends State<SendPictureSelect> {
   List<ImageItem> imageItems = []; // サーバーデータ
   List<ImageItem> _items = []; // 表示使用用画像リスト
   List<ImageItem> _deleteItems = []; // 削除用選択リスト
@@ -45,6 +44,8 @@ class _NewPage extends State<NewPage> {
   bool isSending = false;
   String? resultTitle;
   String? resultContext;
+  FlutterBluePlus flutterBlue = FlutterBluePlus(); // インスタンスを直接作成
+  BluetoothDevice? connectedDevice;
 
   List<ReversedData> reverseData = []; //サーバーデータ：新しい順 // 未使用
   List<DateSort> dateSort = []; //日付並び替え  // 未使用
@@ -59,6 +60,7 @@ class _NewPage extends State<NewPage> {
   @override
   void initState() {
     super.initState();
+    startScan(); // アプリ起動時にスキャンを開始
     initialize();
 
     // メッセージを受信するリスナーを設定
@@ -66,6 +68,48 @@ class _NewPage extends State<NewPage> {
       debugPrint("receiveMessage: $message");
       return await handleReceivedMessage(message);
     });
+  }
+
+  // Bluetooth スキャンを開始
+  void startScan() {
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+
+    FlutterBluePlus.scanResults.listen((results) {
+      for (ScanResult result in results) {
+        debugPrint('Found device: ${result.device.platformName}');
+
+        // widget.trustName を使って特定のデバイス名のみ接続
+        if (result.device.platformName == widget.trustName) {
+          FlutterBluePlus.stopScan(); // スキャン停止
+          connectToDevice(result);
+          break; // 1つのデバイスに接続したらループを抜ける
+        }
+      }
+    });
+  }
+
+  // デバイスに接続
+  Future<void> connectToDevice(ScanResult result) async {
+    try {
+      await result.device.connect();
+      setState(() {
+        connectedDevice = result.device;
+      });
+      debugPrint("Device connected: ${result.device.platformName}");
+    } catch (e) {
+      debugPrint("Connection failed: $e");
+    }
+  }
+
+  // デバイスを切断
+  Future<void> disconnectDevice() async {
+    if (connectedDevice != null) {
+      await connectedDevice!.disconnect();
+      setState(() {
+        connectedDevice = null;
+      });
+      debugPrint("Device disconnected");
+    }
   }
 
   // メッセージ受信後の処理
@@ -249,6 +293,16 @@ class _NewPage extends State<NewPage> {
           appBar: AppBar(
             centerTitle: true,
             title: const Text('配信用登録画像一覧'),
+            actions: [
+              Container(
+                child: connectedDevice != null
+                    ? BluetoothConnection(
+                        device: connectedDevice!, // BluetoothDevice を渡す
+                        targetDeviceName: connectedDevice!.platformName, // デバイス名を渡す
+                      )
+                    : SizedBox(), // 何も表示しない
+              )
+            ],
           ),
           body: Column(
             children: [
