@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import '../bt_connect_page/connect_bt_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 
 
 class SelectCheck extends StatefulWidget {
@@ -79,6 +80,19 @@ class _SelectCheckState extends State<SelectCheck> {
         final file = File(path);
         await file.writeAsBytes(processedData);
         files.add(file);
+
+        // 画像解像度確認
+        // ファイルからバイトデータを読み込む
+        Uint8List imageData = await file.readAsBytes();
+        img.Image? image = img.decodeImage(imageData);
+        if (image != null) {
+          // 解像度（幅と高さ）を取得
+          int width = image.width;
+          int height = image.height;
+          debugPrint('File: ${file.path} -> Width: $width, Height: $height');
+        } else {
+          debugPrint('File: ${file.path} -> 画像をデコードできませんでした');
+        }
       }
     }
   }
@@ -328,6 +342,7 @@ class _SelectCheckState extends State<SelectCheck> {
 
   //ファイルアップロード
   Future<void> postData(List<String?> uploadImages) async {
+
     //保存先URL
     Uri uri = Uri.parse(
         "https://3lewes86g0.execute-api.ap-northeast-1.amazonaws.com/dev/signed_url");

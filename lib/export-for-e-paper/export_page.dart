@@ -248,7 +248,8 @@ class _ExportPageState extends State<ExportPage> {
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
                         color: const Color(0xFF512DA8),
-                        child: const Text('デバイスの接続を解除',
+                        // child: const Text('デバイスの接続を解除',
+                        child: const Text('登録デバイスを削除',
                           //このデバイスの登録を解除',
                             style: TextStyle(
                               fontSize: 20,
@@ -289,11 +290,13 @@ class _ExportPageState extends State<ExportPage> {
                         ),
                       ),
                       icon: const Icon(
-                        Icons.bluetooth_disabled, // Bluetooth接続解除アイコン
+                        // Icons.bluetooth_disabled, // Bluetooth接続解除アイコン
+                        Icons.phonelink_erase,  //  登録デバイス解除
                         color: Colors.white,
                       ),
                       label: const Text(
-                        'デバイス解除',
+                        // 'デバイス解除',
+                        'デバイス削除',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
