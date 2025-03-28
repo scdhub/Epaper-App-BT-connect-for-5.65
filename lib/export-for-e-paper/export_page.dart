@@ -208,7 +208,7 @@ class _ExportPageState extends State<ExportPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NewPage(
+                            builder: (context) => SendPictureSelect(
                               deviceInfo: widget.trustDevice,
                               trustName: widget.trustName,
                             )),

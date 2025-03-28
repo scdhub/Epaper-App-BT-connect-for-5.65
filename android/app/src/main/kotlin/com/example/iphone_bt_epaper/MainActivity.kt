@@ -48,12 +48,11 @@ class MainActivity: FlutterActivity() {
             Handler(Looper.getMainLooper()).postDelayed({
                 val json = JSONObject(data)
                 Log.d("channel.send", "channel.send start")
-                Log.d("channel.send", "channel.send data: $data")
                 channel.send(json.toString())
                 Log.d("channel.send", "channel.send end")
                 // 送信完了後、リストから削除
                 sendingMessages.remove(callbackName)
-                Log.d("MainActivity", "reset isMessageSent: $sendingMessages")
+
             }, 0)
         }
 
@@ -85,7 +84,7 @@ class MainActivity: FlutterActivity() {
                 // セットアップ完了時の処理
                 Log.d("MainActivity", "onSetupSDKComplete")
                 // Flutter側へメッセージ送信
-                sendMessageToFlutter(messageChannel, "onSetupSDKComplete", "Complete", null)
+//                sendMessageToFlutter(messageChannel, "onSetupSDKComplete", "Complete", null)
                 // BL接続
                 Log.d("MainActivity", "call connectBleDevice")
                 sdk?.connectBleDevice(deviceName!!)
@@ -96,19 +95,18 @@ class MainActivity: FlutterActivity() {
                 // Flutter側へメッセージ送信
                 sendMessageToFlutter(messageChannel, "onSetupSDKFailed", error?.message, null)
             }
-            // 呼び出しタイミング：不明　仕様書記載なし
             override fun onBLEDeviceCancelFailed(error: SDKError?) {
+                // BL接続切断失敗時の処理
                 Log.d("MainActivity", "onBLEDeviceCancelFailed: ${error?.message}")
                 sendMessageToFlutter(messageChannel, "onBLEDeviceCancelFailed", error?.message, null)
             }
-            // 未呼び出し
 //            override fun onBLEDeviceConnectStart() {
 //                // BL接続開始時の通知　optional
 //                Log.d("MainActivity", "onBLEDeviceConnectStart")
 //                // Flutter側へメッセージ送信
 //                sendMessageToFlutter(messageChannel, "onBLEDeviceConnectStart", "Start", null)
 //            }
-            // 呼び出しタイミング：不明　仕様書記載なし
+            // 仕様書記載なし
             override fun onBLEDeviceConnectCanceled() {
                 // BL接続キャンセル時の処理
                 Log.d("MainActivity", "onBLEDeviceConnectCanceled")
@@ -166,6 +164,9 @@ class MainActivity: FlutterActivity() {
                 Log.d("MainActivity", "onSendImageToDeviceCanceled")
                 // Flutter側へメッセージ送信
                 sendMessageToFlutter(messageChannel, "onSendImageToDeviceCanceled", "DeviceCanceled", null)
+                // BL接続切断
+                Log.d("MainActivity", "call cancelConnection")
+                sdk?.cancelConnection()
             }
             override fun onSendImageToDeviceProgress(progressPercent: Int) {
                 // 画像送信進捗通知　optional
@@ -197,7 +198,6 @@ class MainActivity: FlutterActivity() {
                 deviceName = call.argument<String>("deviceName")
                 imageUrl = call.argument<String>("imageUrl")
 
-                result.success("called Kotlin")
             } else {
                 result.notImplemented()
             }

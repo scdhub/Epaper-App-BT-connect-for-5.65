@@ -16,21 +16,21 @@ import 'bluetooth_connection_state.dart';
 
 import '../theme.dart';
 
-class NewPage extends StatefulWidget {
+class SendPictureSelect extends StatefulWidget {
   final BluetoothDevice deviceInfo;
   final String trustName;
   final CacheManager? cacheManager;
-  const NewPage(
+  const SendPictureSelect(
       {super.key,
       required this.deviceInfo,
       required this.trustName,
       this.cacheManager});
 
   @override
-  State<StatefulWidget> createState() => _NewPage();
+  State<StatefulWidget> createState() => _SendPictureSelect();
 }
 
-class _NewPage extends State<NewPage> {
+class _SendPictureSelect extends State<SendPictureSelect> {
   List<ImageItem> imageItems = []; // サーバーデータ
   List<ImageItem> _items = []; // 表示使用用画像リスト
   List<ImageItem> _deleteItems = []; // 削除用選択リスト
@@ -42,11 +42,13 @@ class _NewPage extends State<NewPage> {
   bool selectedItem = false; // 画像選択状態
   bool isLoading = true; // 画像読込状態
   bool isConnected = false; // BLE処理状態
-  double? progressPercent = 0.0;
-  bool isSending = false;
-  String? resultTitle;
-  String? resultContext;
-  String connectionState = "disconnect";  // 初期状態
+  double? progressPercent = 0.0;  // LinearProgressIndicator(value)
+  bool isSending = false; // LinearProgressIndicator()表示状態
+  String? resultTitle;  // sdk異常終了時エラーメッセージタイトル
+  String? resultContext;  // sdk異常終了時エラーメッセージ内容
+  String connectionState = "disconnect";  // BL接続状態
+  // メッセージに基づく処理をマッピングするための Map
+  late final Map<String, Future<void> Function(Map<String, dynamic>)> _messageHandlers;
 
   List<ReversedData> reverseData = []; //サーバーデータ：新しい順 // 未使用
   List<DateSort> dateSort = []; //日付並び替え  // 未使用
@@ -63,75 +65,109 @@ class _NewPage extends State<NewPage> {
     super.initState();
     initialize();
 
+    // メッセージに基づいて処理をマッピング
+    _messageHandlers = {
+        "onSetupSDKFailed": _handleSetupSDKFailed,
+        "onBLEDeviceConnectComplete": _handleBLEDeviceConnectComplete,
+        "onBLEDeviceConnectFailed": _handleBLEDeviceConnectFailed,
+        "onBLEDeviceDisconnect": _handleBLEDeviceDisconnect,
+        "onBLEDeviceCancelFailed": _handleBLEDeviceCancelFailed,
+        "onSendImageToDeviceComplete": _handleSendImageToDeviceComplete,
+        "onSendImageToDeviceFailed": _handleSendImageToDeviceFailed,
+        "onSendImageToDeviceProgress": _handleSendImageToDeviceProgress,
+        "onBLEDeviceConnectCanceled": _handleBLEDeviceConnectCanceled,
+    };
+
     // メッセージを受信するリスナーを設定
     _channel.setMessageHandler((String? message) async {
       debugPrint("receiveMessage: $message");
-      return await handleReceivedMessage(message);
+      await handleReceivedMessage(message);
+      return "";
     });
   }
 
   // メッセージ受信後の処理
-  Future<String> handleReceivedMessage(String? message) {
+  Future<void> handleReceivedMessage(String? message) async {
     if (message != null) {
-      // 受信した JSON を `Map<String, dynamic>` に変換
-      final Map<String, dynamic> decodedData = jsonDecode(message);
 
-      // 条件を各デリゲートのコールバック名に変更
+        // 受信した JSON を `Map<String, dynamic>` に変換
+        final Map<String, dynamic> decodedData = jsonDecode(message);
+        // メッセージのcallbackNameを取得
+        final String? callbackName = decodedData["callbackName"];
 
-      if (decodedData['callbackName'] == "onBLEDeviceConnectComplete") {
-        connectionState = "connected";
-      } else if ((decodedData['callbackName'] == "onBLEDeviceConnectFailed") || (decodedData['callbackName'] == "onBLEDeviceDisconnect")) {
-        connectionState = "disconnect";
-      }
-
-      // // LinearProgressIndicator表示開始
-      // if (decodedData['callbackName'] == "onBLEDeviceConnectComplete") {
-      //   setState(() {
-      //     isSending = true;
-      //   });
-      // }
-
-      // 進捗率
-      if (decodedData['callbackName'] == "onSendImageToDeviceProgress") {
-        setState(() {
-          isSending = true;
-          progressPercent = (decodedData['progressPercent'] ?? 0) / 100;
-          debugPrint(
-              "LinearProgressIndicator progressPercent: $progressPercent");
-        });
-      }
-
-      // LinearProgressIndicator表示終了
-      if ((decodedData['callbackName'].startsWith("onSendImageToDevice")) &&
-          (decodedData['callbackName'] != "onSendImageToDeviceProgress")) {
-        progressPercent = 0.0;
-        setState(() {
-          isSending = false;
-        });
-      }
-
-      // Dialog表示   ■BLEConnect条件追加
-      if ((decodedData['callbackName'] != "onSendImageToDeviceFailed") ||
-          (decodedData['callbackName'] != "onSendImageToDeviceCanceled")) {
-        if ((decodedData['callbackName'].endsWith("Failed")) ||
-            (decodedData['callbackName'] == "onBLEDeviceDisconnect") ||
-            (decodedData['callbackName'].endsWith("Canceled"))) {
-          resultTitle = decodedData['callbackName'];
-          resultContext = decodedData['message'];
-          progressPercent = 0.0;
-          setState(() {
-            isSending = false;
-            isConnected = false;
-          });
-          debugPrint("isSending: $isSending");
-          bLEConnectedMessage();
+        if (callbackName != null) {
+          // マッピングされた処理を実行
+          final handler = _messageHandlers[callbackName];
+          if (handler != null) {
+            await handler(decodedData);
+          } else {
+            debugPrint("Unknown message callbackName: $callbackName");
+          }
+        } else {
+          debugPrint("Error: No 'callbackName' field in message");
         }
-      }
-      debugPrint('Received JSON: $decodedData');
-      debugPrint(
-          'callbackName: ${decodedData['callbackName']}, message: ${decodedData['message']}, progressPercent: ${decodedData['progressPercent']}');
     }
-    return Future.value("Flutter でメッセージを受信しました！"); // Kotlin 側に返す
+  }
+
+  // 各メッセージ受信後処理関数
+  Future<void> _handleSetupSDKFailed(Map<String, dynamic> data) async {
+    setState(() {
+      isConnected = false;
+    });
+    callSdkMessage(data);
+  }
+  Future<void> _handleBLEDeviceConnectComplete(Map<String, dynamic> data) async {
+    connectionState = "connected";
+  }
+  Future<void> _handleBLEDeviceConnectFailed(Map<String, dynamic> data) async {
+    setState(() {
+      isConnected = false;
+    });
+    callSdkMessage(data);
+  }
+  Future<void> _handleBLEDeviceDisconnect(Map<String, dynamic> data) async {
+    connectionState = "disconnect";
+    setState(() {
+      isConnected = false;
+    });
+  }
+  Future<void> _handleBLEDeviceCancelFailed(Map<String, dynamic> data) async {
+    callSdkMessage(data);
+  }
+  Future<void> _handleSendImageToDeviceComplete(Map<String, dynamic> data) async {
+    progressPercent = 0.0;
+    setState(() {
+      isSending = false;
+    });
+  }
+  Future<void> _handleSendImageToDeviceFailed(Map<String, dynamic> data) async {
+    progressPercent = 0.0;
+    setState(() {
+      isSending = false;
+    });
+    callSdkMessage(data);
+  }
+  Future<void> _handleSendImageToDeviceProgress(Map<String, dynamic> data) async {
+    setState(() {
+      isSending = true;
+      progressPercent = (data['progressPercent'] ?? 0) / 100;
+      debugPrint(
+          "LinearProgressIndicator progressPercent: $progressPercent");
+    });
+  }
+  Future<void> _handleBLEDeviceConnectCanceled(Map<String, dynamic> data) async {
+    connectionState = "disconnect";
+    setState(() {
+      isConnected = false;
+    });
+    callSdkMessage(data);
+  }
+  Future<void> _handleSendImageToDeviceCanceled(Map<String, dynamic> data) async {
+    progressPercent = 0.0;
+    setState(() {
+      isSending = false;
+    });
+    callSdkMessage(data);
   }
 
   Future<void> initialize() async {
@@ -211,17 +247,14 @@ class _NewPage extends State<NewPage> {
   }
 
   // BL接続
-  Future<String?> callNativeMethod(url) async {
+  void callNativeMethod(url) {
     debugPrint("send image url: ${url}");
     try {
       debugPrint("call Kotlin");
-      final String? result = await platform.invokeMethod('callSdk',
+      platform.invokeMethod('callSdk',
           {'deviceName': '${widget.trustName}', 'imageUrl': '${url}'});
-      debugPrint("Result from Kotlin $result");
-      return result;
     } on PlatformException catch (e) {
       debugPrint("Failed to call native method: '${e.message}'.");
-      return null;
     }
   }
 
@@ -262,7 +295,7 @@ class _NewPage extends State<NewPage> {
             title: const Text('配信用登録画像一覧'),
             actions: [
               Container(
-                child: BluetoothConnection(connectionState),
+                child: BluetoothConnection(connectionState),  // BL接続状況表示
               )
             ],
           ),
@@ -619,7 +652,9 @@ class _NewPage extends State<NewPage> {
     );
   }
 
-  void bLEConnectedMessage() {
+  void callSdkMessage(Map<String, dynamic> data) {
+    resultTitle = data['callbackName'];
+    resultContext = data['message'];
     showDialog(
         barrierDismissible: false,
         context: context,
