@@ -12,6 +12,7 @@ import 'package:iphone_bt_epaper/export-for-e-paper/server_image_delete_check_po
 import 'package:iphone_bt_epaper/export-for-e-paper/sever_data_bind.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'bluetooth_connection_state.dart';
 
 import '../theme.dart';
 
@@ -45,6 +46,7 @@ class _NewPage extends State<NewPage> {
   bool isSending = false;
   String? resultTitle;
   String? resultContext;
+  String connectionState = "disconnect";  // 初期状態
 
   List<ReversedData> reverseData = []; //サーバーデータ：新しい順 // 未使用
   List<DateSort> dateSort = []; //日付並び替え  // 未使用
@@ -74,16 +76,25 @@ class _NewPage extends State<NewPage> {
       // 受信した JSON を `Map<String, dynamic>` に変換
       final Map<String, dynamic> decodedData = jsonDecode(message);
 
-      // LinearProgressIndicator表示開始
+      // 条件を各デリゲートのコールバック名に変更
+
       if (decodedData['callbackName'] == "onBLEDeviceConnectComplete") {
-        setState(() {
-          isSending = true;
-        });
+        connectionState = "connected";
+      } else if ((decodedData['callbackName'] == "onBLEDeviceConnectFailed") || (decodedData['callbackName'] == "onBLEDeviceDisconnect")) {
+        connectionState = "disconnect";
       }
+
+      // // LinearProgressIndicator表示開始
+      // if (decodedData['callbackName'] == "onBLEDeviceConnectComplete") {
+      //   setState(() {
+      //     isSending = true;
+      //   });
+      // }
 
       // 進捗率
       if (decodedData['callbackName'] == "onSendImageToDeviceProgress") {
         setState(() {
+          isSending = true;
           progressPercent = (decodedData['progressPercent'] ?? 0) / 100;
           debugPrint(
               "LinearProgressIndicator progressPercent: $progressPercent");
@@ -201,7 +212,7 @@ class _NewPage extends State<NewPage> {
 
   // BL接続
   Future<String?> callNativeMethod(url) async {
-    debugPrint("url: ${url}");
+    debugPrint("send image url: ${url}");
     try {
       debugPrint("call Kotlin");
       final String? result = await platform.invokeMethod('callSdk',
@@ -249,6 +260,11 @@ class _NewPage extends State<NewPage> {
           appBar: AppBar(
             centerTitle: true,
             title: const Text('配信用登録画像一覧'),
+            actions: [
+              Container(
+                child: BluetoothConnection(connectionState),
+              )
+            ],
           ),
           body: Column(
             children: [
