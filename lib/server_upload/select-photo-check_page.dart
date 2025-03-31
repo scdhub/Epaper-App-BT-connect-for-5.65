@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:iphone_bt_epaper/theme.dart';
 // import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../bt_connect_page/connect_bt_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -82,16 +83,12 @@ class _SelectCheckState extends State<SelectCheck> {
         files.add(file);
 
         // 画像解像度確認
-        // ファイルからバイトデータを読み込む
         Uint8List imageData = await file.readAsBytes();
         img.Image? image = img.decodeImage(imageData);
         if (image != null) {
-          // 解像度（幅と高さ）を取得
-          int width = image.width;
-          int height = image.height;
-          debugPrint('File: ${file.path} -> Width: $width, Height: $height');
+          debugPrint('File before upload: ${file.path} -> Width: ${image.width}, Height: ${image.height}');
         } else {
-          debugPrint('File: ${file.path} -> 画像をデコードできませんでした');
+          debugPrint('File before upload: ${file.path} -> 画像をデコードできませんでした');
         }
       }
     }

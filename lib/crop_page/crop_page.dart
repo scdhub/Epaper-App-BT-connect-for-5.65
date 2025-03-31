@@ -6,6 +6,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:photo_manager/photo_manager.dart';
 //import 'package:photo_manager/photo_manager.dart';
+import 'package:image/image.dart' as img;
 
 import '../server_upload/select-photo-check_page.dart';
 
@@ -45,33 +46,33 @@ void cropImage(BuildContext context,
         cancelButtonTitle: 'Cancel',
         doneButtonTitle: 'Crop',
         minimumAspectRatio: 600 / 448,
+        aspectRatioLockEnabled: true, // iOS でもアスペクト比を固定
       ),
     ],
   );
 
 //トリミング後の画像を `Uint8List` に変換
   if (croppedFile != null) {
-    Uint8List cropBytes = await File(croppedFile.path).readAsBytes();
+    Uint8List cropBytes = await croppedFile.readAsBytes();
 
-    // 解像度を固定するために flutter_image_compress でリサイズ
-    final result = await FlutterImageCompress.compressWithList(
-      cropBytes,
-      minWidth: 600, // 固定幅
-      minHeight: 448, // 固定高さ
-      quality: 88, // 圧縮品質（0〜100の範囲）
-      // rotate: 0, // 回転
-      format: CompressFormat.png, // 画像形式を指定
-    );
+    // 解像度確認
+    img.Image? checkImage = img.decodeImage(cropBytes);
+    if (checkImage != null) {
+      debugPrint('Cropped File: ${croppedFile.path} -> Width: ${checkImage.width}, Height: ${checkImage.height}');
+    } else {
+      debugPrint('Cropped File: ${croppedFile
+          .path} -> 画像をデコードできませんでした');
+    }
 
-    // 圧縮後の `Uint8List`（指定した解像度にリサイズされた画像）
-    Uint8List compressedBytes = result;
+    img.Image? image = img.decodeImage(cropBytes);  // 画像をデコード
+    img.Image resized = img.copyResize(image!, width: 600, height: 448);  // 解像度を指定してリサイズ
+    Uint8List resizedBytes = Uint8List.fromList(img.encodeJpg(resized));  // 画像をエンコードし、Uint8List に変換
 
     //次の画面に渡す
     Navigator.push(
       context,
       MaterialPageRoute(
-        // builder: (context) => SelectCheck(imageData: [cropBytes]),
-        builder: (context) => SelectCheck(imageData: [compressedBytes]),
+        builder: (context) => SelectCheck(imageData: [resizedBytes]),
       ),
     );
   }
