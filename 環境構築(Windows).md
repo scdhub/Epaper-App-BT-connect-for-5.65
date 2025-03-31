@@ -1,4 +1,4 @@
-# E-paper 開発環境構築
+# ~~E-paper~~ CanvasEP 開発環境構築
 
 ## 概要
 
@@ -27,6 +27,17 @@ Windows、AndroidStudio使用
         - 「ログを表示」> 「すべてのブランチ」チェック > ブランチ : `appfront` をチェックアウト
 
     - アプリサーバー : `https://github.com/scdhub/E-Paper-App-Server-for-5.65.git `
+
+- SDK を取得
+
+    - [スマホLIB](https://scdgrp365.sharepoint.com/sites/Iot/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FIot%2FShared%20Documents%2FESL%E3%82%A2%E3%83%97%E3%83%AA%2F%E4%B8%AD%E5%9B%BD%E7%B4%8D%E5%93%81%E7%89%A9%2F20250321%2Fble%5Fsdk%2Drelease%5F20250321%2Ezip&parent=%2Fsites%2FIot%2FShared%20Documents%2FESL%E3%82%A2%E3%83%97%E3%83%AA%2F%E4%B8%AD%E5%9B%BD%E7%B4%8D%E5%93%81%E7%89%A9%2F20250321) をダウンロード
+
+        - ble_sdk-release_20250321.zip
+
+    - SDK の配置
+    `android/app/libs`
+
+        空のaarファイルと置き換える
 
 ### Flutter SDK ダウンロード
 
@@ -89,7 +100,7 @@ flutter pub get
 flutter pub upgrade
 ```
 
-- Android SDK のグレートダウン
+- Android SDK のダウングレード
 `C:\src\flutter\packages\flutter_tools\gradle\src\main\groovy\flutter.groovy`
 
     コンパイル時にGradleが使用するAndroid SDK バージョン
@@ -100,12 +111,12 @@ public final int compileSdkVersion = 34
 public final int targetSdkVersion = 34
 ```
 
-- Java のグレートダウン
+- Java のダウングレード
 
     - ~~JAVA_HOME : Java 17~~
     - `android/gradle.properties`
     ~~~
-    # 追記
+    # 追記　（jdk-17 配置場所を各自指定）
     org.gradle.java.home=C:/Program Files/Java/jdk-17.0.12
     ~~~
 
