@@ -51,7 +51,8 @@ class AppTheme {
 
   // ダイアログのボタンスタイル（「はい」とか「OK」のボタン用）
   static ButtonStyle dialogYesButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFF80DEEA), // ボタンの色
+    // backgroundColor: const Color(0xFF80DEEA), // ボタンの色
+    backgroundColor: const Color(0xFF2962FF),
     foregroundColor: Colors.white, // ボタンの文字色
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10), // ボタンの丸み
@@ -62,7 +63,8 @@ class AppTheme {
 
   // 基本のダイアログのボタンスタイル（「いいえ」とか「キャンセル」のボタン用）
   static ButtonStyle dialogNoButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFFFFA7A7), // ボタンの色
+    // backgroundColor: const Color(0xFFFFA7A7), // ボタンの色
+    backgroundColor: Colors.redAccent,
     foregroundColor: Colors.white, // ボタンの文字色
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10), // ボタンの丸み
@@ -168,4 +170,12 @@ class AppTheme {
         fontWeight: FontWeight.bold, // 太字
         color: Colors.white, // ボタン内のテキストカラー（白）
       );
+
+  static Widget customCircularProgressIndicator() {
+    return const CircularProgressIndicator(
+      valueColor: AlwaysStoppedAnimation(Color(0xFF001F3F)),
+      backgroundColor: Colors.white70,
+      strokeWidth: 5.5,
+    );
+  }
 }

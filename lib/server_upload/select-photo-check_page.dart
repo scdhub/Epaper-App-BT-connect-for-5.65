@@ -162,10 +162,7 @@ class _SelectCheckState extends State<SelectCheck> {
                     children: [
                       //動作
                       if (_isWriting)
-                        const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.black),  backgroundColor: Colors.white70,
-                        ), // 画像登録中にインジケーター表示
-
+                        AppTheme.customCircularProgressIndicator(), // 画像登録中にインジケーター表示
                       if (!_isWriting)
                         Text(
                           'BTスキャン＆E-paper配信関連に移りますか？',
@@ -326,8 +323,7 @@ class _SelectCheckState extends State<SelectCheck> {
             ),
             actions: <Widget>[
               _isWriting
-                  ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.black),  backgroundColor: Colors.white70,)
+                  ? AppTheme.customCircularProgressIndicator()
                   : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
@@ -848,15 +844,7 @@ class _SelectCheckState extends State<SelectCheck> {
                       //   _showWriteDialog(); // 画像アップロード処理を開始
                       // },
                       // _isWriting ? null : _showWriteDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1E88E5),
-                        side: const BorderSide(color: Color(0xFF3D5AFE), width: 2),
-                        foregroundColor: Colors.white, //「登録する」の色
-                        // elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                      style: AppTheme.dialogYesButtonStyle,
                       child: const Text('登録する', //Ok
                         style: TextStyle(
                           fontSize: 16,),
@@ -873,16 +861,7 @@ class _SelectCheckState extends State<SelectCheck> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF06292),
-                        side: const BorderSide(color: Color(0xFFD81B60), width: 2),
-                        // foregroundColor: Colors.white, //「登録しない」の色
-                        // elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12), //20
-                        ),
-                      ),
+                      style: AppTheme.dialogNoButtonStyle,
                       child: const Text('登録しない', //キャンセル
                         style: TextStyle(
                             fontSize: 16), //28

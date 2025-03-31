@@ -397,10 +397,7 @@ class _SendPictureSelect extends State<SendPictureSelect> {
               Expanded(
                   child: Center(
                       child: isLoading
-                          ? const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation(Colors.black),
-                              backgroundColor: Colors.white70,
-                            ) // ローディング中はインジケーターを表示
+                          ? AppTheme.customCircularProgressIndicator() // ローディング中はインジケーターを表示
                           : Container(
                               child: _items.isEmpty
                                   ? NonServerPictureMess()
@@ -420,7 +417,7 @@ class _SendPictureSelect extends State<SendPictureSelect> {
                             fixedSize: const Size(90, 50), //幅,高
                             backgroundColor: Colors.white,
                             foregroundColor: const Color(0xFF29B6F6)),
-                        child: const Text('全選択'),
+                        child: const Text('全選択', style: TextStyle(fontWeight: FontWeight.bold,)),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -432,7 +429,7 @@ class _SendPictureSelect extends State<SendPictureSelect> {
                             fixedSize: const Size(125, 50),
                             backgroundColor: Colors.white,
                             foregroundColor: const Color(0xFF29B6F6)),
-                        child: const Text('全選択解除'),
+                        child: const Text('全選択解除', style: TextStyle(fontWeight: FontWeight.bold,)),
                       ),
                       ElevatedButton(
                         onPressed: () async {
@@ -454,7 +451,7 @@ class _SendPictureSelect extends State<SendPictureSelect> {
                             fixedSize: const Size(50, 50),
                             backgroundColor: Colors.white,
                             foregroundColor: const Color(0xFF29B6F6)),
-                        child: const Text('削除'),
+                        child: const Text('削除', style: TextStyle(fontWeight: FontWeight.bold,)),
                       ),
                     ]
                   : null
@@ -467,7 +464,7 @@ class _SendPictureSelect extends State<SendPictureSelect> {
             dismissible: false, // ユーザー操作をブロック
           )),
         if (isConnected && !isSending)
-          const Center(child: CircularProgressIndicator()),
+          Center(child: AppTheme.customCircularProgressIndicator()),
         if (isConnected && isSending)
           Container(
               alignment: Alignment.bottomCenter,

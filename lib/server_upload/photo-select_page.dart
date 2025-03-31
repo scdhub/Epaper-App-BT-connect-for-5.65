@@ -194,7 +194,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
               style: ElevatedButton.styleFrom(
                   fixedSize: const Size(90, 50),//幅,高
                   backgroundColor: Colors.white, foregroundColor: const Color(0xFF29B6F6)),
-              child: const Text('選択'),
+              child: const Text('選択', style: TextStyle(fontWeight: FontWeight.bold,)),
             ),]
     );
   }

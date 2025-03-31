@@ -197,8 +197,7 @@ void showLoadingModal(BuildContext context) {
           content: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.black),  backgroundColor: Colors.white70,),
+              AppTheme.customCircularProgressIndicator(),
               const SizedBox(width: 30),
               Text('Loading...',
                 style: AppTheme.dialogContentStyle,
