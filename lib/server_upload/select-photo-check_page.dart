@@ -94,11 +94,40 @@ class _SelectCheckState extends State<SelectCheck> {
     }
   }
 
-  // **画像アップロード処理**
-  Future<void> new_postData(List<String?> uploadImages) async {
-    // AWSアップロードの処理（省略）
-  }
+  // BTスキャン＆E-paper配信関連遷移時、位置情報取得許可
+  Future<void> requestLocationPermission() async {
+    // 位置情報の権限が許可されているか確認
+    var status = await Permission.location.status;
+    debugPrint("status.isGranted: ${status.isGranted}");
+    if (!status.isGranted) {
+      // 権限が許可されていない場合、リクエストする
+      PermissionStatus permissionStatus = await Permission.locationWhenInUse
+          .request();
+      debugPrint("permissionStatus.isGranted: ${permissionStatus.isGranted}");
+      debugPrint("permissionStatus.isDenied: ${permissionStatus.isDenied}");
 
+      if (permissionStatus.isGranted) {
+        // 権限が許可された場合
+        debugPrint("Location permission granted");
+      } else {
+        // 権限が拒否された場合
+        debugPrint("Location permission denied");
+
+        if (permissionStatus.isDenied) {
+          // 権限が拒否された場合
+          debugPrint("Location permission is denied. Requesting again...");
+        } else if (permissionStatus.isPermanentlyDenied) {
+          // 権限が「永久に拒否された」場合、設定から手動で権限を変更してもらう必要があります
+          debugPrint(
+              "Location permission is permanently denied. Open settings to grant permission.");
+          openAppSettings(); // 設定画面を開く
+        }
+      }
+    } else {
+      // すでに許可されている場合
+      debugPrint("Location permission already granted");
+    }
+  }
 
   // // ダイアログを表示　
   void uploadMessage() {
@@ -157,7 +186,8 @@ class _SelectCheckState extends State<SelectCheck> {
                                 // ボタンのスタイル
                                 onPressed: _isWriting
                                     ? null // 画像登録中は無効
-                                    : () {
+                                    : () async {
+                                  await requestLocationPermission();
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (

@@ -78,7 +78,8 @@ class MainActivity: FlutterActivity() {
             override fun onSetupSDKStart() {
                 // SDK初期化開始時の通知　optinal
                 Log.d("MainActivity", "onSetupSDKStart")
-                sendMessageToFlutter(messageChannel, "onSetupSDKStart", "Start", null)
+//                // Flutter側へメッセージ送信
+//                sendMessageToFlutter(messageChannel, "onSetupSDKStart", "Start", null)
             }
             override fun onSetupSDKComplete() {
                 // セットアップ完了時の処理

@@ -25,23 +25,23 @@ class _BlueToothConnectToPageState extends State<BlueToothConnectToPage> {
 
       if (permissionStatus.isGranted) {
         // 権限が許可された場合
-        print("Location permission granted");
+        debugPrint("Location permission granted");
       } else {
         // 権限が拒否された場合
-        print("Location permission denied");
+        debugPrint("Location permission denied");
 
         if (permissionStatus.isDenied) {
           // 権限が拒否された場合
-          print("Location permission is denied. Requesting again...");
+          debugPrint("Location permission is denied. Requesting again...");
         } else if (permissionStatus.isPermanentlyDenied) {
           // 権限が「永久に拒否された」場合、設定から手動で権限を変更してもらう必要があります
-          print("Location permission is permanently denied. Open settings to grant permission.");
+          debugPrint("Location permission is permanently denied. Open settings to grant permission.");
           openAppSettings(); // 設定画面を開く
         }
       }
     } else {
       // すでに許可されている場合
-      print("Location permission already granted");
+      debugPrint("Location permission already granted");
     }
   }
 
