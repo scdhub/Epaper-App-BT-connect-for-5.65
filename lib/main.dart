@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title:'CanvasEP',
       //'E ink E-paper',
+      debugShowCheckedModeBanner: false, // デバッグバナーを非表示
       theme: AppTheme.lightTheme, // `theme.dart` のテーマを適用
       themeMode: ThemeMode.system, // システムの設定に従う
       home: const TopPage(title: 'CanvasEP'),//'E ink E-paper'

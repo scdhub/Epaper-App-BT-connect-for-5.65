@@ -21,20 +21,43 @@ class _TopPageState extends State<TopPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'CanvasEP',
+              style: TextStyle(
+                color: Color(0xFF84848F),
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 8), // テキストとアイコンの間隔
+            Image.asset(
+              'assets/assets_CanvasEP_image/CanvasEP_01.png',
+              height: 45, // アイコンサイズはお好みで
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        toolbarHeight: 80,
+      ),
       body: SafeArea(
         child: Column(
             children: [
         const Spacer(),
-              Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 60,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
-              ),
+      //         Text(
+      //           widget.title,
+      //           textAlign: TextAlign.center,
+      //           style: const TextStyle(
+      //             color: Colors.white,
+      //             fontSize: 60,
+      //             fontWeight: FontWeight.bold,
+      //             letterSpacing: 1,
+      //           ),
+      //         ),
               // const SizedBox(height: 25),//タイトルとボタンの余白
 
               // const Text('下記から画像をアップロードしてください。',
@@ -51,7 +74,7 @@ class _TopPageState extends State<TopPage> {
               //       // fontSize: 15,
               //     )),
               //ボタン縦並び　ここをmargin
-              const Spacer(), // タイトルと上側の余白を均等にする
+
         const Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,12 +138,12 @@ class _TopPageState extends State<TopPage> {
                     fontSize: 12,
                       color: Colors.white),
                 ),
-              ],
-            ),
-          ),
             ],
         ),
       ),
+      ],
+    ),
+    ),
     );
   }
 }
