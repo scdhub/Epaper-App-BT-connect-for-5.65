@@ -87,7 +87,7 @@ class MainActivity: FlutterActivity() {
                 // Flutter側へメッセージ送信
 //                sendMessageToFlutter(messageChannel, "onSetupSDKComplete", "Complete", null)
                 // BL接続
-                Log.d("MainActivity", "call connectBleDevice")
+                Log.d("MainActivity", "call connectBleDevice [${deviceName}]")
                 sdk?.connectBleDevice(deviceName!!)
             }
             override fun onSetupSDKFailed(error: SDKError?) {
@@ -191,14 +191,16 @@ class MainActivity: FlutterActivity() {
                     sdk = factory.createSDK()
                     Log.d("MainActivity", "createSDK: $sdk")
                 }
+                // デバイス名取得
+                deviceName = call.argument<String>("deviceName")
+                imageUrl = call.argument<String>("imageUrl")
+                Log.d("MainActivity", "deviceName: $deviceName")
+                Log.d("MainActivity", "imageUrl: $imageUrl")
+
                 // SDKの初期化
                 Log.d("MainActivity", "call setupSDK")
                 val res = sdk?.setupSDK(context, delegate)
                 Log.d("MainActivity", "setupSDK: $res")
-                // デバイス名取得
-                deviceName = call.argument<String>("deviceName")
-                imageUrl = call.argument<String>("imageUrl")
-
             } else {
                 result.notImplemented()
             }
