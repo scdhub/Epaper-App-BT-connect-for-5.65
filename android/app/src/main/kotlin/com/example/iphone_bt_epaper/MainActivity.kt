@@ -89,6 +89,8 @@ class MainActivity: FlutterActivity() {
                 // BL接続
                 Log.d("MainActivity", "call connectBleDevice [${deviceName}]")
                 sdk?.connectBleDevice(deviceName!!)
+                Log.d("MainActivity", "★★★★★★deviceName: $deviceName")
+
             }
             override fun onSetupSDKFailed(error: SDKError?) {
                 // セットアップ失敗時の処理
@@ -191,16 +193,30 @@ class MainActivity: FlutterActivity() {
                     sdk = factory.createSDK()
                     Log.d("MainActivity", "createSDK: $sdk")
                 }
+<<<<<<< HEAD
                 // デバイス名取得
                 deviceName = call.argument<String>("deviceName")
                 imageUrl = call.argument<String>("imageUrl")
                 Log.d("MainActivity", "deviceName: $deviceName")
                 Log.d("MainActivity", "imageUrl: $imageUrl")
 
+=======
+
+                // デバイス名取得
+                deviceName = call.argument<String>("deviceName")
+                Log.d("MainActivity", "@@@@@@@@@@@@@@@@@deviceName: $deviceName")
+                imageUrl = call.argument<String>("imageUrl")
+>>>>>>> 6015241 (・スプラッシュ画面の修正)
                 // SDKの初期化
                 Log.d("MainActivity", "call setupSDK")
                 val res = sdk?.setupSDK(context, delegate)
                 Log.d("MainActivity", "setupSDK: $res")
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 6015241 (・スプラッシュ画面の修正)
             } else {
                 result.notImplemented()
             }

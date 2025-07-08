@@ -389,6 +389,8 @@ class _ConnectBTPageState extends State<ConnectBTPage> {
                           ),
                           IconButton(
                             onPressed: () {
+                              // debugPrint("★ ConnectBTPage　： ExportPage : trustName=${trustDevices[index].trustName}, "
+                              //     "IP=${trustDevices[index].devicesData}");
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

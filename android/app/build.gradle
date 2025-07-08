@@ -46,8 +46,9 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
 //        minSdkVersion flutter.minSdkVersion
+//        targetSdkVersion flutter.targetSdkVersion
         minSdkVersion 33
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 33          // 明示的にAndroid 13に対応　20250509追加
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

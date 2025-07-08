@@ -63,7 +63,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
     if (permitted.isAuth || permitted.hasAccess) {
       albums = await PhotoManager.getAssetPathList(
         type: RequestType.image,
-      );
+      );//
       final Future<int> pages = albums[0].assetCountAsync;
       int count = 0;
       await pages.then((value) {
@@ -85,6 +85,7 @@ class _ImageSelectAlbumState extends State<ImageSelect_Album> {
         _loadMedias();
       }
     } else {
+      log("Permission denied, opening settings");
       //許可がない時設定を開く
       PhotoManager.openSetting();
     }
