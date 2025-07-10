@@ -68,7 +68,7 @@ class _SelectCheckState extends State<SelectCheck> {
   //   });
   // }
 
-  // **画像を `.png` にして保存**
+  // ファイル名を `.jpeg` にして保存する
   Future<void> saveImages() async {
     final directory = await getApplicationDocumentsDirectory();
     for (int i = 0; i < widget.imageData.length; i++) {
@@ -76,7 +76,8 @@ class _SelectCheckState extends State<SelectCheck> {
       if (data != null) {
         // Uint8List processedData = cropImage(data);
         Uint8List processedData = data; // トリミングせずにそのまま保存
-        final String fileName = 'image_$i.png';
+        final String fileName = 'image_$i.jpeg';
+        // final String fileName = 'image_$i.png';
         final path = '${directory.path}/$fileName';
         final file = File(path);
         await file.writeAsBytes(processedData);
