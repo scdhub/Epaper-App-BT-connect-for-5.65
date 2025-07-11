@@ -442,7 +442,9 @@ class _SelectCheckState extends State<SelectCheck> {
       final response = await http.put(
         Uri.parse(signedUrl),
         headers: {
-          'Content-Type': 'binary/octet-stream',
+          // Content-Typeを明示的にJPEGを指定
+          'Content-Type': 'image/jpeg',
+          // 'Content-Type': 'binary/octet-stream',
         },
         body: bytes,
       );
